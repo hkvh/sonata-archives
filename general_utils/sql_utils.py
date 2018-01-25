@@ -1,0 +1,319 @@
+#!/usr/bin/env python
+"""
+This module contains the core Composable subclasses that we made to handle SchemaTables and Fields.
+
+SchemaTables will always be unquoted and thus directly extend Composable while Fields will always be quoted
+and thus
+"""
+from typing import Union, List, Tuple
+
+from psycopg2 import sql, extensions
+
+from general_utils.postgres_utils import LocalhostCursor
+from general_utils.type_helpers import validate_is_int
+
+
+class Field(sql.Identifier):
+    """
+    A composable instance for a field that allows it to work as an element in a query using psycopg's sql module.
+
+    This is a clone of sql.Identifier except that it is hashable (as the unquoted string value).
+    This usefully allows us to store sets or dicts of Fields as if they were strings.
+
+    Note that by subclassesing Identifier directly we inherit its useful ability to properly quote things with escaping.
+    Because all of our field names will be cased, this is especially important and thus all fields should always be
+    encased in double quotes.
+    """
+
+    def __hash__(self):
+        """
+        Implements hash for the Field by using the hash of its wrapped string
+        :return:
+        """
+        return self._wrapped.__hash__()
+
+
+class Schema(sql.Identifier):
+    """
+    A composable instance for a schema that allows it to work as an element in a query using psycopg's sql module.
+
+    Right now a pure clone of Identifier and stores the constructor in the "_wrapped" property
+    """
+
+
+class Table(sql.Identifier):
+    """
+    A composable instance for a schema that allows it to work as an element in a query using psycopg's sql module.
+
+    Right now a pure clone of Identifier and stores the constructor in the "_wrapped" property
+
+    Note that what we refer to as a "table" may actually be a view or a materialized view, but it queries just like a table
+    so for our purposes it's a "table"
+
+    This class also allows us extra features like the ability to get the metadata table if the table is a raw table.
+    """
+
+
+class SchemaTable(sql.Composed):
+    """
+    A composable instance that takes schema and table strings (or  and allows them to work together
+
+    This subclasses Composed since it involves two idenitifiers linked by the sql.SQL('.') and it
+    allows for convenient functionality to abstract away some nuances
+    (i.e. like how you must do "schema"."table" as "schema.table" does not work)
+    gives you a container object if you ever want to get the schema or the table.
+
+    This class also allows us to get the metadata SchemaTable if appropriate.
+    """
+
+    def __init__(self, schema: Union[str, Schema], table: Union[str, Table]):
+
+        if isinstance(schema, Schema):
+            self._schema = schema
+        elif isinstance(schema, str):
+            self._schema = Schema(schema)
+        else:
+            raise TypeError("schema must be a str or Schema, not a {}".format(type(table)))
+
+        if isinstance(table, Table):
+            self._table = table
+        elif isinstance(table, str):
+            self._table = Table(table)
+        else:
+            raise TypeError("table must be a str or Table, not a {}".format(type(table)))
+
+        # Store it as a composed of the schema identifier, the table identifier and a period in between
+        super().__init__([self._schema, sql.SQL("."), self._table])
+
+    @property
+    def string(self) -> str:
+        """
+        "Returns an unwrapped string version of the schema table for ease of printing
+        :return: a string version of the schema table
+        """
+        return self._schema.string + "." + self._table.string
+
+    @property
+    def schema(self) -> Schema:
+        """
+        Returns a clone of schema (so that it can't be changed)
+        :return: a clone of the schema of this SchemaTable
+        """
+        return Schema(self._schema.string)
+
+    @property
+    def table(self) -> Table:
+        """
+        Returns a clone of table (so that it can't be changed)
+        :return: a clone of the table of this SchemaTable
+        """
+        return Table(self._table.string)
+
+
+class SQLType(sql.Composable):
+    """
+    A composable instance that takes a postgres sqltype string and allows it to work as an element in a query
+    using psycopg's sql module
+
+    This is like the Field / sql.Identifier, except it is even more basic composable that does not put quotes around the
+    wrapped input (since SQL Types can't be quoted).
+
+    The goal for this is for use in dynamic CREATE TABLE queries where we give sql types without quotes, and you should
+    only construct this by using the class methods
+    """
+
+    @classmethod
+    def TEXT(cls):
+        return cls("TEXT")
+
+    @classmethod
+    def DATE(cls):
+        return cls("DATE")
+
+    @classmethod
+    def TIMESTAMP(cls):
+        return cls("TIMESTAMP")
+
+    @classmethod
+    def JSONB(cls):
+        return cls("JSONB")
+
+    @classmethod
+    def BOOLEAN(cls):
+        return cls("BOOLEAN")
+
+
+    @classmethod
+    def INTEGER(cls):
+        return cls("INTEGER")
+
+    @classmethod
+    def DOUBLE_PRECISION(cls):
+        return cls("DOUBLE PRECISION")
+
+    @classmethod
+    def NUMERIC(cls, precision: int = None, scale: int = None):
+        if precision is None and scale is None:
+            return cls("NUMERIC")
+        elif precision is None or scale is None:
+            raise Exception("Must specify either both precision and scale or neither")
+        else:
+            return cls("NUMERIC ({}, {})".format(precision, scale))
+
+    def as_string(self, context=None):
+        """
+        Implement the abstract as_string to just give us the string that was given to be wrapped but without quotes.
+
+        This should be safe since we will only use one of the class methods
+
+        :param context: Don't need a context since it won't be quoted
+        :return: the string given in the constructor "wrapped" by this class
+        """
+        return self._wrapped
+
+
+def get_column_names(schema_table: SchemaTable, cursor: extensions.cursor) -> List[str]:
+    """
+    Gets a list of all columns (from the information schema) for a given schema and table in the ordinal order
+
+    :param schema_table: the SchemaTable object that we want to get the columns_from
+    :param cursor: a cursor for where to execute this query
+    :return: a list of all table columns
+    """
+    schema_name = schema_table.schema.string
+    table_name = schema_table.table.string
+    cursor.execute("SELECT column_name FROM information_schema.columns "
+                   "WHERE table_schema = %s AND table_name = %s ORDER BY ordinal_position",
+                   (schema_name, table_name))
+    return [x[0] for x in cursor.fetchall()]
+
+
+def execute_values_insert_query(schema_table: SchemaTable) -> sql.Composable:
+    """
+    This helper function takes a SchemaTable and creates a generic insert query for use with the execute values method
+    (i.e. with the parameter %s following the word values
+
+    :param schema_table: the SchemaTable object to insert
+    :return: a Composable wrapper with the insert query
+    """
+    return sql.SQL("""
+          INSERT INTO {} VALUES %s
+                    """).format(schema_table)
+
+
+def get_row_count(schema_table: SchemaTable, cursor: extensions.cursor) -> int:
+    """
+    Given a SchemaTable and a cursor, this simple utility will run a SELECT COUNT(*) on the object and return an int
+
+    :param schema_table: the SchemaTable object that we want to compute the row count
+    :param cursor: a cursor for where to execute this query
+    :return: the number of rows in the schema table object after querying the database with the cursor
+    """
+    cursor.execute(sql.SQL("""
+          SELECT COUNT(*) FROM {}
+                        """).format(schema_table))
+    count = cursor.fetchone()[0]  # grab the first element of the tuple that is returned
+    validate_is_int(count)
+    return count
+
+
+def fetch_all_records(schema_table: SchemaTable, cursor: extensions.cursor) -> List:
+    """
+    Given a SchemaTable and a cursor, this simple utility will run a SELECT * on the object and return the full thing in
+    memory. Recommended for use only on small objects!
+
+    :param schema_table: the SchemaTable object that we want to fetch all from
+    :param cursor: a cursor for where to execute this query
+    :return: a list of tuple records with the table in memory
+    """
+    cursor.execute(sql.SQL("""
+          SELECT * FROM {}
+                        """).format(schema_table))
+    return cursor.fetchall()
+
+
+def get_column_count(schema_table: SchemaTable, cursor: extensions.cursor) -> int:
+    """
+    Given a SchemaTable and a cursor, this simple utility will query the information schema to find out how many
+    columns are in it.
+
+    Note that this works equally well if the schema_table actually refers to a view, but it won't work with a
+    materialized view since they aren't part of the SQL standard (so they aren't in the information schema)
+
+    :param schema_table: the SchemaTable object that we want to compute the row count
+    :param cursor: a cursor for where to execute this query
+    :return: the number of rows in the schema table object after querying the database with hte cursor
+    """
+    schema_name = schema_table.schema.string
+    table_name = schema_table.table.string
+
+    cursor.execute(sql.SQL("""
+          SELECT COUNT(*) FROM information_schema.columns 
+          WHERE table_schema = %s AND table_name = %s
+                        """), (schema_name, table_name))
+    count = cursor.fetchone()[0]  # grab the first element of the tuple that is returned
+    validate_is_int(count)
+    return count
+
+
+def get_list_field_type_tuples(schema_table: SchemaTable, cursor: extensions.cursor) -> List[Tuple[str, str]]:
+    """
+    Takes a schema table and a cursor and returns a list of tuples with the str field
+    name and the sqltype in the proper ordinal order (which it gets by querying the information_schema).
+
+    Note that the type is simply whatever is in the data_type field, and as of now, this does not use the precision
+    and scale for numeric types.
+
+    Note that this works equally well if the schema_table actually refers to a view, but it won't work with a
+    materialized view since they aren't part of the SQL standard (so they aren't in the information schema)
+
+    :param schema_table: the schema table to use (can also be views, but not materialized views)
+    :param cursor: the cursor for where to execute this query
+    :return: a list of tuple of strings, each one containing the field name and the sql type in ordinal order
+    """
+    schema_name = schema_table.schema.string
+    table_name = schema_table.table.string
+
+    cursor.execute(sql.SQL("""
+            SELECT column_name, data_type FROM information_schema.columns
+            WHERE table_schema = %s AND table_name = %s ORDER BY ordinal_position
+              """), (schema_name, table_name))
+
+    # TODO add precision and scale to a parenthetical for numeric types
+    # TODO make this return List[Tuple[Field, SQLType] instead of List[str, str]
+    return cursor.fetchall()
+
+
+def create_table_from_field_sql_type_tuples(schema_table: SchemaTable,
+                                            list_field_type_tuples: List[Tuple[Field, SQLType]]) -> sql.Composable:
+    """
+    Takes a schema table and a list of (Field, SQLType) tuples and returns a create table SQL Composable.
+
+    :param schema_table: the schema table to use to make the table
+    :param list_field_type_tuples: a list of tuples, each containing the field name and the sql type in ordinal order
+    """
+
+    list_field_type_sql = [sql.SQL("{field}\t\t{type}").format(field=x[0], type=x[1])
+                           for x in list_field_type_tuples]
+
+    return sql.SQL("CREATE TABLE {schema_table} (\n\t{field_types_joined}\n);"
+                   "").format(schema_table=schema_table,
+                              field_types_joined=sql.SQL(",\n\t").join(list_field_type_sql))
+
+
+class TableError(Exception):
+    """
+    An exception for when the table given as an argument is not as expected
+    """
+    pass
+
+
+if __name__ == '__main__':
+    with LocalhostCursor() as cur:
+        print(Field("Hello").as_string(cur))
+        print(SQLType.TEXT().as_string(cur))
+
+        st = SchemaTable("a", "b")
+        l = [(Field("Hello"), SQLType.TEXT()),
+             (Field("Bob"), SQLType.NUMERIC(3, 2))]
+        print(create_table_from_field_sql_type_tuples(st, l).as_string(cur))
