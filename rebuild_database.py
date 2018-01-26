@@ -5,17 +5,15 @@ A module designed to rebuild the entire database from the database_design and fi
 import glob
 import importlib
 import logging
-
 import os
 import types
-import typing
 
 from psycopg2 import extensions, sql
 
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, sonata_archives_schema
+from directories import DATA_DIR, ROOT_DIR
 from general_utils.postgres_utils import LocalhostCursor
-from directories import DATA_DIR
 
 log = logging.getLogger(__name__)
 
@@ -131,30 +129,30 @@ def upsert_all_data(cur: extensions.cursor, fail_if_data_module_missing_upsert_a
 
 def get_module_from_data_dirname(data_file_full_path: str):
     """
-    Given a full path from a data file, this method will convert it into a module imported by the importlib
+    Given a full path from a data file, this method will convert it into a module imported by the importlib by stripping
+    it down to just the elements beyond the root dir and then joining them with '.'
 
     :param data_file_full_path: the string name of the full path
     :return: the data file as a module
     """
     module_element_list = []
 
-    # Pop the last element off the full path until we reach 'sonata-archives', as that means we have the repo-level
-    # path
+    # Pop the last element off the full path until we reach the ROOT_DIR
     path = data_file_full_path
-
     while True:
-        path, last = os.path.split(path)
-
-        # Strip extension if it has one
-        last = os.path.splitext(last)[0]
-
-        if last == "sonata-archives":
+        # If path is ROOT_DIR, we have everything
+        if path == ROOT_DIR:
             break
-        elif last == "":
-            raise Exception("Error! Never found 'sonata-archives' in provided path {}".format(data_file_full_path))
-        else:
-            # insert at the beginning
-            module_element_list.insert(0, last)
+        elif path == "":
+            raise Exception(
+                "Error! Root directory {} not present at the base of path {}".format(ROOT_DIR, data_file_full_path))
+
+        # Pop off the last element and extension and insert it at the beginning of the list
+        path, last = os.path.split(path)
+        last = os.path.splitext(last)[0]   # remove extension
+
+        # insert at the beginning since last element popped is actually the earliest dir
+        module_element_list.insert(0, last)
 
     module_name = '.'.join(module_element_list)
     module = importlib.import_module(module_name)
