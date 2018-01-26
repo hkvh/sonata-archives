@@ -29,12 +29,12 @@ def create_all_sonata_tables(cur: extensions.cursor, drop_if_exists: bool = True
     sonata_table_specs = [
         Composer,
         Piece,
-        Sonata,
         Introduction,
         Exposition,
         Development,
         Recapitulation,
         Coda,
+        Sonata,  # Sonata objects contain FKs to all the blocks so the block PKs must be created first
     ]
     for table in sonata_table_specs:
         create_table_sql = table.create_table_sql(drop_if_exists)

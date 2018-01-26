@@ -5,7 +5,7 @@ This module contains the core Composable subclasses that we made to handle Schem
 SchemaTables will always be unquoted and thus directly extend Composable while Fields will always be quoted
 and thus
 """
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict, Any
 
 from psycopg2 import sql, extensions
 
@@ -141,7 +141,6 @@ class SQLType(sql.Composable):
     @classmethod
     def BOOLEAN(cls):
         return cls("BOOLEAN")
-
 
     @classmethod
     def INTEGER(cls):
@@ -299,6 +298,56 @@ def create_table_from_field_sql_type_tuples(schema_table: SchemaTable,
     return sql.SQL("CREATE TABLE {schema_table} (\n\t{field_types_joined}\n);"
                    "").format(schema_table=schema_table,
                               field_types_joined=sql.SQL(",\n\t").join(list_field_type_sql))
+
+
+def upsert_sql_from_field_value_dict(schema_table: SchemaTable, field_value_dict: Dict[Field, Any],
+                                     conflict_field_list: List[Field]) -> sql.Composable:
+    """
+    Takes a schema table, a dict mapping Fields to values, and a list of fields to check for conflicts on and creates
+    and "upsert", meaning that we will try to insert the dict values associated with each field key into the table,
+    and if that fails due to a conflict where the conf;ict field lists already exist, then do an update instead.
+
+    :param schema_table: the schema table to upsert into
+    :param field_value_dict: the dict mapping a Field to a value representing the data we want to upsert
+    :param conflict_field_list: a list of fields to use for the on conflict column – note that this is often a single
+    field serving as the primary key but multiple fields for composite keys are inserted
+    :return: a list
+    """
+
+    # Grab the fields and values (the order will be preserved by grabbing these without changing the dict in between)
+    field_list = field_value_dict.keys()
+    val_list = [sql.Literal(x) for x in field_value_dict.values()]  # Convert the values into sql.Literal for insertion
+
+    # EXCLUDED is the posgres name of the records that couldn't be inserted due to the conflict
+    exc_fields = [sql.SQL("EXCLUDED.{}").format(x) for x in field_list]
+
+    if len(field_list) == 0:
+        raise Exception("Cannot do upsert with an empty field_value_dict!")
+
+    # The necessity of these two templates is due to an annoying discrepancy between Postgres 9 and Postgres 10:
+    # The SQL without the the parentheses works for Postgres 9 for all cases, but fails in 10 if you have only one field
+    # because 10 wants you to insert the keyword ROW before the parentheses since ROW(1) ≠ (1).
+    # Inserting this keyword would fix the parentheses version in 10 but the ROW keyword is not supported in 9.
+
+    # So the solution is to remove the parentheses if the field list is length 1 and keep them if the field list is
+    # longer than 1 (which works on both 9 and 10!)
+    if len(field_list) == 1:
+        upsert_sql_template = sql.SQL("INSERT INTO {schema_table} ({joined_fields}) VALUES ({joined_vals}) \n"
+                                      "ON CONFLICT ({joined_conf_fields}) \n"
+                                      " DO UPDATE SET {joined_fields} = {joined_exc_fields};")
+
+    else:  # This is the only one necessary in 9 but breaks in 10 if you have only one field
+        upsert_sql_template = sql.SQL("INSERT INTO {schema_table} ({joined_fields}) VALUES ({joined_vals}) \n"
+                                      "ON CONFLICT ({joined_conf_fields}) \n"
+                                      " DO UPDATE SET ({joined_fields}) = ({joined_exc_fields});")
+
+    return upsert_sql_template.format(
+        schema_table=schema_table,
+        joined_fields=sql.SQL(", ").join(field_list),
+        joined_vals=sql.SQL(", ").join(val_list),
+        joined_conf_fields=sql.SQL(", ").join(conflict_field_list),
+        joined_exc_fields=sql.SQL(", ").join(exc_fields)
+    )
 
 
 class TableError(Exception):

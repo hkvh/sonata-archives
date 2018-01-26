@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 import logging
+import typing
+from datetime import date
 from typing import Dict, Any
 
-from datetime import date
 from data.composers import Beethoven
 from database_design.sonata_data_classes import PieceDataClass, SonataDataClass
 from database_design.sonata_enums import PieceType, SonataType
-from database_design.sonata_table_specs import Piece, Sonata, Exposition, Development, Recapitulation
+from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation
 from general_utils.sql_utils import Field
 
 
@@ -32,16 +33,19 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def sonata_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Sonata.ID:                       Beethoven5.id() + "_1",
             Sonata.PIECE_ID:                 Beethoven5.id(),
+            Sonata.MOVEMENT_NUM:             1,
             Sonata.SONATA_TYPE:              SonataType.TYPE_3(),
             Sonata.INTRODUCTION_PRESENT:     False,
             Sonata.DEVELOPMENT_PRESENT:      True,
             Sonata.CODA_PRESENT:             True,
-            Sonata.MOVEMENT_NUM:             1,
             Sonata.EXPOSITION_REPEAT:        True,
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
         }
+
+    @classmethod
+    def introduction_attribute_dict(cls) -> Dict[Field, Any]:
+        pass
 
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
@@ -53,18 +57,18 @@ class Beethoven5_1(SonataDataClass):
         }
 
     @classmethod
+    def development_attribute_dict(cls) -> Dict[Field, Any]:
+        return {
+
+        }
+
+    @classmethod
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Recapitulation.OPENING_TEMPO: "Allegro con brio",
             Recapitulation.P_THEME_KEY:   "C minor",
             Recapitulation.S_THEME_KEY:   "C Major",
             Recapitulation.ESC_PRESENT:   True,
-        }
-
-    @classmethod
-    def development_attribute_dict(cls) -> Dict[Field, Any]:
-        return {
-
         }
 
     @classmethod
@@ -78,16 +82,19 @@ class Beethoven5_4(SonataDataClass):
     @classmethod
     def sonata_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Sonata.ID:                       Beethoven5.id() + "_4",
             Sonata.PIECE_ID:                 Beethoven5.id(),
+            Sonata.MOVEMENT_NUM:             4,
             Sonata.SONATA_TYPE:              SonataType.TYPE_3(),
             Sonata.INTRODUCTION_PRESENT:     False,
             Sonata.DEVELOPMENT_PRESENT:      True,
             Sonata.CODA_PRESENT:             True,
-            Sonata.MOVEMENT_NUM:             4,
             Sonata.EXPOSITION_REPEAT:        True,
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
         }
+
+    @classmethod
+    def introduction_attribute_dict(cls) -> Dict[Field, Any]:
+        pass
 
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
@@ -101,18 +108,18 @@ class Beethoven5_4(SonataDataClass):
         }
 
     @classmethod
-    def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
+    def development_attribute_dict(cls) -> Dict[Field, Any]:
+        return {
+
+        }
+
+    @classmethod
+    def recapitulation_attribute_dict(cls) -> typing.Mapping[str, str]:
         return {
             Recapitulation.OPENING_TEMPO: "Allegro",
             Recapitulation.P_THEME_KEY:   "C Major",
             Recapitulation.S_THEME_KEY:   "C Major",
             Recapitulation.ESC_PRESENT:   True,
-        }
-
-    @classmethod
-    def development_attribute_dict(cls) -> Dict[Field, Any]:
-        return {
-
         }
 
     @classmethod

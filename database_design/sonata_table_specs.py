@@ -141,20 +141,23 @@ class Sonata(TableSpecification):
 
     @classmethod
     def create_constraints_sql(cls) -> sql.Composable:
+        # Add ON DELETE CASCADE to the FK for the blocks so that if we delete a block it deletes the sonata
+        # We are going to upsert the sonata at the end of adding all the blocks anyway, so this is just easier
+        # to ensure that you clear its FK link to any block that has been deleted
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});\n"
                        "ALTER TABLE {st} ADD FOREIGN KEY ({piece_id}) REFERENCES {p_st}({p_id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({intro_id}) REFERENCES {i_st}({i_id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({expo_id}) REFERENCES {e_st}({e_id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({devel_id}) REFERENCES {d_st}({d_id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({recap_id}) REFERENCES {r_st}({r_id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({coda_id}) REFERENCES {c_st}({c_id});") \
+                       "ALTER TABLE {st} ADD FOREIGN KEY ({intro_id}) REFERENCES {i_st}({i_id}) ON DELETE CASCADE;\n"
+                       "ALTER TABLE {st} ADD FOREIGN KEY ({expo_id}) REFERENCES {e_st}({e_id}) ON DELETE CASCADE;\n"
+                       "ALTER TABLE {st} ADD FOREIGN KEY ({devel_id}) REFERENCES {d_st}({d_id}) ON DELETE CASCADE;\n"
+                       "ALTER TABLE {st} ADD FOREIGN KEY ({recap_id}) REFERENCES {r_st}({r_id}) ON DELETE CASCADE;\n"
+                       "ALTER TABLE {st} ADD FOREIGN KEY ({coda_id}) REFERENCES {c_st}({c_id}) ON DELETE CASCADE;") \
             .format(st=cls.schema_table(), id=cls.ID,
                     piece_id=cls.PIECE_ID, p_st=Piece.schema_table(), p_id=Piece.ID,
-                    intro_id=cls.INTRODUCTION_ID, i_st=Piece.schema_table(), i_id=Piece.ID,
-                    expo_id=cls.EXPOSITION_ID, e_st=Piece.schema_table(), e_id=Piece.ID,
-                    devel_id=cls.DEVELOPMENT_ID, d_st=Piece.schema_table(), d_id=Piece.ID,
-                    recap_id=cls.RECAPITULATION_ID, r_st=Piece.schema_table(), r_id=Piece.ID,
-                    coda_id=cls.CODA_ID, c_st=Piece.schema_table(), c_id=Piece.ID)
+                    intro_id=cls.INTRODUCTION_ID, i_st=Introduction.schema_table(), i_id=Piece.ID,
+                    expo_id=cls.EXPOSITION_ID, e_st=Exposition.schema_table(), e_id=Piece.ID,
+                    devel_id=cls.DEVELOPMENT_ID, d_st=Development.schema_table(), d_id=Piece.ID,
+                    recap_id=cls.RECAPITULATION_ID, r_st=Recapitulation.schema_table(), r_id=Piece.ID,
+                    coda_id=cls.CODA_ID, c_st=Coda.schema_table(), c_id=Piece.ID)
 
 
 class Introduction(TableSpecification):
