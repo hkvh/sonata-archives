@@ -129,7 +129,7 @@ class Beethoven5_4(SonataDataClass):
         }
 
 
-# Upsert everything into the database
+# Core upsert method that all data modules must have
 def upsert_all():
     for x in [Beethoven5, Beethoven5_1, Beethoven5_4]:
         x.upsert_data()

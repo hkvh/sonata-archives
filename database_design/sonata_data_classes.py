@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-A module containing the abstract base classes that data classes will extend
+A module containing the abstract base classes that all sonata_data classes will extend
 """
 import logging
 from abc import ABC, abstractmethod
@@ -232,7 +232,7 @@ class SonataDataClass(ABC):
             sonata_dict[Sonata.EXPOSITION_ID] = expo_id
             upsert_sql = upsert_sql_from_field_value_dict(Exposition.schema_table(), block_dict,
                                                           conflict_field_list=[Exposition.ID])
-            log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
+            log.info(upsert_sql.as_string(cur) + "\n")
             cur.execute(upsert_sql)
 
             # Upsert Recapitulation
@@ -241,7 +241,7 @@ class SonataDataClass(ABC):
             sonata_dict[Sonata.RECAPITULATION_ID] = recap_id
             upsert_sql = upsert_sql_from_field_value_dict(Recapitulation.schema_table(), block_dict,
                                                           conflict_field_list=[Recapitulation.ID])
-            log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
+            log.info(upsert_sql.as_string(cur) + "\n")
             cur.execute(upsert_sql)
 
             # Upsert the 3 optional sonata block tables that they will have depending on the booleans present
@@ -253,14 +253,14 @@ class SonataDataClass(ABC):
                 sonata_dict[Sonata.INTRODUCTION_ID] = intro_id
                 upsert_sql = upsert_sql_from_field_value_dict(Introduction.schema_table(), block_dict,
                                                               conflict_field_list=[Introduction.ID])
-                log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
+                log.info(upsert_sql.as_string(cur) + "\n")
                 cur.execute(upsert_sql)
             else:
                 # Delete from Introduction if boolean false (this will cascade delete the sonata as well)
                 delete_sql = sql.SQL("DELETE FROM {schema_table} WHERE {id} = {id_val};").format(
                     schema_table=Introduction.schema_table(),
                     id=Introduction.ID, id_val=sql.Literal(intro_id))
-                log.info("\n\n" + delete_sql.as_string(cur) + "\n")
+                log.info(delete_sql.as_string(cur) + "\n")
                 cur.execute(delete_sql)
 
             # Upsert Development if boolean True
@@ -277,7 +277,7 @@ class SonataDataClass(ABC):
                 delete_sql = sql.SQL("DELETE FROM {schema_table} WHERE {id} = {id_val};").format(
                     schema_table=Development.schema_table(),
                     id=Development.ID, id_val=sql.Literal(devel_id))
-                log.info("\n\n" + delete_sql.as_string(cur) + "\n")
+                log.info(delete_sql.as_string(cur) + "\n")
                 cur.execute(delete_sql)
 
             # Upsert Coda if boolean
@@ -287,14 +287,14 @@ class SonataDataClass(ABC):
                 sonata_dict[Sonata.CODA_ID] = coda_id
                 upsert_sql = upsert_sql_from_field_value_dict(Coda.schema_table(), block_dict,
                                                               conflict_field_list=[Coda.ID])
-                log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
+                log.info(upsert_sql.as_string(cur) + "\n")
                 cur.execute(upsert_sql)
             else:
                 # Delete from Coda if boolean false (this will cascade delete the sonata as well)
                 delete_sql = sql.SQL("DELETE FROM {schema_table} WHERE {id} = {id_val};").format(
                     schema_table=Coda.schema_table(),
                     id=Coda.ID, id_val=sql.Literal(coda_id))
-                log.info("\n\n" + delete_sql.as_string(cur) + "\n")
+                log.info(delete_sql.as_string(cur) + "\n")
                 cur.execute(delete_sql)
 
             ###########
@@ -310,5 +310,5 @@ class SonataDataClass(ABC):
             # Note: because the FK constraints in the sonata table are cascade deletes, if any of the optional blocks
             # were true and the delete from actually deleted rows, the sonata will have been deleted as well
             # and this upsert is just an insert (so the link to the deleted block is wiped as well)
-            log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
+            log.info(upsert_sql.as_string(cur) + "\n")
             cur.execute(upsert_sql)

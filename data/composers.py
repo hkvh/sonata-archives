@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 """
-Composer subclasses
+The core module for all composer classes.
+
+Keep this as the only data file in the root directory to ensure it is upserted first since it is a precondition
+for all the other files since they link to the composers with FKs
 """
 import logging
 from typing import Dict, Any
@@ -59,7 +62,7 @@ composer_list = [
 ]
 
 
-# Upsert everything into the database
+# Core upsert method that all data modules must have
 def upsert_all():
     for x in composer_list:
         x.upsert_data()
