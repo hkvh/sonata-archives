@@ -28,6 +28,8 @@ class Composer(TableSpecification):
     NATIONALITY = Field("nationality")
     BIRTH_DATE = Field("birth_date")
     DEATH_DATE = Field("death_date")
+    BIRTHPLACE = Field("birthplace")
+    PRIMARY_RESIDENCE = Field("primary_residence")
 
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
@@ -38,6 +40,8 @@ class Composer(TableSpecification):
             (cls.NATIONALITY, SQLType.TEXT()),
             (cls.BIRTH_DATE, SQLType.DATE()),
             (cls.DEATH_DATE, SQLType.DATE()),
+            (cls.BIRTHPLACE, SQLType.TEXT()),
+            (cls.PRIMARY_RESIDENCE, SQLType.TEXT()),
         ]
 
     @classmethod

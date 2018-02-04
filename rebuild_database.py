@@ -4,12 +4,13 @@ A module designed to rebuild the entire database from the database_design and fi
 """
 import glob
 import importlib
+import inspect
 import logging
 import os
-import types
 
 from psycopg2 import extensions, sql
 
+from database_design.sonata_data_classes import DataClass
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, sonata_archives_schema
 from directories import DATA_DIR, ROOT_DIR
@@ -26,7 +27,7 @@ def create_all_tables(cur: extensions.cursor, drop_if_exists: bool = True) -> No
     """
     This function creates all sonata tables needed to construct the sonata_archives
 
-    :param cur: a cursor for which to execute this statement
+    :param cur: the postgres cursor to use to upsert the data
     :param drop_if_exists: if true, will wipe out the existing tables and rebuild
     """
 
@@ -64,14 +65,15 @@ def create_all_tables(cur: extensions.cursor, drop_if_exists: bool = True) -> No
         cur.execute(create_constraint_sql)
 
 
-def upsert_all_data(cur: extensions.cursor, fail_if_data_module_missing_upsert_all=True) -> None:
+def upsert_all_data(cur: extensions.cursor) -> None:
     """
-    This function recursively iterates over all files in the 'data' folder and grabs and runs their "upsert_all"
-    function. Every data class must contain an upsert_all method or this will ignore the module or throw an exception
-    (depending on the choice of fail_if_data_module_missing_upsert_all)
+    This function recursively iterates over and loads all python modules in the 'data' folder and grabs all classes
+    defined in them, and runs their upsert_data function.
 
-    :param cur: a cursor for which to execute this statement
-    :param fail_if_data_module_missing_upsert_all: if True we throw an exception, if False we ignore the module
+    Will throw an error if a) a module contains no classes defined in it or b) the class defined in the data module
+    is not a subclass of DataClass.
+
+    :param cur: the postgres cursor to use to upsert the data
     """
 
     # Get all python files recursively under the data dir
@@ -79,7 +81,9 @@ def upsert_all_data(cur: extensions.cursor, fail_if_data_module_missing_upsert_a
 
     log.info('#' * 40)
     log.info('#' * 40)
+    log.info('#' * 40)
     log.info("UPSERTING ALL DATA")
+    log.info('#' * 40)
     log.info('#' * 40)
     log.info('#' * 40 + "\n")
 
@@ -103,28 +107,29 @@ def upsert_all_data(cur: extensions.cursor, fail_if_data_module_missing_upsert_a
         data_module = get_module_from_data_dirname(data_file_full_path)
 
         log.info('#' * 150)
+        log.info('#' * 150)
         log.info("LOADED: {}".format(data_module))
         log.info('#' * 150)
+        log.info('#' * 150)
 
-        # If we have the attribute, call it after making sure it's a function
-        if hasattr(data_module, DATA_MODULE_UPSERT_ALL):
-            log.info("CALLING '{}':\n".format(DATA_MODULE_UPSERT_ALL))
-            upsert_func = getattr(data_module, DATA_MODULE_UPSERT_ALL)
+        # Get a list of all the classes defined in the given module (returns tuples of cls_name, and cls)
+        class_list_tuples = inspect.getmembers(data_module, lambda member:
+                                               inspect.isclass(member) and member.__module__ == data_module.__name__)
+        # Note: Checking member's module necessary to avoid imports
 
-            # If it's not a function... that's weird and we always want that to fail everything
-            if not isinstance(upsert_func, types.FunctionType):
-                raise TypeError("{} contained '{}' but it wasn't a function!".format(data_module,
-                                                                                     DATA_MODULE_UPSERT_ALL))
-            upsert_func()
+        # Throw errors if no classes or if any classes not a subclass of DataClass,
+        # else run each class's upsert_data to update the db
+        if len(class_list_tuples) == 0:
+            raise Exception("\"{}\" contained no classes! "
+                            "Every module in the data directory must contain at least 1 class"
+                            "".format(data_module))
 
-        # Otherwise ignore it or raise an error depending on the option
-        else:
-            log.info("Module is missing function '{}':".format(DATA_MODULE_UPSERT_ALL))
-            if not fail_if_data_module_missing_upsert_all:
-                log.info("Ignoring it...\n")
-                continue
+        for cls_name, cls in class_list_tuples:
+            if issubclass(cls, DataClass):
+                cls.upsert_data(cur)
             else:
-                raise Exception("{} missing function '{}':".format(data_module, DATA_MODULE_UPSERT_ALL))
+                raise Exception("\"{}\" contained the class \"{}\", which was not a subclass of \"DataClass\"!"
+                                "".format(data_module, cls_name))
 
 
 def get_module_from_data_dirname(data_file_full_path: str):
@@ -168,4 +173,5 @@ if __name__ == '__main__':
 
     # Need to leave the with block to commit the connection so that the tables exist
     with LocalhostCursor() as cur:
-        upsert_all_data(cur, fail_if_data_module_missing_upsert_all=False)
+        upsert_all_data(cur)
+

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import logging
 import typing
 from datetime import date
 from typing import Dict, Any
@@ -10,6 +9,10 @@ from database_design.sonata_enums import PieceType, SonataType
 from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation
 from general_utils.sql_utils import Field
 
+
+#################
+# Piece
+#################
 
 class Beethoven5(PieceDataClass):
     @classmethod
@@ -28,8 +31,11 @@ class Beethoven5(PieceDataClass):
         }
 
 
-class Beethoven5_1(SonataDataClass):
+#################
+# Sonata(s)
+#################
 
+class Beethoven5_1(SonataDataClass):
     @classmethod
     def sonata_attribute_dict(cls) -> Dict[Field, Any]:
         return {
@@ -127,15 +133,3 @@ class Beethoven5_4(SonataDataClass):
         return {
 
         }
-
-
-# Core upsert method that all data modules must have
-def upsert_all():
-    for x in [Beethoven5, Beethoven5_1, Beethoven5_4]:
-        x.upsert_data()
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-    upsert_all()

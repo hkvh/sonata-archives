@@ -52,23 +52,3 @@ class Tchaikovsky(ComposerDataClass):
             Composer.DEATH_DATE:  date(1893, 11, 6),
             Composer.NATIONALITY: "Russian",
         }
-
-
-# Make sure to update this list with all composers
-composer_list = [
-    Beethoven,
-    Mahler,
-    Tchaikovsky,
-]
-
-
-# Core upsert method that all data modules must have
-def upsert_all():
-    for x in composer_list:
-        x.upsert_data()
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-    upsert_all()
