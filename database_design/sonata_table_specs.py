@@ -2,13 +2,13 @@
 """
 A module containing the specification for the base SQL tables (and views, which act like tables)
 """
-from typing import Tuple, List
+from abc import abstractmethod, ABC
+from typing import Tuple, List, Set
 
 from psycopg2 import sql
 
 from database_design.table_spec import TableSpecification
 from general_utils.sql_utils import Field, SQLType, SchemaTable, Schema
-
 
 sonata_archives_schema = Schema("sonata_archives")
 
@@ -113,6 +113,7 @@ class Sonata(TableSpecification):
     PIECE_ID = Field("piece_id")
     MOVEMENT_NUM = Field("movement_num")
     SONATA_TYPE = Field("sonata_type")  # Sonata Theory Types 1-5
+    GLOBAL_KEY = Field("global_key")
     EXPOSITION_REPEAT = Field("exposition_repeat")
     DEVELOPMENT_RECAP_REPEAT = Field("development_recap_repeat")
     INTRODUCTION_PRESENT = Field("introduction_present")
@@ -131,6 +132,7 @@ class Sonata(TableSpecification):
             (cls.PIECE_ID, SQLType.TEXT()),
             (cls.MOVEMENT_NUM, SQLType.INTEGER()),
             (cls.SONATA_TYPE, SQLType.TEXT()),
+            (cls.GLOBAL_KEY, SQLType.TEXT()),
             (cls.EXPOSITION_REPEAT, SQLType.BOOLEAN()),
             (cls.DEVELOPMENT_RECAP_REPEAT, SQLType.BOOLEAN()),
             (cls.INTRODUCTION_PRESENT, SQLType.BOOLEAN()),
@@ -164,7 +166,75 @@ class Sonata(TableSpecification):
                     coda_id=cls.CODA_ID, c_st=Coda.schema_table(), c_id=Piece.ID)
 
 
-class Introduction(TableSpecification):
+class SonataBlockTableSpecification(TableSpecification):
+    """
+    An ABC Table Specification for a sonata block that contains some additional functionality that will be shared
+    across each of the sonata blocks
+    """
+
+    @classmethod
+    @abstractmethod
+    def absolute_key_fields(cls) -> Set[Field]:
+        """
+        Returns a set of all absolute key fields, which will be the set of fields for which we will add a
+        corresponding relative key.
+
+        :return: a set of fields corresponding to all the fields that are for absolute keys
+        """
+
+    @classmethod
+    @abstractmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
+        """
+        Since we override field_sql_type_list in this class to compute derived fields, this is the method that
+        subclasses implement instead, which we now make clear is for before the derived fields
+
+        :return: a list of tuple pairs of fields with their sql type in the ordinal order that we want them in the table
+        Any derived fields will change this order, however
+        """
+
+    @staticmethod
+    def get_relative_from_absolute(absolute_key_field: Field) -> Field:
+        """
+        Given a field name with the word key, dynamically replaces it with relative key.
+        :param absolute_key_field: the name of the absolute key field. Must contain the word "key"
+        :return: a new Field with key switched out for relative key as its name
+        """
+        field_name = absolute_key_field.name
+        if 'key' not in field_name:
+            raise Exception("Field {} marked as an absolute key field but didn't contain \"key\"")
+        else:
+            return Field(field_name.replace('key', 'relative_key'))
+
+    @classmethod
+    def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+        """
+        We override this to add in derived fields from the preliminary list created in the pre_derived field list.
+
+        Right now, the only derived fields are the relative keys built from every absolute key field specified in
+        absolute_key_fields using the staticmethod get_relative_from_absolute.
+
+        :return: a list of tuple pairs of fields with their sql type in the ordinal order that we want them in the table
+        """
+
+        new_list = []
+        for field, sql_type in cls.field_sql_type_list_pre_derived_fields():
+
+            new_list.append((field, sql_type))
+
+            # If any field is in the set of absolute key fields, add the relative key version of it right afterwards
+            if field in cls.absolute_key_fields():
+                if sql_type != SQLType.TEXT():
+                    raise Exception("Field \"{}\" in class {} was marked as an absolute key field, which means it "
+                                    "should have a SQLType of TEXT instead of {}"
+                                    "".format(field.name, cls.__name__, sql_type))
+                relative_key_field = cls.get_relative_from_absolute(field)
+                new_list.append((relative_key_field, SQLType.TEXT()))
+
+        return new_list
+
+
+class Introduction(SonataBlockTableSpecification):
     """
     The table representing items particular to the introduction block in a sonata.
     """
@@ -178,6 +248,7 @@ class Introduction(TableSpecification):
 
     INTRODUCTION_TYPE = Field("introduction_type")
     OPENING_KEY = Field("opening_key")
+
     OPENING_TEMPO = Field("opening_tempo")
     KEYS_TONICIZED = Field("keys_tonicized")  # a JSONArray of keys tonicized
     P_THEME_FORESHADOWED = Field("p_theme_recalled")
@@ -195,7 +266,15 @@ class Introduction(TableSpecification):
     ENDING_CADENCE = Field("ending_cadence")
 
     @classmethod
-    def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+    def absolute_key_fields(cls) -> Set[Field]:
+        return {
+            cls.OPENING_KEY,
+            cls.INTRO_THEME_KEY,
+            cls.ENDING_KEY,
+        }
+
+    @classmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT()),
             (cls.NUM_CYCLES, SQLType.INTEGER()),
@@ -224,7 +303,7 @@ class Introduction(TableSpecification):
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
-class Exposition(TableSpecification):
+class Exposition(SonataBlockTableSpecification):
     """
     The table representing items particular to the exposition block in a sonata.
     """
@@ -287,7 +366,20 @@ class Exposition(TableSpecification):
     C_THEME_ENDING_KEY = Field("c_theme_ending_key")
 
     @classmethod
-    def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+    def absolute_key_fields(cls) -> Set[Field]:
+        return {
+            cls.P_THEME_KEY,
+            cls.P_THEME_ENDING_KEY,
+            cls.TR_THEME_KEY,
+            cls.TR_THEME_ENDING_KEY,
+            cls.S_THEME_KEY,
+            cls.S_THEME_ENDING_KEY,
+            cls.C_THEME_KEY,
+            cls.C_THEME_ENDING_KEY
+        }
+
+    @classmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT()),
             (cls.NUM_CYCLES, SQLType.INTEGER()),
@@ -324,7 +416,7 @@ class Exposition(TableSpecification):
             (cls.S_THEME_P_BASED, SQLType.TEXT()),
             (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT()),
             (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),
-            (cls.S_THEME_ENDING_KEY, SQLType.JSONB()),
+            (cls.S_THEME_ENDING_KEY, SQLType.TEXT()),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT()),
 
             # EEC
@@ -348,7 +440,7 @@ class Exposition(TableSpecification):
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
-class Development(TableSpecification):
+class Development(SonataBlockTableSpecification):
     """
     The table representing items particular to the coda block in a sonata.
     """
@@ -390,7 +482,15 @@ class Development(TableSpecification):
     RETRANSITION_ENDING_CADENCE = Field("retransition_ending_cadence")
 
     @classmethod
-    def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+    def absolute_key_fields(cls) -> Set[Field]:
+        return {
+            cls.OPENING_KEY,
+            cls.DEVELOPMENT_THEME_KEY,
+            cls.RETRANSITION_ENDING_KEY,
+        }
+
+    @classmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT()),
             (cls.NUM_CYCLES, SQLType.INTEGER()),
@@ -429,7 +529,7 @@ class Development(TableSpecification):
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
-class Recapitulation(TableSpecification):
+class Recapitulation(SonataBlockTableSpecification):
     """
     The table representing items particular to the recapitulation block in a sonata.
     """
@@ -487,7 +587,20 @@ class Recapitulation(TableSpecification):
     C_THEME_ENDING_KEY = Field("c_theme_ending_key")
 
     @classmethod
-    def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+    def absolute_key_fields(cls) -> Set[Field]:
+        return {
+            cls.P_THEME_KEY,
+            cls.P_THEME_ENDING_KEY,
+            cls.TR_THEME_KEY,
+            cls.TR_THEME_ENDING_KEY,
+            cls.S_THEME_KEY,
+            cls.S_THEME_ENDING_KEY,
+            cls.C_THEME_KEY,
+            cls.C_THEME_ENDING_KEY
+        }
+
+    @classmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT()),
             (cls.NUM_CYCLES, SQLType.INTEGER()),
@@ -520,7 +633,7 @@ class Recapitulation(TableSpecification):
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT()),
             (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
             (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),  # If changed significantly
-            (cls.S_THEME_ENDING_KEY, SQLType.JSONB()),
+            (cls.S_THEME_ENDING_KEY, SQLType.TEXT()),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT()),
 
             # EEC
@@ -543,7 +656,7 @@ class Recapitulation(TableSpecification):
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
-class Coda(TableSpecification):
+class Coda(SonataBlockTableSpecification):
     """
     The table representing items particular to the coda block in a sonata.
     """
@@ -574,7 +687,15 @@ class Coda(TableSpecification):
     ENDING_CADENCE = Field("ending_cadence")
 
     @classmethod
-    def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+    def absolute_key_fields(cls) -> Set[Field]:
+        return {
+            cls.OPENING_KEY,
+            cls.CODA_THEME_KEY,
+            cls.ENDING_KEY,
+        }
+
+    @classmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT()),
             (cls.NUM_CYCLES, SQLType.INTEGER()),

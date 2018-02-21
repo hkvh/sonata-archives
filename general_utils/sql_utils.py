@@ -32,6 +32,14 @@ class Field(sql.Identifier):
         """
         return self._wrapped.__hash__()
 
+    @property
+    def name(self) -> str:
+        """
+        Returns the field name (unquoted)
+        :return: the field name
+        """
+        return self._wrapped
+
 
 class Schema(sql.Identifier):
     """
@@ -366,3 +374,8 @@ if __name__ == '__main__':
         l = [(Field("Hello"), SQLType.TEXT()),
              (Field("Bob"), SQLType.NUMERIC(3, 2))]
         print(create_table_from_field_sql_type_tuples(st, l).as_string(cur))
+
+        a = SQLType.TEXT()
+        b = SQLType.TEX()
+
+        print(a == b)

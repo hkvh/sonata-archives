@@ -5,15 +5,20 @@ from abc import ABCMeta, abstractmethod
 from typing import Dict, Any, Union
 
 from psycopg2 import pool, extensions, extras
+from psycopg2._psycopg import AsIs
 from psycopg2.extensions import register_adapter
 
 from credentials import pg_localhost
+from database_design.key_enums import KeyStruct
 
 log = logging.getLogger(__name__)
 
 # This allows us to directly commit dict and list objects as JSONB with psycopg2
 register_adapter(dict, extras.Json)
 register_adapter(list, extras.Json)
+
+# We also want our KeyStruct to be adapted as a normal text string so we can insert it directly as text
+register_adapter(KeyStruct, lambda x: AsIs("'{}'".format(str(x))))
 
 
 class PostgresConnectionManager(object):

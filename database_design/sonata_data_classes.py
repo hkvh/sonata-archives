@@ -4,12 +4,13 @@ A module containing the abstract base classes that all sonata_data classes will 
 """
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Dict, Any, Type
 
 from psycopg2 import sql, extensions
 
+from database_design.key_enums import KeyStruct, validate_is_key_struct
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
-    Recapitulation, Coda
+    Recapitulation, Coda, SonataBlockTableSpecification
 from general_utils.sql_utils import Field, upsert_sql_from_field_value_dict
 
 log = logging.getLogger(__name__)
@@ -139,14 +140,30 @@ class SonataDataClass(DataClass, ABC):
                               cls.sonata_attribute_dict()[Sonata.MOVEMENT_NUM])
 
     @classmethod
+    def global_key(cls) -> KeyStruct:
+        """
+        Returns the global key for this sonata for use in computing relative keys.
+
+        :return: the global key of this sonata (or KeyError if you forgot to enter the global key was not entered)
+        """
+        try:
+            global_key = cls.sonata_attribute_dict()[Sonata.GLOBAL_KEY]
+            validate_is_key_struct(global_key)
+            return global_key
+        except KeyError:
+            raise KeyError("You forgot to enter the global_key for sonata {}!".format(cls.id()))
+        except TypeError:
+            raise TypeError("You did not enter the global_key for sonata {} as a KeyStruct!".format(cls.id()))
+
+    @classmethod
     @abstractmethod
     def sonata_attribute_dict(cls) -> Dict[Field, Any]:
         """
         An abstract method that each subclass must implement that contains a dictionary mapping attributes from
         the Piece table spec to their values.
 
-        Must ALWAYS specify the piece id, the movement_num and the booleans for whether the introduction, development or coda
-        are present.
+        Must ALWAYS specify the piece id, the movement_num and the booleans for whether the introduction, development
+        or coda are present.
 
         Do not need to add the id column or the links to the 5 blocks as they are handled automatically.
 
@@ -158,13 +175,15 @@ class SonataDataClass(DataClass, ABC):
         """
         A method that contains a dictionary mapping attributes from the Coda table spec to their values. Not abstract
         because not all sonatas have an Introduction, but if you choose True for development_present, you must include
-        this.
+        this unless you want it to be blank
 
         Do not need to add the id column as it is handled automatically.
 
         :return: a dict of fields to their values
         """
-        raise NotImplementedError("Must implement in the subclass since you chose introduction_present = True")
+        return {
+
+        }
 
     @classmethod
     @abstractmethod
@@ -183,13 +202,15 @@ class SonataDataClass(DataClass, ABC):
         """
         A method that contains a dictionary mapping attributes from the Coda table spec to their values. Not abstract
         because not all sonatas have a Development, but if you choose True for development_present, you must include
-        this.
+        this unless you want it to be blank.
 
         Do not need to add the id column as it is handled automatically.
 
         :return: a dict of fields to their values
         """
-        raise NotImplementedError("Must implement in the subclass since you chose development_present = True")
+        return {
+
+        }
 
     @classmethod
     @abstractmethod
@@ -207,13 +228,43 @@ class SonataDataClass(DataClass, ABC):
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         """
         A method that contains a dictionary mapping attributes from the Coda table spec to their values. Not abstract
-        because not all sonatas have a Coda, but if you choose True for coda_present, you must include this.
+        because not all sonatas have a Coda, but if you choose True for coda_present, you must include this unless
+        you want it to be blank.
 
         Do not need to add the id column as it is handled automatically.
 
         :return: a dict of fields to their values
         """
-        raise NotImplementedError("Must implement in the subclass since you chose coda_present = True")
+        return {
+
+        }
+
+    @classmethod
+    def augment_with_derived_fields(cls, attribute_dict: Dict[Field, Any],
+                                    sonata_block_cls: Type[SonataBlockTableSpecification]) -> Dict[Field, Any]:
+        """
+        Takes an attribute_dict and a sonata block table spec subclass (the actual class name, not an instance since
+        we never instantiate those classes) and augments it with derived fields that can be built through
+        the sonata block table spec class.
+
+        Right now the only derived fields we add are relative keys that correspond to absolute keys, so if any
+        attribute dict specifies an absolute key we will dynamically detect that and derive its relative key and add it
+        to the attribute dict to be inserted.
+
+        :param attribute_dict: the attribute dict to augment
+        :param sonata_block_cls: the class of the sonata block that we will use to add the derived fields
+        :return: a new attribute dict with the derived fields added
+        """
+        new_attribute_dict = {}
+        for field, value in attribute_dict.items():
+            new_attribute_dict[field] = value
+
+            # If we added a field that we know is an absolute field, compute and add its relative field counterpart
+            if field in sonata_block_cls.absolute_key_fields():
+                relative_key_field = sonata_block_cls.get_relative_from_absolute(field)
+                validate_is_key_struct(value)  # Make sure any absolute key field's value is a key struct
+                new_attribute_dict[relative_key_field] = value.relative_key_wrt(cls.global_key())
+        return new_attribute_dict
 
     @classmethod
     def upsert_data(cls, cur: extensions.cursor) -> None:
@@ -243,7 +294,7 @@ class SonataDataClass(DataClass, ABC):
         # Upsert the 2 essential sonata block tables that all sonatas have
 
         # Upsert Exposition
-        block_dict = cls.exposition_attribute_dict()
+        block_dict = cls.augment_with_derived_fields(cls.exposition_attribute_dict(), Exposition)
         block_dict[Exposition.ID] = expo_id
         sonata_dict[Sonata.EXPOSITION_ID] = expo_id
         upsert_sql = upsert_sql_from_field_value_dict(Exposition.schema_table(), block_dict,
@@ -252,7 +303,7 @@ class SonataDataClass(DataClass, ABC):
         cur.execute(upsert_sql)
 
         # Upsert Recapitulation
-        block_dict = cls.recapitulation_attribute_dict()
+        block_dict = cls.augment_with_derived_fields(cls.recapitulation_attribute_dict(), Recapitulation)
         block_dict[Recapitulation.ID] = recap_id
         sonata_dict[Sonata.RECAPITULATION_ID] = recap_id
         upsert_sql = upsert_sql_from_field_value_dict(Recapitulation.schema_table(), block_dict,
@@ -264,7 +315,7 @@ class SonataDataClass(DataClass, ABC):
 
         # Upsert Introduction if boolean True
         if cls.sonata_attribute_dict()[Sonata.INTRODUCTION_PRESENT]:
-            block_dict = cls.introduction_attribute_dict()
+            block_dict = cls.augment_with_derived_fields(cls.introduction_attribute_dict(), Introduction)
             block_dict[Introduction.ID] = intro_id
             sonata_dict[Sonata.INTRODUCTION_ID] = intro_id
             upsert_sql = upsert_sql_from_field_value_dict(Introduction.schema_table(), block_dict,
@@ -281,7 +332,7 @@ class SonataDataClass(DataClass, ABC):
 
         # Upsert Development if boolean True
         if cls.sonata_attribute_dict()[Sonata.DEVELOPMENT_PRESENT]:
-            block_dict = cls.development_attribute_dict()
+            block_dict = cls.augment_with_derived_fields(cls.development_attribute_dict(), Development)
             block_dict[Development.ID] = devel_id
             sonata_dict[Sonata.DEVELOPMENT_ID] = devel_id
             upsert_sql = upsert_sql_from_field_value_dict(Development.schema_table(), block_dict,
@@ -296,9 +347,9 @@ class SonataDataClass(DataClass, ABC):
             log.info(delete_sql.as_string(cur) + "\n")
             cur.execute(delete_sql)
 
-        # Upsert Coda if boolean
+        # Upsert Coda if boolean True
         if cls.sonata_attribute_dict()[Sonata.CODA_PRESENT]:
-            block_dict = cls.coda_attribute_dict()
+            block_dict = cls.augment_with_derived_fields(cls.coda_attribute_dict(), Coda)
             block_dict[Coda.ID] = coda_id
             sonata_dict[Sonata.CODA_ID] = coda_id
             upsert_sql = upsert_sql_from_field_value_dict(Coda.schema_table(), block_dict,

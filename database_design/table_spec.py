@@ -33,7 +33,7 @@ class TableSpecification(ABC):
         An abstract method that each subclass must implement that contains a list of fields and the sql types
         which will be wrapped into a create table script so that creating and modifying the table schema is easy
 
-        :return: a Composable with the script that will be used to create the table - dropping it if it already exists
+        :return: a list of tuple pairs of fields with their sql type in the ordinal order that we want them in the table
         """
 
     @classmethod

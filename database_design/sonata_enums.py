@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 """
-A module containing the abstract base class specification for SQL tables (and views, which act like tables)
+A module containing enums for use in picklist-style fields for the sonata archive
 """
-from abc import ABC, abstractmethod
-from typing import Tuple, List
-
-from psycopg2 import sql
-
-from general_utils.sql_utils import Field, SQLType, SchemaTable, create_table_from_field_sql_type_tuples
 
 
 class SonataType(object):
@@ -15,25 +9,11 @@ class SonataType(object):
     An enum for a sonata type
     """
 
-    @classmethod
-    def TYPE_1(cls) -> str:
-        return "Type 1"
-
-    @classmethod
-    def TYPE_2(cls) -> str:
-        return "Type 2"
-
-    @classmethod
-    def TYPE_3(cls) -> str:
-        return "Type 3"
-
-    @classmethod
-    def TYPE_4(cls) -> str:
-        return "Type 4"
-
-    @classmethod
-    def TYPE_5(cls) -> str:
-        return "Type 5"
+    TYPE_1 = "Type 1"
+    TYPE_2 = "Type 2"
+    TYPE_3 = "Type 3"
+    TYPE_4 = "Type 4"
+    TYPE_5 = "Type 5"
 
 
 class PieceType(object):
@@ -41,22 +21,32 @@ class PieceType(object):
     An enum for a piece type
     """
 
-    @classmethod
-    def SYMPHONY(cls) -> str:
-        return "Symphony"
+    # Orchestral Works
+    SYMPHONY = "Symphony"
+    SYMPHONIC_POEM = "Symphonic Poem"
+    OPERA_OVERTURE = "Opera Overture"
+    PIANO_CONCERTO = "Piano Concerto"
+    VIOLIN_CONCERTO = "Violin Concerto"
 
-    @classmethod
-    def PIANO_SONATA(cls) -> str:
-        return "Piano Sonata"
+    # Solo Piano Works
+    PIANO_SONATINA = "Piano Sonatina"
+    PIANO_SONATA = "Piano Sonata"
+    PIANO_SONG_WITHOUT_WORDS = "Piano Song Without Words"
+    PIANO_SCHERZO = "Piano Scherzo"
+    PIANO_BALLADE = "Piano Ballade"
+    PIANO_WALTZ = "Piano Waltz"
+    PIANO_POLONAISE = "Piano Polonaise"
+    PIANO_INTERMEZZO = "Piano Intermezzo"
+    PIANO_PRELUDE = "Piano Prelude"
+    PIANO_NOCTURNE = "Piano Nocturne"
+    PIANO_ETUDE = "Piano Étude"
+    PIANO_FANTASY = "Piano Fantasy"
+    PIANO_RHAPSODY = "Piano Rhapsody"
 
-    @classmethod
-    def PIANO_CONCERTO(cls) -> str:
-        return "Piano Concerto"
+    # String Works
+    VIOLIN_SONATA = "Violin Sonata"
+    STRING_QUARTET = "String Quartet"
 
-    @classmethod
-    def VIOLIN_CONCERTO(cls) -> str:
-        return "Violin Concerto"
 
-    @classmethod
-    def STRING_QUARTER(cls) -> str:
-        return "String Quartet"
+if __name__ == '__main__':
+    pass
