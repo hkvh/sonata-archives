@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h2>{{ composer_name }}</h2>
+	{% for piece_name in piece_names %}
+		<ul>
+			<li>{{ piece_name }}</li>
+		</ul>
+	{% endfor %}
+{% endblock %}
+

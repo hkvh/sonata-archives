@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+	<h2>Composers</h2>
+	{% for composer_id, composer_name in composer_id_name_tuples %}
+		<ul class="composers">
+			<li><a href="/composer/{{ composer_id }}">{{ composer_name }}</a></li>
+		</ul>
+	{% endfor %}
+{% endblock %}
+

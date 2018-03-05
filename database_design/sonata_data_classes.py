@@ -122,6 +122,30 @@ class PieceDataClass(DataClass, ABC):
         log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
         cur.execute(upsert_sql)
 
+    @classmethod
+    def create_piece_full_name(cls, name: str, catalogue_id: str, nickname: str):
+        """
+        Given the name, catalogue_id and nickname, creates the full name for the piece
+        TODO: Consider having this be something that we generate upon upserting
+
+        :param name: the name of the piece
+        :param catalogue_id: the catalogue id, like opus no
+        :param nickname: the nickname
+        :return: a string like <piece_name> "<nickname>", <catalogue_id> or parts of this if the latter two are blank.
+        Will raise an exception if all 3 are blank
+        """
+
+        if name is None or name == "":
+            raise Exception("The piece must have a name and it was left blank or None")
+        elif (catalogue_id is None or catalogue_id == "") and (nickname is None or nickname == ""):
+            return name
+        elif catalogue_id is None or catalogue_id == "":
+            return "{} \"{}\"".format(name, nickname)
+        elif nickname is None or nickname == "":
+            return "{}, {}".format(name, catalogue_id)
+        else:
+            return "{}, {} \"{}\"".format(name, catalogue_id, nickname)
+
 
 class SonataDataClass(DataClass, ABC):
     """

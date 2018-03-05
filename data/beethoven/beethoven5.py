@@ -54,10 +54,11 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.OPENING_TEMPO: "Allegro con brio",
-            Exposition.P_THEME_KEY:   Key.C_MINOR,
-            Exposition.S_THEME_KEY:   Key.E_FLAT_MAJOR,
-            Exposition.EEC_PRESENT:   True
+            Exposition.OPENING_TEMPO:   "Allegro con brio",
+            Exposition.P_THEME_KEY:     Key.C_MINOR,
+            Exposition.S_THEME_PRESENT: True,
+            Exposition.S_THEME_KEY:     Key.E_FLAT_MAJOR,
+            Exposition.EEC_PRESENT:     True
         }
 
     @classmethod
