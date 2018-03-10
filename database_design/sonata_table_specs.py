@@ -66,6 +66,7 @@ class Piece(TableSpecification):
     NAME = Field("name")
     CATALOGUE_ID = Field("catalogue_id")  # K. for mozart, D. for schubert, Op. and No. for most composers
     NICKNAME = Field("nickname")
+    FULL_NAME = Field("full_name")  # usually don't enter this, let it be derived from name, cat_id and nickname
     PIECE_TYPE = Field("piece_type")  # Symphony vs. Piano Sonata etc.
     YEAR_STARTED = Field("year_started")
     YEAR_COMPLETED = Field("year_completed")
@@ -81,6 +82,7 @@ class Piece(TableSpecification):
             (cls.NAME, SQLType.TEXT()),
             (cls.CATALOGUE_ID, SQLType.TEXT()),
             (cls.NICKNAME, SQLType.TEXT()),
+            (cls.FULL_NAME, SQLType.TEXT()),
             (cls.PIECE_TYPE, SQLType.TEXT()),
             (cls.YEAR_STARTED, SQLType.INTEGER()),
             (cls.YEAR_COMPLETED, SQLType.INTEGER()),
@@ -172,6 +174,9 @@ class SonataBlockTableSpecification(TableSpecification):
     across each of the sonata blocks
     """
 
+    # All blocks must have the same ID column
+    ID = Field("id")
+
     @classmethod
     @abstractmethod
     def absolute_key_fields(cls) -> Set[Field]:
@@ -243,7 +248,6 @@ class Introduction(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_introduction")
 
-    ID = Field("id")
     NUM_CYCLES = Field("num_cycles")
 
     INTRODUCTION_TYPE = Field("introduction_type")
@@ -312,7 +316,6 @@ class Exposition(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_exposition")
 
-    ID = Field("id")
     NUM_CYCLES = Field("num_cycles")  # does not include literal exposition repeats -- see sonata method
     OPENING_TEMPO = Field("opening_tempo")
 
@@ -449,7 +452,6 @@ class Development(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_development")
 
-    ID = Field("id")
     NUM_CYCLES = Field("num_cycles")
 
     DEVELOPMENT_TYPE = Field("development_type")
@@ -538,7 +540,6 @@ class Recapitulation(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_recapitulation")
 
-    ID = Field("id")
     NUM_CYCLES = Field("num_cycles")  # does not include literal recap + development repeats -- see sonata method
     OPENING_TEMPO = Field("opening_tempo")
 
@@ -665,7 +666,6 @@ class Coda(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_coda")
 
-    ID = Field("id")
     NUM_CYCLES = Field("num_cycles")
 
     INTRODUCTION_TYPE = Field("coda_type")

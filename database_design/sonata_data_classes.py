@@ -4,7 +4,7 @@ A module containing the abstract base classes that all sonata_data classes will 
 """
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Type
+from typing import Dict, Any, Type, Union
 
 from psycopg2 import sql, extensions
 
@@ -110,23 +110,31 @@ class PieceDataClass(DataClass, ABC):
         The core upsert method that uses the attribute dict to insert (if the relevant id does not exist) or update (
         if the id does exist).
 
+        If no full name was provided for the Piece, it will create it based on its name, catalogue_id and nickname.
+
         :param cur: the postgres cursor to use to upsert the data
         """
+        piece_dict = cls.piece_attribute_dict()
+
+        if Piece.FULL_NAME not in piece_dict:
+            piece_dict[Piece.FULL_NAME] = cls.create_full_name(name=piece_dict.get(Piece.NAME),
+                                                               catalogue_id=piece_dict.get(Piece.CATALOGUE_ID),
+                                                               nickname=piece_dict.get(Piece.NICKNAME))
+            # Note: using .get() instead of [] so no key error if not there
 
         # Use postgres's brand-new ON CONFLICT framework that allows for upserting
         # EXCLUDED is the posgres name of the records that couldn't be inserted so we use update with those records
 
         # Upsert Piece
-        upsert_sql = upsert_sql_from_field_value_dict(Piece.schema_table(), cls.piece_attribute_dict(),
+        upsert_sql = upsert_sql_from_field_value_dict(Piece.schema_table(), piece_dict,
                                                       conflict_field_list=[Piece.ID])
         log.info("\n\n" + upsert_sql.as_string(cur) + "\n")
         cur.execute(upsert_sql)
 
     @classmethod
-    def create_piece_full_name(cls, name: str, catalogue_id: str, nickname: str):
+    def create_full_name(cls, name: str, catalogue_id: Union[str, None], nickname: Union[str, None]):
         """
         Given the name, catalogue_id and nickname, creates the full name for the piece
-        TODO: Consider having this be something that we generate upon upserting
 
         :param name: the name of the piece
         :param catalogue_id: the catalogue id, like opus no
