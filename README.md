@@ -1,127 +1,103 @@
 # sonata-archives
-A repository to build a sonata theory database for all sontatas in the classical common practice period.
+A repository to build a sonata theory database for all sonatas in the classical common practice period.
+
+##  Development Environment Setup
+
+To work on this project, you first must properly set up:
+
+* PostgreSQL 9.6
+* Python 3.6+ (virtual environment highly recommended)
+* Lilypond 2.18
+
+Here are some detailed guides that walk you throught the steps on how to set these up:
+
+* [Mac OS X](README_Setup_Mac.md)
+* [Windows 10](README_Setup_Windows.md)
+
+Note that if you haven't worked on it in a while, dependencies may have changed since you last pulled, so it's recommended to first run the following from inside your `sonata-archives` virtual environment / conda environment before running other code:
+
+`(sonata-archives) $ pip install -r requirements.txt`
+
+## Building the Sonata Archives Database
+
+To build for the first-time (or rebuild) the sonata-archives database with all composers, pieces and sonatas that live in the `data` directory, simply execute the root-level script:
+ 
+`rebuild_database.py`
+
+This script requires a valid connection to a postgres instance; if you are having connection issues, make sure that your `credentials.py` file matches your setup Postgres credentials.
+
+## Viewing the Sonata Archives Web Application
 
 
-## Getting Started
+### 1. Make sure the database is built
 
-### Set-up Postgres Localhost Database
+If you haven't already, make sure to follow the step above to build the database as you will need a connection to it in order to run the webserver.
 
-This codebase is designed to use PostgreSQL, which you can install at the link [here](https://www.postgresql.org/download/).
+### 2. Start the Flask Webserver
 
-I am using version 9.6, but I would assume any version later than that would also work.
+To start the Flask web server in localhost, run the script `app/app.py`
 
-Once you have postgres installed and running locally, you should be able to connect to it in any database IDE (I recommend [JetBrains DataGrip](https://www.jetbrains.com/datagrip/) with the following default connection settings:
+If this works you should see information about `Running on http://127.0.0.1:5000/`
 
-* Host: 127.0.0.1
-* Port: 5432
-* Username: postgres
-* Password: postgres
-* Database: postgres
+If you get errors, make sure your have installed all dependencies (Flask has many of them) from `requirements.txt`
 
-These are the connection settings that are configured in credentials.py – if you configure it differently, you can just update that file.
+### 3. View the website
 
-### Set-up Python Development Virtual Environment
+Now you can view the website then by entering the URL `http://127.0.0.1:5000/` into your browser (Chrome recommended).
 
-This codebase requires using python 3.5+ with some dependencies, and to prevent this from installing these dependencies globally and affecting your default version of python (probably v2.7.X), I highly recommend that you use a virtual environment to manage this project. 
 
-I struggled through using virtualenv and virtualenvwrapper before, but I recommend using conda as it is definitely simpler and a bit nicer.
+## Contributing Analyses to the Sonata Archives
 
-However, I will maintain both a requirements.txt and an environment.yml, which will enable you to still use whatever virtual environment method you please.
+Adding analyses is very easy - simply add or modify files in the `data` directory following the very obvious-to-copy templated format for the analyses already there!
 
-These instructions should work on Unix/Mac OS X, but will be slightly different on Windows since the conda commands differ (I think the only difference is that you need to omit the `source`, but there could be others...)
+But to give a bit more details on some nuances:
 
-#### 1. Download and Install the latest Anaconda3 for Python 3
+### 1. Adding a composer
 
-If you do choose to use conda as I recommend, you first need to install Anaconda3 for Python 3.6+ at the link [here](https://www.continuum.io/downloads).
-``
-You can obviously choose the command line or graphical installer, but I'd recommend the command line installer because it's faster.
+To add a new composer, simply create a new subclass of `ComposerDataClass` and store the class in the `data/composers.py` file. 
 
-You may also see something about miniconda which I have played around with and tried, but I had errors using it, so I'd recommend that you install the full anaconda.
+You can fill out as much of the `composer_attribute_dict` as you'd like, but make sure to at least give the composer an `ID`, `SURNAME` and `FULL_NAME`.
 
-If you've already installed conda ages ago, run `$ conda update --prefix /Users/<YourName>/anaconda3 anaconda` and it will ask you if you want to update everything.
+For the `ID`, usually just choose a concise version of the surname with first initial if necessary.
 
-#### 2. Confirm that your `python` command now runs Conda's installation of python
+Examples:
 
-Before installing anaconda, executing `$ which python` should produce `/usr/bin/python` and running `$ python` would likely start a session of python 2.7.X.
+* `mozart` 
+* `beethoven`
+* `rstrauss`
 
-If the anaconda3 installer worked successfully, executing `$ which python` should now point to `/Users/<YourName>/anaconda3/bin/python`, and running `$ python` should start a session of python 3.6.X.
+### 2. Adding a new piece
 
-If this didn't work, perhaps your `.bash_profile` is a mess due to earlier installations of things like virtualenv and virtualenvwrapper.
+To add a new piece, first choose a `piece_id` unique identifier for your piece – put the composer's id as the first part of it and include the piece type and number or catalogue number to make it an unambiguous id.
 
-Open your `.bash_profile` and delete or comment out anything relating to those and make sure you have a line like this:
+Examples:
 
-```
-# added by Anaconda3 4.4.0 installer
-export PATH="/Users/<YourName>/anaconda3/bin:$PATH"
-```
-Once you've fixed your `.bash_profile`, close out your terminal and open a new one and now `$ which python` point to the right place.
+* beethoven5
+* mozartk330
 
-#### 3. Create the sonata-archives virtual environment
+Then create a new file in `data/<composer_id>/<piece_id>.py` where `composer_id` is the composer of the piece.
 
-There are two ways to create the sonata-archives virtual environment:
+In this module, create a new subclass of `PieceDataClass` and fill out as much of the `piece_attribute_dict` as you'd like, but make sure to at least fill out the `ID`, `COMPOSER_ID` and `NAME`.
 
-1. Create a new empty environment with `$ conda create --name sonata-archives python=3`. Choose yes to create the environment with a few default conda packages.
+* `ID` should be a string with same name as the module 
+* `COMPOSER_ID` should not be entered as a string; instead import your composer class from `data.composers` and use its `id()` function.
+* `NAME` should be just the name of the piece without any nicknames or catalogue ids such as opus numbers. 
+	* To add those, fill out `NICKNAME` and/or `CATALOGUE_ID`
 
-	Activate the environment with `$ source activate sonata-archives ` and you should see `(sonata-archives) ~$` before your shell.
-	
-	You can confirm that it is empty of pip-installed python packages by running `(sonata-archives) $ pip freeze` which should return nothing, but conda added a few aforementioned conda-installed default packages (including openssl, wheel and pip), so `(sonata-archives) $ conda list` will not be empty.
+Note that if directories start getting cluttered (e.g. there are too many piece modules under `data/beethoven/`), feel free to create as many subfolders under the composer as you would like (e.g. `data/beethoven/symphonies/`, `data/beethoven/piano_sonatas/`). The code that rebuilds the database will recursively dive through all directories until it gets `.py` files and doesn't care about folders!
 
-	Now that you are in your conda environment, you are able to use pip to install all the requirements: simply run:
+*Note:* That's not quite true... it does care that `composers.py` is the only root-level module in data so don't add any pieces that aren't in a subfolder of data since the composers must be processed and upserted first.
 
-	`(sonata-archives) $ pip install -r requirements.txt`
-	
-	This will install all the python requirements with pip which beautifully integrates into your conda environment.
+### 3. Adding a new sonata
 
-2. Create the sonata-archives conda environment directly from the `environment.yml` configuration by running:
+To add a new sonata, create a subclass of `SonataDataClass` in the same file as the piece that the sonata is housed in.
 
-	`$ conda env create environment.yml`
+You can fill out as much of the `sonata_attribute_dict` as you'd like, but make sure to at least fill out `PIECE_ID`, `MOVEMENT_NUM`, `GLOBAL_KEY`, `INTRODUCTION_PRESENT`, `DEVELOPMENT_PRESENT`, `CODA_PRESENT`.
 
-	This should create an environment named `sonata-archives` with all necessary conda and pip packages that you can activate via `$ source activate sonata-archives`.
-	
-*Note*: If you messed this up and need to remove your environment to start from scratch, first deactivate it with `source deactivate` and then you can remove it with `conda remove --name sonata-archives --all`. 
+* `PIECE_ID` should just a be calling `id()` method in your piece's class that should be defined in this file.
+* `MOVEMENT_NUM` is an integer representing what movement in the peice the sonata refers to, and it will be used to automatically create an id for the sonata in the format `<piece_id>_<movement_num>`, so it is required. 
+	* If the sonata is the piece itself (the piece is a single movement work), use 0 
+* `GLOBAL_KEY` is the enum `Key` instance imported from `key_enums.py` that houses the global key of the sonata. It is used to compute relative keys for all additional key fields, so it must be filled out.
+* `INTRODUCTION_PRESENT`, `DEVELOPMENT_PRESENT`, `CODA_PRESENT` are booleans that need to be filled out to specify if the optional sonata blocks are present (the Exposition and Recapitulation obviously are always present or you don't have a sonata)
 
-(You can see a list of all your envs with `conda info --envs`)
-
-*Additional Note*: If you chose not to use conda for your environment, the first method above can be easily adapted to pyenv/virtualenv where you setup a `sonata-archives` empty env and then run `$ pip install -r requirements.txt`
-
-#### 4. Adding new dependencies / Installing new packages
-
-In general, you can view your pip-installed packages in any python environment (conda or not) with the simple command `$ pip freeze`.
-
-But in a conda environment you can also run: `$ conda list`, a more robust command that will show you both the conda-installed packages and the pip-installed packages.
-
-Although conda can be used to install new packages, I want to support all kinds of envs by keeping a normal python requirements.txt, so **DO NOT USE CONDA TO INSTALL ANY PYTHON PACKAGES - ALWAYS USE PIP**. If you have to install some package that only conda can do and not pip, then that is a different issue and might motivate forcing everyone to use conda envs.
-
-But since almost everything is available via pip and pip integrates seamlessly with your conda env (once you have activated it with `$ source activate sonata-archives`), all you need to do is use pip to install a package in the usual way:
-
-`(sonata-archives) $ pip install somepackage`
-
-When you have installed everything that you need (and have confirmed this with `$ pip freeze` / `$ conda list` that things are working, **run the bash script update_dependencies.sh**:
-
-`(sonata-archives) $ bash update_dependencies.sh`
-
-This bash script will update both the pip requirements.txt and the conda environment.yml files (and will allow both methods of section 3 to work for collaborators). This is why it is so important to install packages with only pip, because a pip-installed package enteres the requirements.txt and the environment.yml file, while a conda-installed package would only enter the environment.yml.
-
-*Note*: My simple bash script is a wrapper to both `$ pip freeze` and `$ conda env export` where I grep out the "prefix" stored in the latter command so that our local anaconda path is not in the file designed to be shared with others)
-
-*Additional Note*: if you messed something up by installing a package in your virtual environment that clashes with something and want to uninstall everything to get a fresh start, you can do this nifty command:
-
-`pip freeze | xargs pip uninstall -y`
-
-And then you can fix things in the requirements.txt and run `pip install -r requriements.txt`. Of course, never only change something only in requirements.txt and not environment.yml - be sure to run the bash script `update_dependencies.sh` to make both the two files match.
-
-#### Configuring the PyCharm IDE to use your virtual environment
-
-Although you are free to use whatever text editor or IDE you want to work on this project, I prefer [JetBrains PyCharm](https://www.jetbrains.com/pycharm/).
-
-When you open sonata-archives, by default the Project will be configured to use your default version of Python, which is not what we want.
-
-At least in version 2017.2, to change this, go to:
-
-PyCharm--> Preferences --> Project: sonata-archives --> Project Interpreter --> <Click on the gear> --> Add Local
-
-Then navigate to the python executable in your virtualenv folder which for the conda files should be at: 
-
-`~/anaconda3/envs/sonata-archives/bin/python3.6`
-
-Make sure that you choose the python executable in the bin folder, which should be around ~10 KB, not an alias (which will only be a few bytes)
+Then fill out the `exposition_attribute_dict` and `recapitulation_attribute_dict` with as many attributes as you want, and also fill out whichever of `introduction_attribute_dict`, `development_attribute_dict`, and `coda_attribute_dict` where you specified `True` for the `PRESENT` parameters above.

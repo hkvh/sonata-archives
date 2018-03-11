@@ -201,7 +201,7 @@ class Strauss(ComposerDataClass):
     @classmethod
     def composer_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Composer.ID:                "strauss",
+            Composer.ID:                "rstrauss",
             Composer.SURNAME:           "Strauss",
             Composer.FULL_NAME:         "Richard Georg Strauss",
             Composer.BIRTH_DATE:        date(1864, 6, 11),

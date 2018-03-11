@@ -64,7 +64,7 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.OPENING_KEY: Key.F_MINOR,
+            Development.OPENING_KEY:    Key.F_MINOR,
             Development.KEYS_TONICIZED: [
                 Key.F_MINOR,
                 Key.C_MINOR,
@@ -115,7 +115,7 @@ class Beethoven5_4(SonataDataClass):
             Exposition.S_THEME_PRESENT: True,
             Exposition.S_THEME_KEY:     Key.G_MAJOR,
             Exposition.C_THEME_PRESENT: True,
-            Exposition.EEC_PRESENT:     True
+            Exposition.EEC_PRESENT:     False
         }
 
     @classmethod
@@ -127,10 +127,11 @@ class Beethoven5_4(SonataDataClass):
     @classmethod
     def recapitulation_attribute_dict(cls) -> typing.Mapping[str, str]:
         return {
-            Recapitulation.OPENING_TEMPO: "Allegro",
-            Recapitulation.P_THEME_KEY:   Key.C_MAJOR,
-            Recapitulation.S_THEME_KEY:   Key.C_MAJOR,
-            Recapitulation.ESC_PRESENT:   True,
+            Recapitulation.OPENING_TEMPO:   "Allegro",
+            Recapitulation.P_THEME_KEY:     Key.C_MAJOR,
+            Recapitulation.S_THEME_PRESENT: True,
+            Recapitulation.S_THEME_KEY:     Key.C_MAJOR,
+            Recapitulation.ESC_PRESENT:     False,
         }
 
     @classmethod
