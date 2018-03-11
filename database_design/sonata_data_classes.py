@@ -272,6 +272,31 @@ class SonataDataClass(DataClass, ABC):
         }
 
     @classmethod
+    def _convert_absolute_to_relative(cls, obj):
+        """
+        Recursive helper method that traverses a scalar, dict or list object (or any composition of them) and
+        converts all KeyStruct values it finds to the relative key. Assumes that all non-dict keys in the nested
+        structure were KeyStruct instances
+
+        :param obj: the scalar KeyStruct, dict or list to operate on
+        :return: the object converted
+        :raises TypeError if any of the values of the dict / list were NOT KeyStructs
+        """
+        if isinstance(obj, list):
+            new_obj = []
+            for x in obj:
+                new_obj.append(cls._convert_absolute_to_relative(x))
+        elif isinstance(obj, dict):
+            new_obj = {}
+            for k, v in obj.items():
+                new_obj[k] = cls._convert_absolute_to_relative(v)
+        else:
+            validate_is_key_struct(obj)  # Make sure any scalars are a key struct before trying to convert
+            new_obj = obj.relative_key_wrt(cls.global_key())
+
+        return new_obj
+
+    @classmethod
     def augment_with_derived_fields(cls, attribute_dict: Dict[Field, Any],
                                     sonata_block_cls: Type[SonataBlockTableSpecification]) -> Dict[Field, Any]:
         """
@@ -281,7 +306,7 @@ class SonataDataClass(DataClass, ABC):
 
         Right now the only derived fields we add are relative keys that correspond to absolute keys, so if any
         attribute dict specifies an absolute key we will dynamically detect that and derive its relative key and add it
-        to the attribute dict to be inserted.
+        to the attribute dict to be inserted. (Will also detect Lists and Dicts and relativize everything inside them.)
 
         :param attribute_dict: the attribute dict to augment
         :param sonata_block_cls: the class of the sonata block that we will use to add the derived fields
@@ -291,11 +316,11 @@ class SonataDataClass(DataClass, ABC):
         for field, value in attribute_dict.items():
             new_attribute_dict[field] = value
 
-            # If we added a field that we know is an absolute field, compute and add its relative field counterpart
+            # If we added a field that we know contains an absolute key, compute and add its relative key counterpart
             if field in sonata_block_cls.absolute_key_fields():
                 relative_key_field = sonata_block_cls.get_relative_from_absolute(field)
-                validate_is_key_struct(value)  # Make sure any absolute key field's value is a key struct
-                new_attribute_dict[relative_key_field] = value.relative_key_wrt(cls.global_key())
+                new_attribute_dict[relative_key_field] = cls._convert_absolute_to_relative(value)
+
         return new_attribute_dict
 
     @classmethod

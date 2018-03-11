@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import copy
+import json
 import logging
 from abc import ABCMeta, abstractmethod
 from typing import Dict, Any, Union
@@ -13,9 +14,29 @@ from database_design.key_enums import KeyStruct
 
 log = logging.getLogger(__name__)
 
+
+# Create a new JSON class that will try to use __str__ to serialize all object as JSON
+class StringConverterJSON(extras.Json):
+    def dumps(self, obj):
+        """
+        Overwrites the normal dumping of an object into a JSON for psycopg2 to try to use the str(x) to coaxe objects
+        to tbe JSON serializable instead of throwing a type error
+
+        :param obj: the object to convert
+        :return: the json representation
+        """
+        try:
+            return json.dumps(obj)
+        except TypeError:
+            if isinstance(obj, list):
+                return json.dumps([str(x) for x in obj])
+            elif isinstance(obj, dict):
+                return json.dumps({str(k): str(v) for k, v in obj.items()})
+
+
 # This allows us to directly commit dict and list objects as JSONB with psycopg2
-register_adapter(dict, extras.Json)
-register_adapter(list, extras.Json)
+register_adapter(dict, StringConverterJSON)
+register_adapter(list, StringConverterJSON)
 
 # We also want our KeyStruct to be adapted as a normal text string so we can insert it directly as text
 register_adapter(KeyStruct, lambda x: AsIs("'{}'".format(str(x))))

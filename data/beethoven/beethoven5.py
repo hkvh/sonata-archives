@@ -7,7 +7,7 @@ from data.composers import Beethoven
 from database_design.key_enums import Key
 from database_design.sonata_data_classes import PieceDataClass, SonataDataClass
 from database_design.sonata_enums import PieceType, SonataType
-from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation
+from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation, Development
 from general_utils.sql_utils import Field
 
 
@@ -64,6 +64,15 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
+            Development.OPENING_KEY: Key.F_MINOR,
+            Development.KEYS_TONICIZED: [
+                Key.F_MINOR,
+                Key.C_MINOR,
+                Key.G_MINOR,
+                Key.C_MINOR,
+                Key.F_MINOR,
+                Key.C_MINOR,
+            ]
 
         }
 

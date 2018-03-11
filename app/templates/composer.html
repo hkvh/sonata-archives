@@ -17,7 +17,7 @@
 	<hr>
 	<h3>Pieces Analyzed </h3>
 	{% for piece_id, piece_name in piece_id_name_tuples %}
-		<ul>
+		<ul class="pieces">
 			<li><a href="/composers/{{ composer_id }}/{{ piece_id }}">{{ piece_name }}</a></li>
 		</ul>
 	{% endfor %}

@@ -1,4 +1,49 @@
 
-.composers li{
-  margin: 10px 0;
+.composers li {
+    font-size: 16px;
 }
+
+.pieces li {
+    font-size: 16px;
+}
+
+td.right_align {
+    text-align: right;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 28px;
+}
+
+h3 {
+    font-size: 24px;
+}
+
+h4 {
+    font-size: 20px;
+}
+
+p {
+    font-size: 14px;
+}
+
+table.sonata_attributes {
+    margin-left: 20px;
+}
+
+h4.sonata_attributes {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+hr {
+    height: 12px;
+    border: 0;
+    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
+}
+

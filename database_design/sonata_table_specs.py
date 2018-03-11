@@ -2,7 +2,7 @@
 """
 A module containing the specification for the base SQL tables (and views, which act like tables)
 """
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 from typing import Tuple, List, Set
 
 from psycopg2 import sql
@@ -34,14 +34,14 @@ class Composer(TableSpecification):
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.FULL_NAME, SQLType.TEXT()),
-            (cls.SURNAME, SQLType.TEXT()),
-            (cls.NATIONALITY, SQLType.TEXT()),
-            (cls.BIRTH_DATE, SQLType.DATE()),
-            (cls.DEATH_DATE, SQLType.DATE()),
-            (cls.BIRTHPLACE, SQLType.TEXT()),
-            (cls.PRIMARY_RESIDENCE, SQLType.TEXT()),
+            (cls.ID, SQLType.TEXT),
+            (cls.FULL_NAME, SQLType.TEXT),
+            (cls.SURNAME, SQLType.TEXT),
+            (cls.NATIONALITY, SQLType.TEXT),
+            (cls.BIRTH_DATE, SQLType.DATE),
+            (cls.DEATH_DATE, SQLType.DATE),
+            (cls.BIRTHPLACE, SQLType.TEXT),
+            (cls.PRIMARY_RESIDENCE, SQLType.TEXT),
         ]
 
     @classmethod
@@ -77,18 +77,18 @@ class Piece(TableSpecification):
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.COMPOSER_ID, SQLType.TEXT()),
-            (cls.NAME, SQLType.TEXT()),
-            (cls.CATALOGUE_ID, SQLType.TEXT()),
-            (cls.NICKNAME, SQLType.TEXT()),
-            (cls.FULL_NAME, SQLType.TEXT()),
-            (cls.PIECE_TYPE, SQLType.TEXT()),
-            (cls.YEAR_STARTED, SQLType.INTEGER()),
-            (cls.YEAR_COMPLETED, SQLType.INTEGER()),
-            (cls.PREMIER_DATE, SQLType.DATE()),
-            (cls.GLOBAL_KEY, SQLType.TEXT()),
-            (cls.NUM_MOVEMENTS, SQLType.INTEGER()),
+            (cls.ID, SQLType.TEXT),
+            (cls.COMPOSER_ID, SQLType.TEXT),
+            (cls.NAME, SQLType.TEXT),
+            (cls.CATALOGUE_ID, SQLType.TEXT),
+            (cls.NICKNAME, SQLType.TEXT),
+            (cls.FULL_NAME, SQLType.TEXT),
+            (cls.PIECE_TYPE, SQLType.TEXT),
+            (cls.YEAR_STARTED, SQLType.INTEGER),
+            (cls.YEAR_COMPLETED, SQLType.INTEGER),
+            (cls.PREMIER_DATE, SQLType.DATE),
+            (cls.GLOBAL_KEY, SQLType.TEXT),
+            (cls.NUM_MOVEMENTS, SQLType.INTEGER),
         ]
 
     @classmethod
@@ -130,21 +130,21 @@ class Sonata(TableSpecification):
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.PIECE_ID, SQLType.TEXT()),
-            (cls.MOVEMENT_NUM, SQLType.INTEGER()),
-            (cls.SONATA_TYPE, SQLType.TEXT()),
-            (cls.GLOBAL_KEY, SQLType.TEXT()),
-            (cls.EXPOSITION_REPEAT, SQLType.BOOLEAN()),
-            (cls.DEVELOPMENT_RECAP_REPEAT, SQLType.BOOLEAN()),
-            (cls.INTRODUCTION_PRESENT, SQLType.BOOLEAN()),
-            (cls.DEVELOPMENT_PRESENT, SQLType.BOOLEAN()),
-            (cls.CODA_PRESENT, SQLType.BOOLEAN()),
-            (cls.INTRODUCTION_ID, SQLType.TEXT()),
-            (cls.EXPOSITION_ID, SQLType.TEXT()),
-            (cls.DEVELOPMENT_ID, SQLType.TEXT()),
-            (cls.RECAPITULATION_ID, SQLType.TEXT()),
-            (cls.CODA_ID, SQLType.TEXT()),
+            (cls.ID, SQLType.TEXT),
+            (cls.PIECE_ID, SQLType.TEXT),
+            (cls.MOVEMENT_NUM, SQLType.INTEGER),
+            (cls.SONATA_TYPE, SQLType.TEXT),
+            (cls.GLOBAL_KEY, SQLType.TEXT),
+            (cls.EXPOSITION_REPEAT, SQLType.BOOLEAN),
+            (cls.DEVELOPMENT_RECAP_REPEAT, SQLType.BOOLEAN),
+            (cls.INTRODUCTION_PRESENT, SQLType.BOOLEAN),
+            (cls.DEVELOPMENT_PRESENT, SQLType.BOOLEAN),
+            (cls.CODA_PRESENT, SQLType.BOOLEAN),
+            (cls.INTRODUCTION_ID, SQLType.TEXT),
+            (cls.EXPOSITION_ID, SQLType.TEXT),
+            (cls.DEVELOPMENT_ID, SQLType.TEXT),
+            (cls.RECAPITULATION_ID, SQLType.TEXT),
+            (cls.CODA_ID, SQLType.TEXT),
         ]
 
     @classmethod
@@ -229,12 +229,12 @@ class SonataBlockTableSpecification(TableSpecification):
 
             # If any field is in the set of absolute key fields, add the relative key version of it right afterwards
             if field in cls.absolute_key_fields():
-                if sql_type != SQLType.TEXT():
+                if sql_type != SQLType.TEXT and sql_type != SQLType.JSONB:
                     raise Exception("Field \"{}\" in class {} was marked as an absolute key field, which means it "
-                                    "should have a SQLType of TEXT instead of {}"
+                                    "should have a SQLType of TEXT OR JSONB instead of {}"
                                     "".format(field.name, cls.__name__, sql_type))
                 relative_key_field = cls.get_relative_from_absolute(field)
-                new_list.append((relative_key_field, SQLType.TEXT()))
+                new_list.append((relative_key_field, sql_type))
 
         return new_list
 
@@ -280,26 +280,26 @@ class Introduction(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.NUM_CYCLES, SQLType.INTEGER()),
+            (cls.ID, SQLType.TEXT),
+            (cls.NUM_CYCLES, SQLType.INTEGER),
 
-            (cls.INTRODUCTION_TYPE, SQLType.TEXT()),
-            (cls.OPENING_KEY, SQLType.TEXT()),
-            (cls.OPENING_TEMPO, SQLType.TEXT()),
-            (cls.KEYS_TONICIZED, SQLType.JSONB()),  # JSONArray
-            (cls.P_THEME_FORESHADOWED, SQLType.BOOLEAN()),
-            (cls.TR_THEME_FORESHADOWED, SQLType.BOOLEAN()),
-            (cls.S_THEME_FORESHADOWED, SQLType.BOOLEAN()),
-            (cls.C_THEME_FORESHADOWED, SQLType.BOOLEAN()),
+            (cls.INTRODUCTION_TYPE, SQLType.TEXT),
+            (cls.OPENING_KEY, SQLType.TEXT),
+            (cls.OPENING_TEMPO, SQLType.TEXT),
+            (cls.KEYS_TONICIZED, SQLType.JSONB),  # JSONArray
+            (cls.P_THEME_FORESHADOWED, SQLType.BOOLEAN),
+            (cls.TR_THEME_FORESHADOWED, SQLType.BOOLEAN),
+            (cls.S_THEME_FORESHADOWED, SQLType.BOOLEAN),
+            (cls.C_THEME_FORESHADOWED, SQLType.BOOLEAN),
 
             # I Theme
-            (cls.INTRO_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.INTRO_THEME_KEY, SQLType.TEXT()),
-            (cls.INTRO_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.INTRO_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),
+            (cls.INTRO_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.INTRO_THEME_KEY, SQLType.TEXT),
+            (cls.INTRO_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.INTRO_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
 
-            (cls.ENDING_KEY, SQLType.TEXT()),
-            (cls.ENDING_CADENCE, SQLType.TEXT()),
+            (cls.ENDING_KEY, SQLType.TEXT),
+            (cls.ENDING_CADENCE, SQLType.TEXT),
         ]
 
     @classmethod
@@ -384,58 +384,58 @@ class Exposition(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.NUM_CYCLES, SQLType.INTEGER()),
-            (cls.OPENING_TEMPO, SQLType.TEXT()),
+            (cls.ID, SQLType.TEXT),
+            (cls.NUM_CYCLES, SQLType.INTEGER),
+            (cls.OPENING_TEMPO, SQLType.TEXT),
 
             # P
-            (cls.P_THEME_KEY, SQLType.TEXT()),
-            (cls.P_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB()),
-            (cls.P_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),
-            (cls.P_THEME_ENDING_KEY, SQLType.TEXT()),
-            (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.P_THEME_KEY, SQLType.TEXT),
+            (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.P_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
+            (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
 
             # TR
-            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.TR_THEME_KEY, SQLType.TEXT()),
-            (cls.TR_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN()),
-            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB()),
-            (cls.TR_THEME_MOTIVES_LILYPOND, SQLType.TEXT()),
-            (cls.TR_THEME_ENERGY_GAIN, SQLType.BOOLEAN()),
-            (cls.TR_THEME_HAMMER_BLOWS, SQLType.BOOLEAN()),
-            (cls.TR_THEME_ENDING_KEY, SQLType.TEXT()),
-            (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.TR_THEME_KEY, SQLType.TEXT),
+            (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
+            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.TR_THEME_MOTIVES_LILYPOND, SQLType.TEXT),
+            (cls.TR_THEME_ENERGY_GAIN, SQLType.BOOLEAN),
+            (cls.TR_THEME_HAMMER_BLOWS, SQLType.BOOLEAN),
+            (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
 
             # MC
-            (cls.MC_PRESENT, SQLType.BOOLEAN()),
-            (cls.MC_TYPE, SQLType.TEXT()),
+            (cls.MC_PRESENT, SQLType.BOOLEAN),
+            (cls.MC_TYPE, SQLType.TEXT),
 
             # S
-            (cls.S_THEME_PRESENT, SQLType.TEXT()),
-            (cls.S_THEME_KEY, SQLType.TEXT()),
-            (cls.S_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.S_THEME_P_BASED, SQLType.TEXT()),
-            (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT()),
-            (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),
-            (cls.S_THEME_ENDING_KEY, SQLType.TEXT()),
-            (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.S_THEME_PRESENT, SQLType.TEXT),
+            (cls.S_THEME_KEY, SQLType.TEXT),
+            (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.S_THEME_P_BASED, SQLType.TEXT),
+            (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
+            (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
 
             # EEC
-            (cls.EEC_PRESENT, SQLType.BOOLEAN()),
-            (cls.EEC_FAKED_OUT_COUNT, SQLType.INTEGER()),
-            (cls.EEC_STRENGTH, SQLType.TEXT()),
+            (cls.EEC_PRESENT, SQLType.BOOLEAN),
+            (cls.EEC_FAKED_OUT_COUNT, SQLType.INTEGER),
+            (cls.EEC_STRENGTH, SQLType.TEXT),
 
             # C
-            (cls.C_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.C_THEME_KEY, SQLType.TEXT()),
-            (cls.C_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.C_THEME_P_BASED, SQLType.TEXT()),
-            (cls.C_THEME_S_BASED, SQLType.TEXT()),
-            (cls.C_THEME_PHRASE_STRUCTURE, SQLType.JSONB()),
-            (cls.C_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),
-            (cls.C_THEME_ENDING_KEY, SQLType.TEXT()),
+            (cls.C_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.C_THEME_KEY, SQLType.TEXT),
+            (cls.C_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.C_THEME_P_BASED, SQLType.TEXT),
+            (cls.C_THEME_S_BASED, SQLType.TEXT),
+            (cls.C_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.C_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
+            (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
         ]
 
     @classmethod
@@ -489,41 +489,42 @@ class Development(SonataBlockTableSpecification):
             cls.OPENING_KEY,
             cls.DEVELOPMENT_THEME_KEY,
             cls.RETRANSITION_ENDING_KEY,
+            cls.KEYS_TONICIZED,
         }
 
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.NUM_CYCLES, SQLType.INTEGER()),
+            (cls.ID, SQLType.TEXT),
+            (cls.NUM_CYCLES, SQLType.INTEGER),
 
-            (cls.DEVELOPMENT_TYPE, SQLType.TEXT()),
-            (cls.OPENING_KEY, SQLType.TEXT()),
-            (cls.OPENING_TEMPO, SQLType.TEXT()),
-            (cls.KEYS_TONICIZED, SQLType.JSONB()),  # JSONArray
+            (cls.DEVELOPMENT_TYPE, SQLType.TEXT),
+            (cls.OPENING_KEY, SQLType.TEXT),
+            (cls.OPENING_TEMPO, SQLType.TEXT),
+            (cls.KEYS_TONICIZED, SQLType.JSONB),  # JSONArray
 
             # Episodes
-            (cls.NUM_EPISODES, SQLType.INTEGER()),
-            (cls.EPISODE_DESCRIPTIONS, SQLType.JSONB()),
-            (cls.EPISODE_THEME_MAP, SQLType.JSONB()),
-            (cls.EPISODE_TONAL_MAP, SQLType.JSONB()),
-            (cls.EPISODE_MOTIVE_LILYPOND, SQLType.JSONB()),
+            (cls.NUM_EPISODES, SQLType.INTEGER),
+            (cls.EPISODE_DESCRIPTIONS, SQLType.JSONB),
+            (cls.EPISODE_THEME_MAP, SQLType.JSONB),
+            (cls.EPISODE_TONAL_MAP, SQLType.JSONB),
+            (cls.EPISODE_MOTIVE_LILYPOND, SQLType.JSONB),
 
-            (cls.P_THEME_INITIATED, SQLType.BOOLEAN()),
-            (cls.P_THEME_DEVELOPED, SQLType.BOOLEAN()),
-            (cls.TR_THEME_DEVELOPED, SQLType.BOOLEAN()),
-            (cls.S_THEME_DEVELOPED, SQLType.BOOLEAN()),
-            (cls.C_THEME_DEVELOPED, SQLType.BOOLEAN()),
+            (cls.P_THEME_INITIATED, SQLType.BOOLEAN),
+            (cls.P_THEME_DEVELOPED, SQLType.BOOLEAN),
+            (cls.TR_THEME_DEVELOPED, SQLType.BOOLEAN),
+            (cls.S_THEME_DEVELOPED, SQLType.BOOLEAN),
+            (cls.C_THEME_DEVELOPED, SQLType.BOOLEAN),
 
             # Development Theme
-            (cls.DEVELOPMENT_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.DEVELOPMENT_THEME_KEY, SQLType.TEXT()),
-            (cls.DEVELOPMENT_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.DEVELOPMENT_THEME_MOTIVES, SQLType.JSONB()),
+            (cls.DEVELOPMENT_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.DEVELOPMENT_THEME_KEY, SQLType.TEXT),
+            (cls.DEVELOPMENT_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.DEVELOPMENT_THEME_MOTIVES, SQLType.JSONB),
 
-            (cls.RETRANSITION_PRESENT, SQLType.BOOLEAN()),
-            (cls.RETRANSITION_ENDING_KEY, SQLType.TEXT()),
-            (cls.RETRANSITION_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.RETRANSITION_PRESENT, SQLType.BOOLEAN),
+            (cls.RETRANSITION_ENDING_KEY, SQLType.TEXT),
+            (cls.RETRANSITION_ENDING_CADENCE, SQLType.TEXT),
         ]
 
     @classmethod
@@ -603,53 +604,53 @@ class Recapitulation(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.NUM_CYCLES, SQLType.INTEGER()),
-            (cls.OPENING_TEMPO, SQLType.TEXT()),
+            (cls.ID, SQLType.TEXT),
+            (cls.NUM_CYCLES, SQLType.INTEGER),
+            (cls.OPENING_TEMPO, SQLType.TEXT),
 
             # P
-            (cls.P_THEME_KEY, SQLType.TEXT()),
-            (cls.P_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.P_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
-            (cls.P_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),  # If changed significantly
-            (cls.P_THEME_ENDING_KEY, SQLType.TEXT()),
-            (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.P_THEME_KEY, SQLType.TEXT),
+            (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.P_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            (cls.P_THEME_MOTIVES_LILYPOND, SQLType.JSONB),  # If changed significantly
+            (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
 
             # TR
-            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.TR_THEME_KEY, SQLType.TEXT()),
-            (cls.TR_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.TR_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
-            (cls.TR_THEME_MOTIVES_LILYPOND, SQLType.TEXT()),  # If changed significantly
-            (cls.TR_THEME_ENDING_KEY, SQLType.TEXT()),
-            (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.TR_THEME_KEY, SQLType.TEXT),
+            (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.TR_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            (cls.TR_THEME_MOTIVES_LILYPOND, SQLType.TEXT),  # If changed significantly
+            (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
 
             # MC
-            (cls.MC_PRESENT, SQLType.BOOLEAN()),
-            (cls.MC_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
+            (cls.MC_PRESENT, SQLType.BOOLEAN),
+            (cls.MC_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
 
             # S
-            (cls.S_THEME_PRESENT, SQLType.TEXT()),
-            (cls.S_THEME_KEY, SQLType.TEXT()),
-            (cls.S_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
-            (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),  # If changed significantly
-            (cls.S_THEME_ENDING_KEY, SQLType.TEXT()),
-            (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT()),
+            (cls.S_THEME_PRESENT, SQLType.TEXT),
+            (cls.S_THEME_KEY, SQLType.TEXT),
+            (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB),  # If changed significantly
+            (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
 
             # EEC
-            (cls.ESC_PRESENT, SQLType.BOOLEAN()),
-            (cls.ESC_FAKED_OUT_COUNT, SQLType.INTEGER()),
-            (cls.ESC_STRENGTH, SQLType.TEXT()),
-            (cls.ESC_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
+            (cls.ESC_PRESENT, SQLType.BOOLEAN),
+            (cls.ESC_FAKED_OUT_COUNT, SQLType.INTEGER),
+            (cls.ESC_STRENGTH, SQLType.TEXT),
+            (cls.ESC_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
 
             # C
-            (cls.C_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.C_THEME_KEY, SQLType.TEXT()),
-            (cls.C_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.C_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),  # If changed significantly
-            (cls.C_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT()),
-            (cls.C_THEME_ENDING_KEY, SQLType.TEXT()),
+            (cls.C_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.C_THEME_KEY, SQLType.TEXT),
+            (cls.C_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.C_THEME_MOTIVES_LILYPOND, SQLType.JSONB),  # If changed significantly
+            (cls.C_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
         ]
 
     @classmethod
@@ -697,26 +698,26 @@ class Coda(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT()),
-            (cls.NUM_CYCLES, SQLType.INTEGER()),
+            (cls.ID, SQLType.TEXT),
+            (cls.NUM_CYCLES, SQLType.INTEGER),
 
-            (cls.INTRODUCTION_TYPE, SQLType.TEXT()),
-            (cls.OPENING_KEY, SQLType.TEXT()),
-            (cls.OPENING_TEMPO, SQLType.TEXT()),
-            (cls.KEYS_TONICIZED, SQLType.JSONB()),  # JSONArray
-            (cls.P_THEME_RECALLED, SQLType.BOOLEAN()),
-            (cls.TR_THEME_RECALLED, SQLType.BOOLEAN()),
-            (cls.S_THEME_RECALLED, SQLType.BOOLEAN()),
-            (cls.C_THEME_RECALLED, SQLType.BOOLEAN()),
+            (cls.INTRODUCTION_TYPE, SQLType.TEXT),
+            (cls.OPENING_KEY, SQLType.TEXT),
+            (cls.OPENING_TEMPO, SQLType.TEXT),
+            (cls.KEYS_TONICIZED, SQLType.JSONB),  # JSONArray
+            (cls.P_THEME_RECALLED, SQLType.BOOLEAN),
+            (cls.TR_THEME_RECALLED, SQLType.BOOLEAN),
+            (cls.S_THEME_RECALLED, SQLType.BOOLEAN),
+            (cls.C_THEME_RECALLED, SQLType.BOOLEAN),
 
             # Coda Theme
-            (cls.CODA_THEME_PRESENT, SQLType.BOOLEAN()),
-            (cls.CODA_THEME_KEY, SQLType.TEXT()),
-            (cls.CODA_THEME_DESCRIPTION, SQLType.TEXT()),
-            (cls.CODA_THEME_MOTIVES_LILYPOND, SQLType.JSONB()),
+            (cls.CODA_THEME_PRESENT, SQLType.BOOLEAN),
+            (cls.CODA_THEME_KEY, SQLType.TEXT),
+            (cls.CODA_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.CODA_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
 
-            (cls.ENDING_KEY, SQLType.TEXT()),
-            (cls.ENDING_CADENCE, SQLType.TEXT()),
+            (cls.ENDING_KEY, SQLType.TEXT),
+            (cls.ENDING_CADENCE, SQLType.TEXT),
         ]
 
     @classmethod

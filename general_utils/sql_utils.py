@@ -118,7 +118,7 @@ class SchemaTable(sql.Composed):
         return Table(self._table.string)
 
 
-class SQLType(sql.Composable):
+class SQLTypeStruct(sql.Composable):
     """
     A composable instance that takes a postgres sqltype string and allows it to work as an element in a query
     using psycopg's sql module
@@ -130,43 +130,6 @@ class SQLType(sql.Composable):
     only construct this by using the class methods
     """
 
-    @classmethod
-    def TEXT(cls):
-        return cls("TEXT")
-
-    @classmethod
-    def DATE(cls):
-        return cls("DATE")
-
-    @classmethod
-    def TIMESTAMP(cls):
-        return cls("TIMESTAMP")
-
-    @classmethod
-    def JSONB(cls):
-        return cls("JSONB")
-
-    @classmethod
-    def BOOLEAN(cls):
-        return cls("BOOLEAN")
-
-    @classmethod
-    def INTEGER(cls):
-        return cls("INTEGER")
-
-    @classmethod
-    def DOUBLE_PRECISION(cls):
-        return cls("DOUBLE PRECISION")
-
-    @classmethod
-    def NUMERIC(cls, precision: int = None, scale: int = None):
-        if precision is None and scale is None:
-            return cls("NUMERIC")
-        elif precision is None or scale is None:
-            raise Exception("Must specify either both precision and scale or neither")
-        else:
-            return cls("NUMERIC ({}, {})".format(precision, scale))
-
     def as_string(self, context=None):
         """
         Implement the abstract as_string to just give us the string that was given to be wrapped but without quotes.
@@ -177,6 +140,31 @@ class SQLType(sql.Composable):
         :return: the string given in the constructor "wrapped" by this class
         """
         return self._wrapped
+
+
+class SQLType(object):
+    """
+    An enum container for the SQLTypeStruct's objects.
+
+    In python the only way to make an object return enum-instances of itself is to use class methods which are a bit
+    bulky and so easier to just make this second object as the enum object with class properties that reference the
+    other object.
+    """
+    TEXT = SQLTypeStruct("TEXT")
+    DATE = SQLTypeStruct("DATE")
+    TIMESTAMP = SQLTypeStruct("TIMESTAMP")
+    JSONB = SQLTypeStruct("JSONB")
+    BOOLEAN = SQLTypeStruct("BOOLEAN")
+    INTEGER = SQLTypeStruct("INTEGER")
+    DOUBLE_PRECISION = SQLTypeStruct("DOUBLE PRECISION")
+    NUMERIC = SQLTypeStruct("NUMERIC")
+
+    @staticmethod
+    def NUMERIC_WITH_PRECISION_SCALE(precision: int, scale: int):
+        if precision is None or scale is None:
+            raise Exception("Must specify either both precision and scale or neither")
+        else:
+            return SQLTypeStruct("NUMERIC ({}, {})".format(precision, scale))
 
 
 def get_column_names(schema_table: SchemaTable, cursor: extensions.cursor) -> List[str]:
@@ -368,14 +356,14 @@ class TableError(Exception):
 if __name__ == '__main__':
     with LocalhostCursor() as cur:
         print(Field("Hello").as_string(cur))
-        print(SQLType.TEXT().as_string(cur))
+        print(SQLType.TEXT.as_string(cur))
 
         st = SchemaTable("a", "b")
-        l = [(Field("Hello"), SQLType.TEXT()),
-             (Field("Bob"), SQLType.NUMERIC(3, 2))]
+        l = [(Field("Hello"), SQLType.TEXT),
+             (Field("Bob"), SQLType.NUMERIC_WITH_PRECISION_SCALE(3, 2))]
         print(create_table_from_field_sql_type_tuples(st, l).as_string(cur))
 
-        a = SQLType.TEXT()
-        b = SQLType.TEX()
+        a = SQLType.TEXT
+        b = SQLType.TEXT
 
         print(a == b)
