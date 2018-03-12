@@ -1,3 +1,6 @@
+\include "lilypond-book-preamble.ly"
+\version "2.18.2"
+
 \markup {\huge \bold Exposition}
 
 dolce = \markup { \italic dolce }
