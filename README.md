@@ -1,7 +1,7 @@
 # sonata-archives
 A repository to build a sonata theory database for all sonatas in the classical common practice period.
 
-##  Development Environment Setup
+## I. Development Environment Setup
 
 To work on this project, you first must properly set up:
 
@@ -18,22 +18,37 @@ Note that if you haven't worked on it in a while, dependencies may have changed 
 
 `(sonata-archives) $ pip install -r requirements.txt`
 
-## Building the Sonata Archives Database
+## II. Building the Sonata Archives Database
 
 To build for the first-time (or rebuild) the sonata-archives database with all composers, pieces and sonatas that live in the `data` directory, simply execute the root-level script:
  
 `rebuild_database.py`
 
-This script requires a valid connection to a postgres instance; if you are having connection issues, make sure that your `credentials.py` file matches your setup Postgres credentials.
+This script requires a valid connection to postgres; if you are having connection issues, make sure that your `credentials.py` file matches your setup Postgres credentials.
 
-## Viewing the Sonata Archives Web Application
+If you make changes to the attributes of an existing piece or add a new analysis, you should just re-run this script, as it is extremely fast for the database to fully refresh by rebuilding itself.
 
+## III. Rendering Lilypond Score Excerpts
+
+All rendered lilypond images are stored in `app/static/lilypond/`) but the files are not stored in source control (see `.gitignore`). 
+
+Eventually, the files will be stored somewhere like S3, but for now this means that to make all the `.png` files that you will need in order to see the score excerpts, you must first run the following root level script:
+
+`render_all_lilypond.py`
+
+If you are adding additional lilypond files or making changes to existing ones, you can always run the full script and render everything, but because it can take a while, it is advisable to run it with a provided `filename_list` where you list only the specific `.ly` files that need re-rendering.
+
+## IV. Viewing the Sonata Archives Website
 
 ### 1. Make sure the database is built
 
-If you haven't already, make sure to follow the step above to build the database as you will need a connection to it in order to run the webserver.
+If you haven't already, make sure to follow step II above to build the database as you will need a connection to it in order to have the website display any information.
 
-### 2. Start the Flask Webserver
+### 2. Make sure all lilypond images are rendered
+
+If you haven't already, make sure to follow step III above and render all the lilypond files or you will not be able to see most of the image files on the website.
+
+### 3. Start the Flask Web Server
 
 To start the Flask web server in localhost, run the script `app/app.py`
 
@@ -41,14 +56,13 @@ If this works you should see information about `Running on http://127.0.0.1:5000
 
 If you get errors, make sure your have installed all dependencies (Flask has many of them) from `requirements.txt`
 
-### 3. View the website
+### 4. View the Website!
 
-Now you can view the website then by entering the URL `http://127.0.0.1:5000/` into your browser (Chrome recommended).
+Now you can view the website that your webserver is hosting by entering the URL `http://127.0.0.1:5000/` into your browser (Chrome recommended).
 
+## VI. Contributing Analyses to the Sonata Archives
 
-## Contributing Analyses to the Sonata Archives
-
-Adding analyses is very easy - simply add or modify files in the `data` directory following the very obvious-to-copy templated format for the analyses already there!
+Adding analyses is very easy with the existing framework and does not require detailed knowledge in how the code actually works - simply add or modify files in the `data` directory following the very obvious-to-copy templated formats for the analyses already there!
 
 But to give a bit more details on some nuances:
 
@@ -101,3 +115,11 @@ You can fill out as much of the `sonata_attribute_dict` as you'd like, but make 
 * `INTRODUCTION_PRESENT`, `DEVELOPMENT_PRESENT`, `CODA_PRESENT` are booleans that need to be filled out to specify if the optional sonata blocks are present (the Exposition and Recapitulation obviously are always present or you don't have a sonata)
 
 Then fill out the `exposition_attribute_dict` and `recapitulation_attribute_dict` with as many attributes as you want, and also fill out whichever of `introduction_attribute_dict`, `development_attribute_dict`, and `coda_attribute_dict` where you specified `True` for the `PRESENT` parameters above.
+
+#### 4. Adding a new Lilypond file
+
+As of now, each sonata can have at most a single lilypond (`.ly`) file linked to it, which should exist in the `data` directory with a filename that exactly matches the `sonata_id` that it corresponds to. (See above for a discussion on how this will always be `<piece_id>_<movement_num>`)
+
+For example, for Beethoven Symphony No. 5 (`piece_id` =`beethoven5`), the first movement would have a `sonata_id` of `beethoven5_1`, so the corresponding lilypond file should be named `beethoven5_1.ly`.
+
+TODO: More details about how to link the lilypond files to the sonata in the database so that the Flask app knows what images it should try to grab for the website.

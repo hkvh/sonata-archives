@@ -101,3 +101,6 @@ ENV/
 .mypy_cache/
 
 .idea
+
+# For now, don't put pngs in source control since they can be easily rendered from lilypond code
+/app/static/lilypond/*.png
