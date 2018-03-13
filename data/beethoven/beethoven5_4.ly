@@ -1,7 +1,6 @@
-\include "lilypond-book-preamble.ly"
 \version "2.18.2"
 
-\markup {\huge \bold Exposition}
+\markup {\huge \bold {Exposition Motives}}
 
 dolce = \markup { \italic dolce }
 
@@ -52,15 +51,21 @@ dolce = \markup { \italic dolce }
     g2.\fp (fis4 | e d) d d |
 }
 
-\markup {\huge \bold Development}
+\markup {\huge \bold {Development Motives}}
 
-\markup{\huge D\super1 (Scherzo reprise)}
-\relative c'' {
-    \time 3/4
-    g\p g g | g2. | bes4 aes g | f
+\markup{\huge D\super1 \huge{(S} \super{1.2 var} \huge)}
+\relative c' {
+    \clef bass
+    \partial 4 a4\p (| gis2 a | b)
 }
 
-\markup {\huge \bold Coda}
+\markup{\huge D\super2 (Scherzo reprise)}
+\relative c'' {
+    \time 3/4
+    g4\p g g | g2. | bes4 (aes) g-. | f
+}
+
+\markup {\huge \bold {Coda Motives}}
 
 \markup{\huge TR\super{1 var}}
 \relative c {

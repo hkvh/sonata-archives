@@ -7,7 +7,7 @@ from data.composers import Beethoven
 from database_design.key_enums import Key
 from database_design.sonata_data_classes import PieceDataClass, SonataDataClass
 from database_design.sonata_enums import PieceType, SonataType
-from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation, Development
+from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation, Development, Coda
 from general_utils.sql_utils import Field
 
 
@@ -49,6 +49,9 @@ class Beethoven5_1(SonataDataClass):
             Sonata.CODA_PRESENT:             True,
             Sonata.EXPOSITION_REPEAT:        True,
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
+
+            # Delete this attribute if did not render a lilypond image for this sonata
+            Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 460}
         }
 
     @classmethod
@@ -64,16 +67,16 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.OPENING_KEY:    Key.F_MINOR,
-            Development.KEYS_TONICIZED: [
+            Development.OPENING_KEY:             Key.F_MINOR,
+            Development.KEYS_TONICIZED:          [
                 Key.F_MINOR,
                 Key.C_MINOR,
                 Key.G_MINOR,
                 Key.C_MINOR,
                 Key.F_MINOR,
                 Key.C_MINOR,
-            ]
-
+            ],
+            Development.RETRANSITION_ENDING_KEY: Key.C_MINOR,
         }
 
     @classmethod
@@ -88,7 +91,8 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-
+            Coda.OPENING_KEY: Key.C_MINOR,
+            Coda.ENDING_KEY:  Key.C_MAJOR,
         }
 
 
@@ -105,22 +109,39 @@ class Beethoven5_4(SonataDataClass):
             Sonata.CODA_PRESENT:             True,
             Sonata.EXPOSITION_REPEAT:        True,
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
+
+            # Delete this attribute if did not render a lilypond image for this sonata
+            Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 620}
         }
 
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.OPENING_TEMPO:   "Allegro",
-            Exposition.P_THEME_KEY:     Key.C_MAJOR,
-            Exposition.S_THEME_PRESENT: True,
-            Exposition.S_THEME_KEY:     Key.G_MAJOR,
-            Exposition.C_THEME_PRESENT: True,
-            Exposition.EEC_PRESENT:     False
+            Exposition.OPENING_TEMPO:    "Allegro",
+            Exposition.P_THEME_KEY:      Key.C_MAJOR,
+            Exposition.TR_THEME_PRESENT: True,
+            Exposition.S_THEME_PRESENT:  True,
+            Exposition.S_THEME_KEY:      Key.G_MAJOR,
+            Exposition.C_THEME_PRESENT:  True,
+            Exposition.EEC_PRESENT:      False,
         }
 
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
+            Development.OPENING_KEY:             Key.A_MAJOR,
+            Development.KEYS_TONICIZED:          [
+                Key.A_MAJOR,
+                Key.A_MINOR,
+                Key.F_MAJOR,
+                Key.B_FLAT_MAJOR,
+                Key.B_FLAT_MINOR,
+                Key.D_FLAT_MAJOR,
+                Key.C_MAJOR,
+                Key.G_MAJOR,
+                Key.C_MINOR,
+            ],
+            Development.RETRANSITION_ENDING_KEY: Key.C_MINOR,
 
         }
 
@@ -137,5 +158,6 @@ class Beethoven5_4(SonataDataClass):
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-
+            Coda.OPENING_KEY: Key.C_MAJOR,
+            Coda.ENDING_KEY:  Key.C_MAJOR,
         }

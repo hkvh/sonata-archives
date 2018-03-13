@@ -122,4 +122,8 @@ As of now, each sonata can have at most a single lilypond (`.ly`) file linked to
 
 For example, for Beethoven Symphony No. 5 (`piece_id` =`beethoven5`), the first movement would have a `sonata_id` of `beethoven5_1`, so the corresponding lilypond file should be named `beethoven5_1.ly`.
 
-TODO: More details about how to link the lilypond files to the sonata in the database so that the Flask app knows what images it should try to grab for the website.
+Once you add the lilypond file and render it into an image, in order to make it appear on the website, you must fill out `LILYPOND_IMAGE_SETTINGS` in the corresponding sonata's attribute dict.
+
+As long as you provide a blank dict for `LILYPOND_IMAGE_SETTINGS`, the image will appear, but you may want to set an `IMAGE_WIDTH` inside the dict to customize the size of the image on the website.
+
+

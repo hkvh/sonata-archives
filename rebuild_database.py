@@ -23,11 +23,11 @@ DATA_MODULE_UPSERT_ALL = 'upsert_all'
 COMPOSERS_FILE_NAME = 'composers.py'
 
 
-def create_all_tables(cur: extensions.cursor, drop_if_exists: bool = True) -> None:
+def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) -> None:
     """
     This function creates all sonata tables needed to construct the sonata_archives
 
-    :param cur: the postgres cursor to use to upsert the data
+    :param cursor: the postgres cursor to use to upsert the data
     :param drop_if_exists: if true, will wipe out the existing tables and rebuild
     """
 
@@ -39,8 +39,8 @@ def create_all_tables(cur: extensions.cursor, drop_if_exists: bool = True) -> No
 
     # Create sonata archives schema
     create_schema_sql = sql.SQL("CREATE SCHEMA IF NOT EXISTS {s};").format(s=sonata_archives_schema)
-    log.info("\n\n" + create_schema_sql.as_string(cur) + "\n")
-    cur.execute(create_schema_sql)
+    log.info("\n\n" + create_schema_sql.as_string(cursor) + "\n")
+    cursor.execute(create_schema_sql)
 
     # Loop over all objects twice to both create them and add their constraints
     sonata_table_specs = [
@@ -55,17 +55,17 @@ def create_all_tables(cur: extensions.cursor, drop_if_exists: bool = True) -> No
     ]
     for table in sonata_table_specs:
         create_table_sql = table.create_table_sql(drop_if_exists)
-        log.info("\n\n" + create_table_sql.as_string(cur) + "\n")
-        cur.execute(create_table_sql)
+        log.info("\n\n" + create_table_sql.as_string(cursor) + "\n")
+        cursor.execute(create_table_sql)
 
     # Execute constrain sql only after making all tables
     for table in sonata_table_specs:
         create_constraint_sql = table.create_constraints_sql()
-        log.info("\n" + create_constraint_sql.as_string(cur) + "\n")
-        cur.execute(create_constraint_sql)
+        log.info("\n" + create_constraint_sql.as_string(cursor) + "\n")
+        cursor.execute(create_constraint_sql)
 
 
-def upsert_all_data(cur: extensions.cursor) -> None:
+def upsert_all_data(cursor: extensions.cursor) -> None:
     """
     This function recursively iterates over and loads all python modules in the 'data' folder and grabs all classes
     defined in them, and runs their upsert_data function.
@@ -73,7 +73,7 @@ def upsert_all_data(cur: extensions.cursor) -> None:
     Will throw an error if a) a module contains no classes defined in it or b) the class defined in the data module
     is not a subclass of DataClass.
 
-    :param cur: the postgres cursor to use to upsert the data
+    :param cursor: the postgres cursor to use to upsert the data
     """
 
     # Get all python files recursively under the data dir
@@ -126,7 +126,7 @@ def upsert_all_data(cur: extensions.cursor) -> None:
 
         for cls_name, cls in class_list_tuples:
             if issubclass(cls, DataClass):
-                cls.upsert_data(cur)
+                cls.upsert_data(cursor)
             else:
                 raise Exception("\"{}\" contained the class \"{}\", which was not a subclass of \"DataClass\"!"
                                 "".format(data_module, cls_name))

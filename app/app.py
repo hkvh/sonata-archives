@@ -1,13 +1,15 @@
 #!/usr/bin/env python
+import logging
 
 from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
 from psycopg2 import sql
 
-from database_design.sonata_data_classes import PieceDataClass
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda
 from general_utils.postgres_utils import LocalhostCursor
-from flask_bootstrap import Bootstrap
+
+log = logging.getLogger(__name__)
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -111,7 +113,11 @@ def piece(composer_id: str, piece_id: str):
     # 5. sonatas_info_dict: Dict[str, Dict[str, Any]]
     # a dict that maps sonata names to dicts of sonata-level attributes and values
     #
-    # 6. sonatas_blocks_info_dict: Dict[str, Dict[str, Dict[str, Any]]]
+    # 6. sonatas_lilypond_image_settings_dict: Dict[str, Dict[str, Any]]
+    # a dict that maps sonata names to an image settings dict containing settings for the lilypond file
+    # Right now, the only setting it should have is "image_width"
+    #
+    # 7. sonatas_blocks_info_dict: Dict[str, Dict[str, Dict[str, Any]]]
     # nested dicts that map sonata_name --> block name --> block-level dict of attributes and values
     #
     # If sonata name = 'Itself' then this means the piece is a single-movement work that is the sonata
@@ -170,20 +176,22 @@ def piece(composer_id: str, piece_id: str):
 
         sonatas_info_dict = {}
         sonatas_blocks_info_dict = {}
+        sonatas_lilypond_image_settings_dict = {}
 
         for result in cur:
             sonata_info_dict = dict(result)
 
             # Remove information that we don't want to display (grab various ids and info we need while popping)
             sonata_info_dict.pop(Sonata.PIECE_ID.string)
-            sonata_info_dict.pop(Sonata.ID.string)
 
+            sonata_id = sonata_info_dict.pop(Sonata.ID.string)
             movement_num = sonata_info_dict.pop(Sonata.MOVEMENT_NUM.string)
             intro_id = sonata_info_dict.pop(Sonata.INTRODUCTION_ID.string)
             expo_id = sonata_info_dict.pop(Sonata.EXPOSITION_ID.string)
             dev_id = sonata_info_dict.pop(Sonata.DEVELOPMENT_ID.string)
             recap_id = sonata_info_dict.pop(Sonata.RECAPITULATION_ID.string)
             coda_id = sonata_info_dict.pop(Sonata.CODA_ID.string)
+            lilypond_image_settings = sonata_info_dict.pop(Sonata.LILYPOND_IMAGE_SETTINGS.string)
 
             # Movement Number 0 means the piece is itself a sonata
             if movement_num == 0:
@@ -192,6 +200,19 @@ def piece(composer_id: str, piece_id: str):
                 sonata_name = 'Movement {}'.format(movement_num)
 
             sonatas_info_dict[sonata_name] = sonata_info_dict
+
+            # If settings to the lilypond image were provided for this sonata, we should expect the image to exist
+            if lilypond_image_settings is not None:
+
+                # The assumed image path will be in the static folder named after the sonata id
+                lilypond_image_settings[Sonata.IMAGE_PATH] = '/static/lilypond/{}.png'.format(sonata_id)
+
+                # Provide a default image width if not provided
+                if Sonata.IMAGE_WIDTH not in lilypond_image_settings:
+                    lilypond_image_settings[Sonata.IMAGE_WIDTH] = 400
+
+                sonatas_lilypond_image_settings_dict[sonata_name] = lilypond_image_settings
+
             sonatas_blocks_info_dict[sonata_name] = {}
 
             block_ids = [intro_id, expo_id, dev_id, recap_id, coda_id]
@@ -221,14 +242,21 @@ def piece(composer_id: str, piece_id: str):
 
                         sonatas_blocks_info_dict[sonata_name][block_name] = sonata_block_info_dict
 
+        log.debug('sonatas_lilypond_image_settings_dict: {}'.format(sonatas_lilypond_image_settings_dict))
+
         return render_template('piece.html',
                                composer_id=composer_id,
                                composer_surname=composer_surname,
                                piece_name=piece_name,
                                piece_info_dict=piece_info_dict,
                                sonatas_info_dict=sonatas_info_dict,
-                               sonatas_blocks_info_dict=sonatas_blocks_info_dict)
+                               sonatas_blocks_info_dict=sonatas_blocks_info_dict,
+                               sonatas_lilypond_image_settings_dict=sonatas_lilypond_image_settings_dict,
+                               IMAGE_PATH=Sonata.IMAGE_PATH,
+                               IMAGE_WIDTH=Sonata.IMAGE_WIDTH)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(message)s')
     app.run(debug=True)

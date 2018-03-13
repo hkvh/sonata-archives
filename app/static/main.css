@@ -1,3 +1,6 @@
+p {
+    font-size: 14px;
+}
 
 .composers li {
     font-size: 16px;
@@ -7,38 +10,91 @@
     font-size: 16px;
 }
 
+col.composer_attributes_key  {
+    width: 175px
+}
+
+col.composer_attributes_value {
+    width: 500px
+}
+
+col.piece_attributes_key  {
+    width: 190px
+}
+
+col.piece_attributes_value {
+    width: 700px
+}
+
+table.sonata_attributes {
+    table-layout: fixed;
+}
+
+col.sonata_attributes_key  {
+    width: 210px
+}
+
+col.sonata_attributes_value {
+    width: 300px
+}
+
+table.sonata_block_attributes {
+    table-layout: fixed;
+}
+
+col.sonata_block_attributes_key  {
+    width: 220px
+}
+
+col.sonata_block_attributes_value {
+    width: 200px
+}
+
 td.right_align {
     text-align: right;
 }
 
-h1 {
+h1.composer_surname {
     font-size: 36px;
 }
 
-h2 {
+h2.piece_attributes {
     font-size: 28px;
+    margin-bottom: 20px;
+
 }
 
-h3 {
-    font-size: 24px;
+h3.sonata_name {
+    font-size: 26px;
+    margin-bottom: 30px;
 }
 
-h4 {
-    font-size: 20px;
+h4.sonata_block_attributes {
+    font-size: 22px;
+    margin-top: 30px;
 }
 
-p {
-    font-size: 14px;
-}
-
-table.sonata_attributes {
+table.sonata_block_attributes {
     margin-left: 20px;
 }
 
-h4.sonata_attributes {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 20px;
+#sonata_attribute_box {
+    float: left;
+    width: 40%
+}
+#sonata_image_box {
+    float: left;
+    width: 60%
+}
+
+.container {
+    margin-bottom: 40px;
+}
+ /*Clear floats after the columns */
+.container:after {
+    content: "";
+    display: table;
+    clear: both;
 }
 
 hr {
@@ -47,3 +103,13 @@ hr {
     box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
 }
 
+/* Uncomment this to see the div border */
+
+/*div {*/
+    /*border: 1px dashed red;*/
+    /*margin-bottom: 10px;*/
+/*}*/
+
+/*table {*/
+    /*border: 1px dashed blue;*/
+/*}*/

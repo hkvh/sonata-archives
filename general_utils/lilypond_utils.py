@@ -83,13 +83,14 @@ def render_lilypond_png_into_app_directory(ly_file_full_path: str, remove_temp_d
         if os.path.exists(dest):
             os.remove(dest)
         copyfile(src=source, dst=dest)
-        log.info("Removing the temporary directory and all other files non-png files created")
+        log.info("Removing the temporary directory along with all other non-png files")
         if remove_temp_dir:
             rmtree(TEMP_DIRECTORY)
     else:
         if remove_temp_dir:
             rmtree(TEMP_DIRECTORY)
         raise LilypondRenderError("Error in lilypond code in \"{}\", no png generated.".format(ly_file_full_path))
+    log.info("Lilypond PNG creation complete!!!")
 
 
 class LilypondRenderError(Exception):

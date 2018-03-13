@@ -1,106 +1,115 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-	<nav class="navbar navbar-default" role="navigation">
-		<div class="container-fluid">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-						data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="/index">Sonata Archives</a>
-			</div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/index">Sonata Archives</a>
+            </div>
 
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<li><a href="/index">Home</a></li>
-					<li><a href="/composers">Composers</a></li>
-					<li><a href="/composers/{{ composer_id }}">{{ composer_surname }}</a></li>
-				</ul>
-			</div><!-- /.navbar-collapse -->
-		</div><!-- /.container-fluid -->
-	</nav>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="/index">Home</a></li>
+                    <li><a href="/composers">Composers</a></li>
+                    <li><a href="/composers/{{ composer_id }}">{{ composer_surname }}</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
 {% endblock %}
 
 {% block app_content %}
-	<h1>{{ composer_surname }}</h1>
-	<hr>
-	<h2>{{ piece_name }}</h2>
-	<table>
-		<col width="150">
-		<col width="300">
-		{% for key, value in piece_info_dict.items() %}
-			<tr>
-				<td>{{ key }}</td>
-				<td>{{ value }}</td>
-			</tr>
-		{% endfor %}
-	</table>
-	<hr>
-	{% for sonata_name in sonatas_info_dict %}
+    <h1 class="composer_surname">{{ composer_surname }}</h1>
+    <hr>
+    <h2 class="piece_attributes">{{ piece_name }}</h2>
+    <table class="piece_attributes">
+        <col class="piece_attributes_key">
+        <col class="piece_attributes_value">
+        {% for key, value in piece_info_dict.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <hr>
+    {% for sonata_name in sonatas_info_dict %}
 
-		{% if sonata_name != 'Itself' %}
-			<h3> {{ sonata_name }}</h3>
-		{% endif %}
+        {% if sonata_name != 'Itself' %}
+            <h3 class="sonata_name"> {{ sonata_name }}</h3>
+        {% endif %}
+        <div class="container">
+            <div id="sonata_attribute_box">
+                <table class="sonata_attributes">
+                    <col class="sonata_attributes_key">
+                    <col class="sonata_attributes_value">
+                    {% for key, value in sonatas_info_dict[sonata_name].items() %}
+                        <tr>
+                            <td>{{ key }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                {% for block_name in sonatas_blocks_info_dict[sonata_name] %}
+                    <h4 class="sonata_block_attributes"> {{ block_name }}</h4>
+                    <table class="sonata_block_attributes">
+                        <col class=sonata_block_attributes_key>
+                        <col class="sonata_block_attributes_value">
+                        {% for key, value in sonatas_blocks_info_dict[sonata_name][block_name].items() %}
+                            {% if value is not none %}
 
-		<table class="sonata_attributes">
-			<col width="250">
-			<col width="300">
-			{% for key, value in sonatas_info_dict[sonata_name].items() %}
-				<tr>
-					<td>{{ key }}</td>
-					<td>{{ value }}</td>
-				</tr>
-			{% endfor %}
-		</table>
-		<br>
-		{% for block_name in sonatas_blocks_info_dict[sonata_name] %}
-			<h4 class="sonata_attributes"> {{ block_name }}</h4>
-			<table class="sonata_attributes">
-				<col width="250">
-				<col width="300">
-				{% for key, value in sonatas_blocks_info_dict[sonata_name][block_name].items() %}
-					{% if value is not none %}
+                                {% if value is mapping %} {# Check if dict #}
+                                    <tr>
+                                        <td>{{ key }}</td>
+                                        <td></td>
+                                    </tr>
+                                    {% for k, v in value.items() %}
+                                        <tr>
+                                            <td>{{ k }}</td>
+                                            <td>{{ v }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% elif value is iterable and value is not string %}{# Check if list #}
+                                    <tr>
+                                        <td>{{ key }}</td>
+                                        <td></td>
+                                    </tr>
+                                    {% for x in value %}
+                                        <tr>
+                                            <td></td>
+                                            <td>{{ x }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %} {# Check if scalar (normal case) #}
+                                    <tr>
+                                        <td>{{ key }}</td>
+                                        <td>{{ value }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
 
-					{% if value is mapping %} {# Check if dict #}
-						<tr>
-							<td>{{ key }}</td>
-							<td></td>
-						</tr>
-						{% for k, v in value.items() %}
-							<tr>
-								<td>{{ k }}</td>
-								<td>{{ v }}</td>
-							</tr>
-						{% endfor %}
-						{% elif value is iterable and value is not string %}{# Check if list #}
-							<tr>
-								<td>{{ key }}</td>
-								<td></td>
-							</tr>
-							{% for x in value %}
-								<tr>
-									<td></td>
-									<td>{{ x }}</td>
-								</tr>
-							{% endfor %}
-						{% else %} {# Check if scalar (normal case) #}
-							<tr>
-								<td>{{ key }}</td>
-								<td>{{ value }}</td>
-							</tr>
-						{% endif %}
-					{% endif %}
+                        {% endfor %}
+                    </table>
+                {% endfor %}
+            </div>
+            <div id="sonata_image_box">
 
-				{% endfor %}
-			</table>
-		{% endfor %}
-		<hr>
-	{% endfor %}
+                {% if sonata_name in sonatas_lilypond_image_settings_dict %}
+                    <img src="{{ sonatas_lilypond_image_settings_dict[sonata_name][IMAGE_PATH] }}"
+                         width={{ sonatas_lilypond_image_settings_dict[sonata_name][IMAGE_WIDTH] }}>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+    {% endfor %}
 {% endblock %}
 

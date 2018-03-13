@@ -126,6 +126,11 @@ class Sonata(TableSpecification):
     DEVELOPMENT_ID = Field("development_id")
     RECAPITULATION_ID = Field("recapitulation_id")
     CODA_ID = Field("coda_id")
+    LILYPOND_IMAGE_SETTINGS = Field("lilypond_image_settings")  # Contains properties about the image for display
+
+    # The keys for use in the image settings dict / JSON
+    IMAGE_WIDTH = "image_width"
+    IMAGE_PATH = "image_path"
 
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
@@ -145,6 +150,7 @@ class Sonata(TableSpecification):
             (cls.DEVELOPMENT_ID, SQLType.TEXT),
             (cls.RECAPITULATION_ID, SQLType.TEXT),
             (cls.CODA_ID, SQLType.TEXT),
+            (cls.LILYPOND_IMAGE_SETTINGS, SQLType.JSONB)
         ]
 
     @classmethod
@@ -264,7 +270,6 @@ class Introduction(SonataBlockTableSpecification):
     INTRO_THEME_PRESENT = Field("intro_theme_present")  # whether the intro contains a novel theme
     INTRO_THEME_KEY = Field("intro_theme_key")
     INTRO_THEME_DESCRIPTION = Field("intro_theme_description")
-    INTRO_THEME_MOTIVES_LILYPOND = Field("intro_theme_motives_lilypond")
 
     ENDING_KEY = Field("ending_key")
     ENDING_CADENCE = Field("ending_cadence")
@@ -296,8 +301,6 @@ class Introduction(SonataBlockTableSpecification):
             (cls.INTRO_THEME_PRESENT, SQLType.BOOLEAN),
             (cls.INTRO_THEME_KEY, SQLType.TEXT),
             (cls.INTRO_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.INTRO_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
-
             (cls.ENDING_KEY, SQLType.TEXT),
             (cls.ENDING_CADENCE, SQLType.TEXT),
         ]
@@ -323,7 +326,6 @@ class Exposition(SonataBlockTableSpecification):
     P_THEME_KEY = Field("p_theme_key")
     P_THEME_DESCRIPTION = Field("p_theme_description")
     P_THEME_PHRASE_STRUCTURE = Field("p_theme_phrase_structure")
-    P_THEME_MOTIVES_LILYPOND = Field("p_theme_motives_lilypond")
     P_THEME_ENDING_KEY = Field("p_theme_ending_key")
     P_THEME_ENDING_CADENCE = Field("p_theme_ending_cadence")
 
@@ -333,7 +335,6 @@ class Exposition(SonataBlockTableSpecification):
     TR_THEME_DESCRIPTION = Field("tr_theme_description")
     TR_THEME_P_BASED = Field("tr_theme_p_based")
     TR_THEME_PHRASE_STRUCTURE = Field("tr_theme_phrase_structure")
-    TR_THEME_MOTIVES_LILYPOND = Field("tr_theme_motives_lilypond")
     TR_THEME_ENERGY_GAIN = Field("tr_theme_energy_gain")
     TR_THEME_HAMMER_BLOWS = Field("tr_theme_hammer_blows")
     TR_THEME_ENDING_KEY = Field("tr_theme_ending_key")
@@ -349,7 +350,6 @@ class Exposition(SonataBlockTableSpecification):
     S_THEME_DESCRIPTION = Field("s_theme_description")
     S_THEME_P_BASED = Field("s_theme_p_based")
     S_THEME_PHRASE_STRUCTURE = Field("s_theme_phrase_structure")
-    S_THEME_MOTIVES_LILYPOND = Field("s_theme_motives_lilypond")
     S_THEME_ENDING_KEY = Field("s_theme_ending_key")
     S_THEME_ENDING_CADENCE = Field("s_theme_ending_cadence")
 
@@ -365,7 +365,6 @@ class Exposition(SonataBlockTableSpecification):
     C_THEME_P_BASED = Field("c_theme_p_based")
     C_THEME_S_BASED = Field("c_theme_s_based")
     C_THEME_PHRASE_STRUCTURE = Field("c_theme_phrase_structure")
-    C_THEME_MOTIVES_LILYPOND = Field("c_theme_motives_lilypond")
     C_THEME_ENDING_KEY = Field("c_theme_ending_key")
 
     @classmethod
@@ -392,7 +391,6 @@ class Exposition(SonataBlockTableSpecification):
             (cls.P_THEME_KEY, SQLType.TEXT),
             (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
-            (cls.P_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -402,7 +400,6 @@ class Exposition(SonataBlockTableSpecification):
             (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
-            (cls.TR_THEME_MOTIVES_LILYPOND, SQLType.TEXT),
             (cls.TR_THEME_ENERGY_GAIN, SQLType.BOOLEAN),
             (cls.TR_THEME_HAMMER_BLOWS, SQLType.BOOLEAN),
             (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
@@ -413,12 +410,11 @@ class Exposition(SonataBlockTableSpecification):
             (cls.MC_TYPE, SQLType.TEXT),
 
             # S
-            (cls.S_THEME_PRESENT, SQLType.TEXT),
+            (cls.S_THEME_PRESENT, SQLType.BOOLEAN),
             (cls.S_THEME_KEY, SQLType.TEXT),
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.S_THEME_P_BASED, SQLType.TEXT),
             (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
-            (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -434,7 +430,6 @@ class Exposition(SonataBlockTableSpecification):
             (cls.C_THEME_P_BASED, SQLType.TEXT),
             (cls.C_THEME_S_BASED, SQLType.TEXT),
             (cls.C_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
-            (cls.C_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
             (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
         ]
 
@@ -464,7 +459,6 @@ class Development(SonataBlockTableSpecification):
     EPISODE_DESCRIPTIONS = Field("episode_descriptions")
     EPISODE_TONAL_MAP = Field("episode_tonal_map")  # a map of episode to the keys used
     EPISODE_THEME_MAP = Field("episode_theme_map")  # a map of episode to the themes used P / S / TR / C
-    EPISODE_MOTIVE_LILYPOND = Field("episode_motive_lilypond")  # motives of each development episode
 
     P_THEME_INITIATED = Field("p_theme_initiated")
     P_THEME_DEVELOPED = Field("p_theme_developed")
@@ -476,7 +470,6 @@ class Development(SonataBlockTableSpecification):
     DEVELOPMENT_THEME_PRESENT = Field("development_theme_present")  # whether the development contains a novel theme
     DEVELOPMENT_THEME_KEY = Field("coda_theme_key")
     DEVELOPMENT_THEME_DESCRIPTION = Field("coda_theme_description")
-    DEVELOPMENT_THEME_MOTIVES = Field("development_theme_motives_lilypond")
 
     # Retransition
     RETRANSITION_PRESENT = Field("retransition_present")
@@ -508,7 +501,6 @@ class Development(SonataBlockTableSpecification):
             (cls.EPISODE_DESCRIPTIONS, SQLType.JSONB),
             (cls.EPISODE_THEME_MAP, SQLType.JSONB),
             (cls.EPISODE_TONAL_MAP, SQLType.JSONB),
-            (cls.EPISODE_MOTIVE_LILYPOND, SQLType.JSONB),
 
             (cls.P_THEME_INITIATED, SQLType.BOOLEAN),
             (cls.P_THEME_DEVELOPED, SQLType.BOOLEAN),
@@ -520,7 +512,6 @@ class Development(SonataBlockTableSpecification):
             (cls.DEVELOPMENT_THEME_PRESENT, SQLType.BOOLEAN),
             (cls.DEVELOPMENT_THEME_KEY, SQLType.TEXT),
             (cls.DEVELOPMENT_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.DEVELOPMENT_THEME_MOTIVES, SQLType.JSONB),
 
             (cls.RETRANSITION_PRESENT, SQLType.BOOLEAN),
             (cls.RETRANSITION_ENDING_KEY, SQLType.TEXT),
@@ -548,7 +539,6 @@ class Recapitulation(SonataBlockTableSpecification):
     P_THEME_KEY = Field("p_theme_key")
     P_THEME_DESCRIPTION = Field("p_theme_description")
     P_THEME_CHANGE_FROM_EXPOSITION = Field("p_theme_change_from_exposition")
-    P_THEME_MOTIVES_LILYPOND = Field("p_theme_motives_lilypond")  # if changed significantly from exposition
     P_THEME_ENDING_KEY = Field("p_theme_ending_key")
     P_THEME_ENDING_CADENCE = Field("p_theme_ending_cadence")
 
@@ -557,7 +547,6 @@ class Recapitulation(SonataBlockTableSpecification):
     TR_THEME_KEY = Field("tr_theme_key")
     TR_THEME_DESCRIPTION = Field("tr_theme_description")
     TR_THEME_CHANGE_FROM_EXPOSITION = Field("tr_theme_change_from_exposition")
-    TR_THEME_MOTIVES_LILYPOND = Field("tr_theme_motives_lilypond")  # if changed significantly from exposition
     TR_THEME_ENDING_KEY = Field("tr_theme_ending_key")
     TR_THEME_ENDING_CADENCE = Field("tr_theme_ending_cadence")
 
@@ -570,7 +559,6 @@ class Recapitulation(SonataBlockTableSpecification):
     S_THEME_KEY = Field("s_theme_key")
     S_THEME_DESCRIPTION = Field("s_theme_description")
     S_THEME_CHANGE_FROM_EXPOSITION = Field("s_theme_change_from_exposition")
-    S_THEME_MOTIVES_LILYPOND = Field("s_theme_motives_lilypond")  # if changed significantly from exposition
     S_THEME_ENDING_KEY = Field("s_theme_ending_key")
     S_THEME_ENDING_CADENCE = Field("s_theme_ending_cadence")
 
@@ -585,7 +573,6 @@ class Recapitulation(SonataBlockTableSpecification):
     C_THEME_KEY = Field("c_theme_key")
     C_THEME_DESCRIPTION = Field("c_theme_description")
     C_THEME_CHANGE_FROM_EXPOSITION = Field("c_theme_change_from_exposition")
-    C_THEME_MOTIVES_LILYPOND = Field("c_theme_motives_lilypond")  # if changed significantly from exposition
     C_THEME_ENDING_KEY = Field("c_theme_ending_key")
 
     @classmethod
@@ -612,7 +599,6 @@ class Recapitulation(SonataBlockTableSpecification):
             (cls.P_THEME_KEY, SQLType.TEXT),
             (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.P_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.P_THEME_MOTIVES_LILYPOND, SQLType.JSONB),  # If changed significantly
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -621,7 +607,6 @@ class Recapitulation(SonataBlockTableSpecification):
             (cls.TR_THEME_KEY, SQLType.TEXT),
             (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.TR_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.TR_THEME_MOTIVES_LILYPOND, SQLType.TEXT),  # If changed significantly
             (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -634,7 +619,6 @@ class Recapitulation(SonataBlockTableSpecification):
             (cls.S_THEME_KEY, SQLType.TEXT),
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.S_THEME_MOTIVES_LILYPOND, SQLType.JSONB),  # If changed significantly
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -648,7 +632,6 @@ class Recapitulation(SonataBlockTableSpecification):
             (cls.C_THEME_PRESENT, SQLType.BOOLEAN),
             (cls.C_THEME_KEY, SQLType.TEXT),
             (cls.C_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.C_THEME_MOTIVES_LILYPOND, SQLType.JSONB),  # If changed significantly
             (cls.C_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
             (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
         ]
@@ -682,7 +665,6 @@ class Coda(SonataBlockTableSpecification):
     CODA_THEME_PRESENT = Field("coda_theme_present")  # whether the coda contains a novel theme
     CODA_THEME_KEY = Field("coda_theme_key")
     CODA_THEME_DESCRIPTION = Field("coda_theme_description")
-    CODA_THEME_MOTIVES_LILYPOND = Field("coda_theme_motives_lilypond")
 
     ENDING_KEY = Field("ending_key")
     ENDING_CADENCE = Field("ending_cadence")
@@ -714,7 +696,6 @@ class Coda(SonataBlockTableSpecification):
             (cls.CODA_THEME_PRESENT, SQLType.BOOLEAN),
             (cls.CODA_THEME_KEY, SQLType.TEXT),
             (cls.CODA_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.CODA_THEME_MOTIVES_LILYPOND, SQLType.JSONB),
 
             (cls.ENDING_KEY, SQLType.TEXT),
             (cls.ENDING_CADENCE, SQLType.TEXT),

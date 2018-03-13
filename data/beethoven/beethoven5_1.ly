@@ -1,6 +1,6 @@
 \version "2.18.2"
 
-\markup {\huge \bold Exposition}
+\markup {\huge \bold {Exposition Motives}}
 
 dolce = \markup { \italic dolce }
 
