@@ -28,6 +28,7 @@ However, I will maintain both a requirements.txt and an environment.yml, which w
 
 If you have experience using some other virtualenvironment, feel free to set that up, and you can skip the rest of this section and install all dependencies in the usual way running:
 
+`pip install -r requirements.txt`
 
 But if you do choose to use conda as I recommend, here is the guide:
 
@@ -45,6 +46,7 @@ If you've already installed conda ages ago, run `conda update --prefix /Users/<Y
 
 Before installing anaconda, executing `where python` in Command Prompt should produce `/usr/bin/python` and running `> python` would likely start a session of python 2.7.X.
 
+If the anaconda3 installer worked successfully, executing `where python` in Command should now point to `C:/Users/<YourName>/anaconda3/bin/python`, and running `python` should start a session of python 3.6.X.
 
 #### 3. Create the sonata-archives virtual environment
 
@@ -52,6 +54,7 @@ There are two ways to create the sonata-archives virtual environment:
 
 1. Create a new empty environment with `conda create --name sonata-archives python=3` in Command Prompt. Choose yes to create the environment with a few default conda packages.
 
+	Activate the environment with `activate sonata-archives` and you should see `(sonata-archives)` before your shell.
 	
 	You can confirm that it is empty of pip-installed python packages by running `(sonata-archives) pip freeze` which should return nothing, but conda added a few aforementioned conda-installed default packages (including openssl, wheel and pip), so `(sonata-archives) conda list` will not be empty.
 
