@@ -615,7 +615,7 @@ class Recapitulation(SonataBlockTableSpecification):
             (cls.MC_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
 
             # S
-            (cls.S_THEME_PRESENT, SQLType.TEXT),
+            (cls.S_THEME_PRESENT, SQLType.BOOLEAN),
             (cls.S_THEME_KEY, SQLType.TEXT),
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
