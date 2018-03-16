@@ -43,7 +43,7 @@ table.sonata_block_attributes {
 }
 
 col.sonata_block_attributes_key  {
-    width: 220px
+    width: 250px
 }
 
 col.sonata_block_attributes_value {
@@ -80,11 +80,11 @@ table.sonata_block_attributes {
 
 #sonata_attribute_box {
     float: left;
-    width: 40%
+    width: 50%
 }
 #sonata_image_box {
     float: left;
-    width: 60%
+    width: 50%
 }
 
 .container {

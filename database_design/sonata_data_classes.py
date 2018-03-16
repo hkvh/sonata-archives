@@ -8,7 +8,7 @@ from typing import Dict, Any, Type, Union
 
 from psycopg2 import sql, extensions
 
-from database_design.key_enums import KeyStruct, validate_is_key_struct
+from enums.key_enums import KeyStruct, validate_is_key_struct
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, SonataBlockTableSpecification
 from general_utils.sql_utils import Field, upsert_sql_from_field_value_dict

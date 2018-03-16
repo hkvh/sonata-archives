@@ -10,7 +10,7 @@ from psycopg2._psycopg import AsIs
 from psycopg2.extensions import register_adapter
 
 from credentials import pg_localhost
-from database_design.key_enums import KeyStruct
+from enums.key_enums import KeyStruct
 
 log = logging.getLogger(__name__)
 

@@ -48,7 +48,7 @@ class PieceType(object):
     STRING_QUARTET = "String Quartet"
 
 
-class CadenceType(object):
+class Cadence(object):
     """
     An enum for Types of Cadences
     """
@@ -101,11 +101,11 @@ class PhraseStructure(object):
     """
     # @formatter:off
 
-    # Tiny (~2-4 measure) Phrase Units
+    # Tiny (~2-3 measure) Phrase Units
     BASIC_IDEA = "Basic Idea (BI)"               # BI = motivic cell cellhas no cadence
     CONTRASTING_IDEA = "Contrasting Idea (CI)"   # CI = counterpart to BI Half Cadence, or IAC, CI' =
 
-    # Small (~4-8 measure) Phrase Units
+    # Small (~4-5 measure) Phrase Units
     ANTECEDENT = "Antecedent"                           # BI + CI  (ends in HC or IAC)
     CONSEQUENT = "Consequent"                           # BI + CI' (ends in PC or IAC)
     COMPOUND_BASIC_IDEA = "Compound Basic Idea"         # BI + BI  (no cadence)
@@ -114,7 +114,7 @@ class PhraseStructure(object):
     CADENTIAL = "Cadential"                             # Cadential Progression  (PAC, HC or IAC)
     CONTINUATION_CADENTIAL = "Continuation + Cadential"
 
-    # Medium (~8-16 measure) Phrase Units
+    # Medium (~8-10 measure) Phrase Units
     PERIOD = "Period"           # Antecedent          -> Consequent
     SENTENCE = "Sentence"       # Presentation        -> Continuation + Cadential
     HYBRID_1 = "Hybrid 1"       # Antecedent          -> Continutation
@@ -122,6 +122,35 @@ class PhraseStructure(object):
     HYBRID_3 = "Hybrid 3"       # Compound Basic Idea -> Continuation
     HYBRID_4 = "Hybrid 4"       # Compound Basic Idea -> Consequent
 
+    GRAND_ANTECEDENT = "Grand Antecedent"  # The antecedent of a compound period
+    GRAND_CONSEQUENT = "Grand Consequent"  # The consequent of a compound period
+    GRAND_DISSOLVING_CONSEQUENT = "Grand Dissolving Consequent"  # A compound period's consequent that liquidates
+
+    # Large (16+ measure) Phrase Units
+    COMPOUND_PERIOD = "Compound Period"  # A large period where each ant + cons is a medium phrase structure
+    COMPOUND_SENTENCE = "Compound Sentence"  # A large sentence where the presentation contains 2 compound BIs
+
+
+class EnergyChange(object):
+    """
+    An enum to describe energy gain / loss / stasis
+    """
+
+    ENERGY_GAIN_CRESCENDO = "Energy Gain Crescendo"
+    ENERGY_LOSS_DIMINUENDO = "Energy Gain Crescendo"
+    ENERGY_STASIS_FORTE = "Energy Stasis Forte"
+    ENERGY_STASIS_PIANO = "Energy Stasis Piano"
+
+
+class MedialCaesura(object):
+    """
+    An enum to describe MCs
+    """
+
+    GENERAL_PAUSE = "General Pause"
+    CAESURA_FILL = "Caesura Fill"
+    CAESURA_FILL_RISE = "Caesura Fill Rise"
+    CAESURA_FILL_CASCADE = "Caesura Fill Cascade"
 
 if __name__ == '__main__':
     pass

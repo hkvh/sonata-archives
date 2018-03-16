@@ -331,18 +331,21 @@ class Exposition(SonataBlockTableSpecification):
 
     # TR
     TR_THEME_PRESENT = Field("tr_theme_present")
-    TR_THEME_KEY = Field("tr_theme_key")
+    TR_THEME_OPENING_KEY = Field("tr_theme_opening_key")
     TR_THEME_DESCRIPTION = Field("tr_theme_description")
-    TR_THEME_P_BASED = Field("tr_theme_p_based")
     TR_THEME_PHRASE_STRUCTURE = Field("tr_theme_phrase_structure")
-    TR_THEME_ENERGY_GAIN = Field("tr_theme_energy_gain")
-    TR_THEME_HAMMER_BLOWS = Field("tr_theme_hammer_blows")
+
+    # TR Drive to MC
+    TR_THEME_CHROMATICALLY_ALTERED_PREDOMINANT = Field("tr_chromatic_predominant")
+    TR_THEME_DOMINANT_LOCK = Field("tr_theme_dominant_lock")
+    TR_THEME_ENERGY = Field("tr_theme_energy")
+    TR_THEME_HAMMER_BLOW_COUNT = Field("tr_final_hammer_blow_count")
     TR_THEME_ENDING_KEY = Field("tr_theme_ending_key")
     TR_THEME_ENDING_CADENCE = Field("tr_theme_ending_cadence")
 
     # MC
     MC_PRESENT = Field("mc_present")
-    MC_TYPE = Field("mc_type")
+    MC_VARIANT = Field("mc_variant")
 
     # S
     S_THEME_PRESENT = Field("s_theme_present")
@@ -354,16 +357,16 @@ class Exposition(SonataBlockTableSpecification):
     S_THEME_ENDING_CADENCE = Field("s_theme_ending_cadence")
 
     # EEC
-    EEC_PRESENT = Field("eec_present")
-    EEC_FAKED_OUT_COUNT = Field("eec_fake_out_count")
-    EEC_STRENGTH = Field("eec_strength")
+    # TODO Add column translations object so that "eec_esc" in Exposition can render as "EEC" and "ESC" in Recap
+    EEC_ESC_PRESENT = Field("eec_esc_present")  # Naming it both EEC and ESC so I can use same attribute in Recap
+    EEC_ESC_FAKE_OUT_COUNT = Field("eec_esc_fake_out_count")
+    EEC_ESC_STRENGTH = Field("eec_esc_strength")
 
     # C
     C_THEME_PRESENT = Field("c_theme_present")
     C_THEME_KEY = Field("c_theme_key")
     C_THEME_DESCRIPTION = Field("c_theme_description")
     C_THEME_P_BASED = Field("c_theme_p_based")
-    C_THEME_S_BASED = Field("c_theme_s_based")
     C_THEME_PHRASE_STRUCTURE = Field("c_theme_phrase_structure")
     C_THEME_ENDING_KEY = Field("c_theme_ending_key")
 
@@ -372,7 +375,7 @@ class Exposition(SonataBlockTableSpecification):
         return {
             cls.P_THEME_KEY,
             cls.P_THEME_ENDING_KEY,
-            cls.TR_THEME_KEY,
+            cls.TR_THEME_OPENING_KEY,
             cls.TR_THEME_ENDING_KEY,
             cls.S_THEME_KEY,
             cls.S_THEME_ENDING_KEY,
@@ -380,58 +383,80 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_ENDING_KEY
         }
 
+    # Helper methods so the recap can easily insert new attribtues over everything in the exposition
     @classmethod
-    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
+    def _general_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.OPENING_TEMPO, SQLType.TEXT),
+        ]
 
-            # P
+    @classmethod
+    def _p_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+        return [
             (cls.P_THEME_KEY, SQLType.TEXT),
             (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
+        ]
 
-            # TR
-            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN),
-            (cls.TR_THEME_KEY, SQLType.TEXT),
+    @classmethod
+    def _tr_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+        return [
+            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.TR_THEME_OPENING_KEY, SQLType.TEXT),
             (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
-            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
-            (cls.TR_THEME_ENERGY_GAIN, SQLType.BOOLEAN),
-            (cls.TR_THEME_HAMMER_BLOWS, SQLType.BOOLEAN),
+            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.TR_THEME_CHROMATICALLY_ALTERED_PREDOMINANT, SQLType.BOOLEAN),
+            (cls.TR_THEME_DOMINANT_LOCK, SQLType.BOOLEAN),
+            (cls.TR_THEME_ENERGY, SQLType.TEXT),
+            (cls.TR_THEME_HAMMER_BLOW_COUNT, SQLType.INTEGER),
             (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
+            (cls.MC_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.MC_VARIANT, SQLType.TEXT),
+        ]
 
-            # MC
-            (cls.MC_PRESENT, SQLType.BOOLEAN),
-            (cls.MC_TYPE, SQLType.TEXT),
-
-            # S
-            (cls.S_THEME_PRESENT, SQLType.BOOLEAN),
+    @classmethod
+    def _s_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+        return [
+            (cls.S_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.S_THEME_KEY, SQLType.TEXT),
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.S_THEME_P_BASED, SQLType.TEXT),
             (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
+            (cls.EEC_ESC_PRESENT, SQLType.BOOLEAN),
+            (cls.EEC_ESC_FAKE_OUT_COUNT, SQLType.INTEGER),
+            (cls.EEC_ESC_STRENGTH, SQLType.TEXT),
+        ]
 
-            # EEC
-            (cls.EEC_PRESENT, SQLType.BOOLEAN),
-            (cls.EEC_FAKED_OUT_COUNT, SQLType.INTEGER),
-            (cls.EEC_STRENGTH, SQLType.TEXT),
-
-            # C
-            (cls.C_THEME_PRESENT, SQLType.BOOLEAN),
+    @classmethod
+    def _c_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+        return [
+            (cls.C_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.C_THEME_KEY, SQLType.TEXT),
             (cls.C_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.C_THEME_P_BASED, SQLType.TEXT),
-            (cls.C_THEME_S_BASED, SQLType.TEXT),
+            (cls.C_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.C_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
             (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
         ]
+
+    # Builds this from all the private methods
+    @classmethod
+    def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
+        list_of_lists = [
+            cls._general_field_sql_type_list(),
+            cls._p_field_sql_type_list(),
+            cls._tr_field_sql_type_list(),
+            cls._s_field_sql_type_list(),
+            cls._c_field_sql_type_list()
+        ]
+        # Flatten list of lists
+        return [item for sublist in list_of_lists for item in sublist]
 
     @classmethod
     def create_constraints_sql(cls) -> sql.Composable:
@@ -523,9 +548,11 @@ class Development(SonataBlockTableSpecification):
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
-class Recapitulation(SonataBlockTableSpecification):
+class Recapitulation(Exposition):
     """
     The table representing items particular to the recapitulation block in a sonata.
+
+    Inherits from the Exposition since in general everything in the Exposition we want in the recap
     """
 
     @classmethod
@@ -533,108 +560,51 @@ class Recapitulation(SonataBlockTableSpecification):
         return SchemaTable(sonata_archives_schema, "sonata_recapitulation")
 
     NUM_CYCLES = Field("num_cycles")  # does not include literal recap + development repeats -- see sonata method
-    OPENING_TEMPO = Field("opening_tempo")
 
     # P
-    P_THEME_KEY = Field("p_theme_key")
-    P_THEME_DESCRIPTION = Field("p_theme_description")
+    P_THEME_PRESENT = Field("p_theme_present")  # Type 2 Sonatas don't recap P
     P_THEME_CHANGE_FROM_EXPOSITION = Field("p_theme_change_from_exposition")
-    P_THEME_ENDING_KEY = Field("p_theme_ending_key")
-    P_THEME_ENDING_CADENCE = Field("p_theme_ending_cadence")
 
     # TR
-    TR_THEME_PRESENT = Field("tr_theme_present")
-    TR_THEME_KEY = Field("tr_theme_key")
-    TR_THEME_DESCRIPTION = Field("tr_theme_description")
     TR_THEME_CHANGE_FROM_EXPOSITION = Field("tr_theme_change_from_exposition")
-    TR_THEME_ENDING_KEY = Field("tr_theme_ending_key")
-    TR_THEME_ENDING_CADENCE = Field("tr_theme_ending_cadence")
-
-    # MC
-    MC_PRESENT = Field("mc_present")
-    MC_CHANGE_FROM_EXPOSITION = Field("mc_change_from_exposition")
 
     # S
-    S_THEME_PRESENT = Field("s_theme_present")
-    S_THEME_KEY = Field("s_theme_key")
-    S_THEME_DESCRIPTION = Field("s_theme_description")
     S_THEME_CHANGE_FROM_EXPOSITION = Field("s_theme_change_from_exposition")
-    S_THEME_ENDING_KEY = Field("s_theme_ending_key")
-    S_THEME_ENDING_CADENCE = Field("s_theme_ending_cadence")
-
-    # EEC
-    ESC_PRESENT = Field("esc_present")
-    ESC_FAKED_OUT_COUNT = Field("eec_fake_out_count")
-    ESC_STRENGTH = Field("esc_strength")
-    ESC_CHANGE_FROM_EXPOSITION = Field("esc_change_from_exposition")
 
     # C
-    C_THEME_PRESENT = Field("c_theme_present")
-    C_THEME_KEY = Field("c_theme_key")
-    C_THEME_DESCRIPTION = Field("c_theme_description")
     C_THEME_CHANGE_FROM_EXPOSITION = Field("c_theme_change_from_exposition")
-    C_THEME_ENDING_KEY = Field("c_theme_ending_key")
 
-    @classmethod
-    def absolute_key_fields(cls) -> Set[Field]:
-        return {
-            cls.P_THEME_KEY,
-            cls.P_THEME_ENDING_KEY,
-            cls.TR_THEME_KEY,
-            cls.TR_THEME_ENDING_KEY,
-            cls.S_THEME_KEY,
-            cls.S_THEME_ENDING_KEY,
-            cls.C_THEME_KEY,
-            cls.C_THEME_ENDING_KEY
-        }
-
+    # Builds this by using Exposition parent's lists with ability to add additional below each one
+    # (This enables the new Recap elements to not have to be all at the end
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
-        return [
-            (cls.ID, SQLType.TEXT),
-            (cls.NUM_CYCLES, SQLType.INTEGER),
-            (cls.OPENING_TEMPO, SQLType.TEXT),
+        list_of_lists = [
+            cls._general_field_sql_type_list(),
+            [
+                (cls.P_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE)
+            ],
+            cls._p_field_sql_type_list(),
+            [
+                (cls.P_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            ],
 
-            # P
-            (cls.P_THEME_KEY, SQLType.TEXT),
-            (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.P_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
-            (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
+            cls._tr_field_sql_type_list(),
+            [
+                (cls.TR_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            ],
 
-            # TR
-            (cls.TR_THEME_PRESENT, SQLType.BOOLEAN),
-            (cls.TR_THEME_KEY, SQLType.TEXT),
-            (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.TR_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
-            (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
+            cls._s_field_sql_type_list(),
+            [
+                (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            ],
 
-            # MC
-            (cls.MC_PRESENT, SQLType.BOOLEAN),
-            (cls.MC_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-
-            # S
-            (cls.S_THEME_PRESENT, SQLType.BOOLEAN),
-            (cls.S_THEME_KEY, SQLType.TEXT),
-            (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
-            (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
-
-            # EEC
-            (cls.ESC_PRESENT, SQLType.BOOLEAN),
-            (cls.ESC_FAKED_OUT_COUNT, SQLType.INTEGER),
-            (cls.ESC_STRENGTH, SQLType.TEXT),
-            (cls.ESC_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-
-            # C
-            (cls.C_THEME_PRESENT, SQLType.BOOLEAN),
-            (cls.C_THEME_KEY, SQLType.TEXT),
-            (cls.C_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.C_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
-            (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
+            cls._c_field_sql_type_list(),
+            [
+                (cls.C_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            ],
         ]
+        # Flatten list of lists
+        return [item for sublist in list_of_lists for item in sublist]
 
     @classmethod
     def create_constraints_sql(cls) -> sql.Composable:
