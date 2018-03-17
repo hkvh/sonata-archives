@@ -205,11 +205,11 @@ class Sonata(TableSpecification):
             (cls.MOVEMENT_NUM, SQLType.INTEGER),
             (cls.SONATA_TYPE, SQLType.TEXT),
             (cls.GLOBAL_KEY, SQLType.TEXT),
-            (cls.EXPOSITION_REPEAT, SQLType.BOOLEAN),
-            (cls.DEVELOPMENT_RECAP_REPEAT, SQLType.BOOLEAN),
-            (cls.INTRODUCTION_PRESENT, SQLType.BOOLEAN),
-            (cls.DEVELOPMENT_PRESENT, SQLType.BOOLEAN),
-            (cls.CODA_PRESENT, SQLType.BOOLEAN),
+            (cls.EXPOSITION_REPEAT, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.DEVELOPMENT_RECAP_REPEAT, SQLType.BOOLEAN_DEFAULT_FALSE),
+            (cls.INTRODUCTION_PRESENT, SQLType.BOOLEAN_DEFAULT_FALSE),
+            (cls.DEVELOPMENT_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.CODA_PRESENT, SQLType.BOOLEAN_DEFAULT_FALSE),
             (cls.INTRODUCTION_ID, SQLType.TEXT),
             (cls.EXPOSITION_ID, SQLType.TEXT),
             (cls.DEVELOPMENT_ID, SQLType.TEXT),
@@ -322,13 +322,13 @@ class Introduction(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_introduction")
 
-    NUM_CYCLES = Field("num_cycles", "Number of Cycles")
-
+    NUM_CYCLES = Field("num_cycles", "Introduction Number of Cycles")
+    MEASURES = Field("measures", "Introduction Measures")
     INTRODUCTION_TYPE = Field("introduction_type", "Introduction Type")
-    OPENING_KEY = Field("opening_key", "Opening Key")
+    OPENING_KEY = Field("opening_key", "Introduction Opening Key")
+    OPENING_TEMPO = Field("opening_tempo", "Introduction Opening Tempo")
 
-    OPENING_TEMPO = Field("opening_tempo", "Opening Tempo")
-    KEYS_TONICIZED = Field("keys_tonicized", "Keys Tonicized")  # a JSONArray of keys tonicized
+    INTRODUCTION_KEYS = Field("introduction_keys", "Introduction Keys")  # a JSONArray of keys tonicized
     P_THEME_FORESHADOWED = Field("p_theme_recalled", "P Theme Recalled")
     TR_THEME_FORESHADOWED = Field("tr_theme_foreshadowed", "TR Theme Foreshadowed")
     S_THEME_FORESHADOWED = Field("s_theme_foreshadowed", "S Theme Foreshadowed")
@@ -337,12 +337,12 @@ class Introduction(SonataBlockTableSpecification):
     # I
 
     # whether the intro contains a novel theme
-    INTRO_THEME_PRESENT = Field("intro_theme_present", "Intro Theme Present")
-    INTRO_THEME_KEY = Field("intro_theme_key", "Intro Theme Key")
-    INTRO_THEME_DESCRIPTION = Field("intro_theme_description", "Intro Theme Description")
+    INTRO_THEME_PRESENT = Field("intro_theme_present", "Introduction Novel Theme Present")
+    INTRO_THEME_KEY = Field("intro_theme_key", "Introduction Novel Theme Key")
+    INTRO_THEME_DESCRIPTION = Field("intro_theme_description", "Introduction Theme Description")
 
-    ENDING_KEY = Field("ending_key", "Ending Key")
-    ENDING_CADENCE = Field("ending_cadence", "Ending Cadence")
+    ENDING_KEY = Field("ending_key", "Introduction Ending Key")
+    ENDING_CADENCE = Field("ending_cadence", "Introduction Ending Cadence")
 
     @classmethod
     def absolute_key_fields(cls) -> Set[Field]:
@@ -357,11 +357,12 @@ class Introduction(SonataBlockTableSpecification):
         return [
             (cls.ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
-
+            (cls.MEASURES, SQLType.TEXT),
             (cls.INTRODUCTION_TYPE, SQLType.TEXT),
-            (cls.OPENING_KEY, SQLType.TEXT),
             (cls.OPENING_TEMPO, SQLType.TEXT),
-            (cls.KEYS_TONICIZED, SQLType.JSONB),  # JSONArray
+            (cls.OPENING_KEY, SQLType.TEXT),
+
+            (cls.INTRODUCTION_KEYS, SQLType.JSONB),  # JSONArray
             (cls.P_THEME_FORESHADOWED, SQLType.BOOLEAN),
             (cls.TR_THEME_FORESHADOWED, SQLType.BOOLEAN),
             (cls.S_THEME_FORESHADOWED, SQLType.BOOLEAN),
@@ -389,23 +390,28 @@ class Exposition(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_exposition")
 
-    NUM_CYCLES = Field("num_cycles", "Num Cycles")  # does not include literal exposition repeats -- see sonata method
-    OPENING_TEMPO = Field("opening_tempo", "Opening Tempo")
+    # Recap will override the display names on all of these
+    NUM_CYCLES = Field("num_cycles", "Exposition Number of Cycles")  # does not include literal exposition repeats
+    MEASURES = Field("measures", "Exposition Measures")
+    OPENING_TEMPO = Field("opening_tempo", "Exposition Opening Tempo")
 
     # P
+    P_THEME_MEASURES = Field("p_theme_measures", "P Theme Measures")
     P_THEME_KEY = Field("p_theme_key", "P Theme Key")
     P_THEME_DESCRIPTION = Field("p_theme_description", "P Theme Description")
     P_THEME_PHRASE_STRUCTURE = Field("p_theme_phrase_structure", "P Theme Phrase Structure")
+    P_THEME_OTHER_KEYS = Field("p_theme_other_keys", "P Theme Other Keys")
     P_THEME_ENDING_KEY = Field("p_theme_ending_key", "P Theme Ending Key")
     P_THEME_ENDING_CADENCE = Field("p_theme_ending_cadence", "P Theme Ending Cadence")
 
     # TR
     TR_THEME_PRESENT = Field("tr_theme_present", "TR Theme Present")
+    TR_THEME_MEASURES = Field("tr_theme_measures", "TR Theme Measures")
     TR_THEME_OPENING_KEY = Field("tr_theme_opening_key", "TR Theme Opening Key")
     TR_THEME_DESCRIPTION = Field("tr_theme_description", "TR Theme Description")
+    TR_THEME_P_BASED = Field("tr_theme_p_based", "TR Theme P-Based")
     TR_THEME_PHRASE_STRUCTURE = Field("tr_theme_phrase_structure", "TR Theme Phrase Structure")
-
-    # TR Drive to MC
+    TR_THEME_OTHER_KEYS = Field("tr_theme_other_keys", "TR Theme Other Keys")
     TR_THEME_CHROMATIC_PREDOMINANT = Field("tr_theme_chromatic_predominant", "TR Theme Chromatic Predominant")
     TR_THEME_DOMINANT_LOCK = Field("tr_theme_dominant_lock", "TR Theme Dominant Lock")
     TR_THEME_ENERGY = Field("tr_theme_energy", "TR Theme Energy")
@@ -415,30 +421,34 @@ class Exposition(SonataBlockTableSpecification):
 
     # MC
     MC_PRESENT = Field("mc_present", "MC Present")
-    MC_VARIANT = Field("mc_variant", "MC Variant")
+    MC_MEASURES = Field("mc_measures", "MC Measure(s)")
+    MC_TYPE = Field("mc_type", "MC Type")
 
     # S
     S_THEME_PRESENT = Field("s_theme_present", "S Theme Present")
+    S_THEME_MEASURES = Field("s_theme_measures", "S Theme Measures")
     S_THEME_KEY = Field("s_theme_key", "S Theme Key")
     S_THEME_DESCRIPTION = Field("s_theme_description", "S Theme Description")
     S_THEME_P_BASED = Field("s_theme_p_based", "S Theme P-Based")
     S_THEME_PHRASE_STRUCTURE = Field("s_theme_phrase_structure", "S Theme Phrase Structure")
+    S_THEME_OTHER_KEYS = Field("s_theme_other_keys", "S Theme Other Keys")
     S_THEME_ENDING_KEY = Field("s_theme_ending_key", "S Theme Ending Key")
     S_THEME_ENDING_CADENCE = Field("s_theme_ending_cadence", "S Theme Ending Cadence")
 
     # EEC
-
-    # Naming raw name with both EEC and ESC so Recap can truly inherit all fields from Exposition
-    # Only its display name will be different
+    # Note: naming raw name with both EEC and ESC so Recap can truly inherit all fields from Exposition
+    # Only its display name will be different for Recap
     EEC_ESC_PRESENT = Field("eec_esc_present", "EEC Present")
     EEC_ESC_FAKE_OUT_COUNT = Field("eec_esc_fake_out_count", "EEC Fake Outs")
     EEC_ESC_STRENGTH = Field("eec_esc_strength", "EEC Strength")
 
     # C
     C_THEME_PRESENT = Field("c_theme_present", "C Theme Present")
+    C_THEME_MEASURES = Field("c_theme_measures", "C Theme Measures")
     C_THEME_KEY = Field("c_theme_key", "C Theme Key")
     C_THEME_DESCRIPTION = Field("c_theme_description", "C Theme Description")
     C_THEME_P_BASED = Field("c_theme_p_based", "C Theme P-Based")
+    C_THEME_OTHER_KEYS = Field("c_theme_other_keys", "C Theme Other Keys")
     C_THEME_PHRASE_STRUCTURE = Field("c_theme_phrase_structure", "C Theme Phrase Structure")
     C_THEME_ENDING_KEY = Field("c_theme_ending_key", "C Theme Ending Key")
 
@@ -446,30 +456,37 @@ class Exposition(SonataBlockTableSpecification):
     def absolute_key_fields(cls) -> Set[Field]:
         return {
             cls.P_THEME_KEY,
+            cls.P_THEME_OTHER_KEYS,
             cls.P_THEME_ENDING_KEY,
             cls.TR_THEME_OPENING_KEY,
+            cls.TR_THEME_OTHER_KEYS,
             cls.TR_THEME_ENDING_KEY,
             cls.S_THEME_KEY,
+            cls.S_THEME_OTHER_KEYS,
             cls.S_THEME_ENDING_KEY,
             cls.C_THEME_KEY,
+            cls.C_THEME_OTHER_KEYS,
             cls.C_THEME_ENDING_KEY
         }
 
-    # Helper methods so the recap can easily insert new attribtues over everything in the exposition
+    # Helper methods so the recap can easily insert new attributes after or before phases of the exposition
     @classmethod
     def _general_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
+            (cls.MEASURES, SQLType.TEXT),
             (cls.OPENING_TEMPO, SQLType.TEXT),
         ]
 
     @classmethod
     def _p_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
+            (cls.P_THEME_MEASURES, SQLType.TEXT),
             (cls.P_THEME_KEY, SQLType.TEXT),
             (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.P_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.P_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
         ]
@@ -478,30 +495,42 @@ class Exposition(SonataBlockTableSpecification):
     def _tr_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.TR_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.TR_THEME_MEASURES, SQLType.TEXT),
             (cls.TR_THEME_OPENING_KEY, SQLType.TEXT),
+            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.TR_THEME_OTHER_KEYS, SQLType.TEXT),  # JSONArray
             (cls.TR_THEME_CHROMATIC_PREDOMINANT, SQLType.BOOLEAN),
             (cls.TR_THEME_DOMINANT_LOCK, SQLType.BOOLEAN),
             (cls.TR_THEME_ENERGY, SQLType.TEXT),
             (cls.TR_THEME_HAMMER_BLOW_COUNT, SQLType.INTEGER),
             (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
+
+        ]
+
+    @classmethod
+    def _mc_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
+        return [
             (cls.MC_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
-            (cls.MC_VARIANT, SQLType.TEXT),
+            (cls.MC_MEASURES, SQLType.TEXT),
+            (cls.MC_TYPE, SQLType.TEXT),
         ]
 
     @classmethod
     def _s_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.S_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.S_THEME_MEASURES, SQLType.TEXT),
             (cls.S_THEME_KEY, SQLType.TEXT),
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.S_THEME_P_BASED, SQLType.TEXT),
             (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.S_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
-            (cls.EEC_ESC_PRESENT, SQLType.BOOLEAN),
+            (cls.EEC_ESC_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.EEC_ESC_FAKE_OUT_COUNT, SQLType.INTEGER),
             (cls.EEC_ESC_STRENGTH, SQLType.TEXT),
         ]
@@ -511,9 +540,11 @@ class Exposition(SonataBlockTableSpecification):
         return [
             (cls.C_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.C_THEME_KEY, SQLType.TEXT),
+            (cls.C_THEME_MEASURES, SQLType.TEXT),
             (cls.C_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.C_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.C_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.C_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
         ]
 
@@ -524,6 +555,7 @@ class Exposition(SonataBlockTableSpecification):
             cls._general_field_sql_type_list(),
             cls._p_field_sql_type_list(),
             cls._tr_field_sql_type_list(),
+            cls._mc_field_sql_type_list(),
             cls._s_field_sql_type_list(),
             cls._c_field_sql_type_list()
         ]
@@ -544,15 +576,15 @@ class Development(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_development")
 
-    NUM_CYCLES = Field("num_cycles", "Number of Cycles")
-
+    NUM_CYCLES = Field("num_cycles", "Development Number of Cycles")
+    MEASURES = Field("measures", "Development Measures")
     DEVELOPMENT_TYPE = Field("development_type", "Development Type")
-    OPENING_KEY = Field("opening_key", "Opening Key")
     OPENING_TEMPO = Field("opening_tempo", "Opening Tempo")
-    KEYS_TONICIZED = Field("keys_tonicized", "Keys Tonicized")  # a JSONArray of all keys tonicized in the development
+    OPENING_KEY = Field("opening_key", "Development Opening Key")
+    DEVELOPMENT_KEYS = Field("development_keys", "Development Keys")  # JSONArray of all keys tonicized
 
     # Episodes
-    NUM_EPISODES = Field("num_episodes", "Episodes")
+    NUM_EPISODES = Field("num_episodes", "Development Episodes")
     EPISODE_DESCRIPTIONS = Field("episode_descriptions", "Episode Descriptions")
     EPISODE_TONAL_MAP = Field("episode_tonal_map", "Episode Tonal Map")  # a map of episode to the keys used
     EPISODE_THEME_MAP = Field("episode_theme_map",
@@ -565,9 +597,8 @@ class Development(SonataBlockTableSpecification):
     C_THEME_DEVELOPED = Field("c_theme_developed", "C Theme Developed")
 
     # Development Theme
-    DEVELOPMENT_THEME_PRESENT = Field("development_theme_present",
-                                      "Development Theme Present")  # whether the development contains a novel theme
-    DEVELOPMENT_THEME_KEY = Field("development_theme_key", "Development Theme Key")
+    DEVELOPMENT_THEME_PRESENT = Field("development_theme_present", "Development Novel Theme Present")
+    DEVELOPMENT_THEME_KEY = Field("development_theme_key", "Development Novel Theme Key")
     DEVELOPMENT_THEME_DESCRIPTION = Field("Development Theme Description")
 
     # Retransition
@@ -579,9 +610,9 @@ class Development(SonataBlockTableSpecification):
     def absolute_key_fields(cls) -> Set[Field]:
         return {
             cls.OPENING_KEY,
+            cls.DEVELOPMENT_KEYS,
             cls.DEVELOPMENT_THEME_KEY,
             cls.RETRANSITION_ENDING_KEY,
-            cls.KEYS_TONICIZED,
         }
 
     @classmethod
@@ -589,11 +620,12 @@ class Development(SonataBlockTableSpecification):
         return [
             (cls.ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
-
+            (cls.MEASURES, SQLType.TEXT),
             (cls.DEVELOPMENT_TYPE, SQLType.TEXT),
-            (cls.OPENING_KEY, SQLType.TEXT),
             (cls.OPENING_TEMPO, SQLType.TEXT),
-            (cls.KEYS_TONICIZED, SQLType.JSONB),  # JSONArray
+            (cls.OPENING_KEY, SQLType.TEXT),
+
+            (cls.DEVELOPMENT_KEYS, SQLType.JSONB),  # JSONArray
 
             # Episodes
             (cls.NUM_EPISODES, SQLType.INTEGER),
@@ -633,7 +665,10 @@ class Recapitulation(Exposition):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_recapitulation")
 
-    NUM_CYCLES = Field("num_cycles")  # does not include literal recap + development repeats -- see sonata method
+    # Override the display names on these exposition attributes
+    NUM_CYCLES = Field("num_cycles", "Recapitulation Number of Cycles")  # does not include literal exposition repeats
+    MEASURES = Field("measures", "Recapitulation Measures")
+    OPENING_TEMPO = Field("opening_tempo", "Recapitulation Opening Tempo")
 
     # P
     P_THEME_PRESENT = Field("p_theme_present", "P Theme Present")  # Type 2 Sonatas don't recap P
@@ -647,7 +682,7 @@ class Recapitulation(Exposition):
 
     # ESC
 
-    # Override the display name so the column display will work
+    # Override the display name since EEC vs ESC only core sonata thing named differently between the two halfs
     EEC_ESC_PRESENT = Field("eec_esc_present", "ESC Present")
     EEC_ESC_FAKE_OUT_COUNT = Field("eec_esc_fake_out_count", "ESC Fake Outs")
     EEC_ESC_STRENGTH = Field("eec_esc_strength", "ESC Strength")
@@ -672,6 +707,11 @@ class Recapitulation(Exposition):
             cls._tr_field_sql_type_list(),
             [
                 (cls.TR_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+            ],
+
+            cls._mc_field_sql_type_list(),
+            [
+
             ],
 
             cls._s_field_sql_type_list(),
@@ -701,24 +741,25 @@ class Coda(SonataBlockTableSpecification):
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_coda")
 
-    NUM_CYCLES = Field("num_cycles", "Number of Cycles")
+    NUM_CYCLES = Field("num_cycles", "Coda Number of Cycles")
+    MEASURES = Field("measures", "Coda Measures")
+    CODA_TYPE = Field("coda_type", "Coda Type")
+    OPENING_TEMPO = Field("opening_tempo", "Coda Opening Tempo")
+    OPENING_KEY = Field("opening_key", "Coda Opening Key")
 
-    INTRODUCTION_TYPE = Field("coda_type", "Coda Type")
-    OPENING_KEY = Field("opening_key", "Opening Key")
-    OPENING_TEMPO = Field("opening_tempo", "Opening Tempo")
-    KEYS_TONICIZED = Field("keys_tonicized", "Keys Tonicized")  # a JSONArray of keys tonicized
+    CODA_OTHER_KEYS = Field("coda_keys", "Coda Other Keys")  # a JSONArray of keys tonicized
     P_THEME_RECALLED = Field("p_theme_recalled", "P Theme Recalled")
     TR_THEME_RECALLED = Field("tr_theme_recalled", "TR Theme Recalled")
     S_THEME_RECALLED = Field("s_theme_recalled", "S Theme Recalled")
     C_THEME_RECALLED = Field("c_theme_recalled", "C Theme Recalled")
 
     # Coda Theme
-    CODA_THEME_PRESENT = Field("coda_theme_present", "Coda Theme Present")  # whether the coda contains a novel theme
-    CODA_THEME_KEY = Field("coda_theme_key", "Coda Theme Key")
-    CODA_THEME_DESCRIPTION = Field("coda_theme_description", "Coda Theme Description")
+    CODA_THEME_PRESENT = Field("coda_theme_present", "Coda Novel Theme Present")
+    CODA_THEME_KEY = Field("coda_theme_key", "Coda Novel Theme Key")
+    CODA_THEME_DESCRIPTION = Field("coda_theme_description", "Coda Novel Theme Description")
 
-    ENDING_KEY = Field("ending_key", "Ending Key")
-    ENDING_CADENCE = Field("ending_cadence", "Ending Cadence")
+    ENDING_KEY = Field("ending_key", "Coda Ending Key")
+    ENDING_CADENCE = Field("ending_cadence", "Coda Ending Cadence")
 
     @classmethod
     def absolute_key_fields(cls) -> Set[Field]:
@@ -733,11 +774,12 @@ class Coda(SonataBlockTableSpecification):
         return [
             (cls.ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
-
-            (cls.INTRODUCTION_TYPE, SQLType.TEXT),
-            (cls.OPENING_KEY, SQLType.TEXT),
+            (cls.MEASURES, SQLType.TEXT),
+            (cls.CODA_TYPE, SQLType.TEXT),
             (cls.OPENING_TEMPO, SQLType.TEXT),
-            (cls.KEYS_TONICIZED, SQLType.JSONB),  # JSONArray
+            (cls.OPENING_KEY, SQLType.TEXT),
+
+            (cls.CODA_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.P_THEME_RECALLED, SQLType.BOOLEAN),
             (cls.TR_THEME_RECALLED, SQLType.BOOLEAN),
             (cls.S_THEME_RECALLED, SQLType.BOOLEAN),

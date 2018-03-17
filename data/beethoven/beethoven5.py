@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 from datetime import date
-from typing import Dict, Any
 
 from data.composers import Beethoven
-from enums.key_enums import Key
 from database_design.sonata_data_classes import PieceDataClass, SonataDataClass
-from enums.sonata_enums import PieceType, SonataType, Cadence, EnergyChange, PhraseStructure, \
-    MedialCaesura
-from database_design.sonata_table_specs import Piece, Sonata, Exposition, Recapitulation, Development, Coda
+from database_design.sonata_table_specs import *
+from enums.key_enums import Key
+from enums.sonata_enums import *
 from general_utils.sql_utils import Field
 
 
@@ -55,9 +53,15 @@ class Beethoven5_1(SonataDataClass):
         }
 
     @classmethod
+    def introduction_attribute_dict(cls) -> Dict[Field, Any]:
+        return {}
+
+    @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Exposition.OPENING_TEMPO:                  "Allegro con brio",
+
+            Exposition.P_THEME_MEASURES:               measure_number_range(1, 21),
             Exposition.P_THEME_KEY:                    Key.C_MINOR,
             Exposition.P_THEME_PHRASE_STRUCTURE:       PhraseStructure.SENTENCE,
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
@@ -70,7 +74,7 @@ class Beethoven5_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_KEY:            Key.E_FLAT_MAJOR,
             # Uses A dim7 / C as vii˚7/B-flat
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
-            Exposition.MC_VARIANT:                     MedialCaesura.GENERAL_PAUSE,
+            Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE,
 
             Exposition.S_THEME_KEY:                    Key.E_FLAT_MAJOR,
             Exposition.S_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
@@ -86,7 +90,7 @@ class Beethoven5_1(SonataDataClass):
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Development.OPENING_KEY:             Key.F_MINOR,
-            Development.KEYS_TONICIZED:          [
+            Development.DEVELOPMENT_KEYS:        [
                 Key.F_MINOR,
                 Key.C_MINOR,
                 Key.G_MINOR,
@@ -141,6 +145,10 @@ class Beethoven5_4(SonataDataClass):
         }
 
     @classmethod
+    def introduction_attribute_dict(cls) -> Dict[Field, Any]:
+        return {}
+
+    @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Exposition.OPENING_TEMPO:                  "Allegro",
@@ -153,15 +161,13 @@ class Beethoven5_4(SonataDataClass):
             Exposition.TR_THEME_DOMINANT_LOCK:         True,
             Exposition.TR_THEME_ENDING_KEY:            Key.G_MAJOR,
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
-            Exposition.MC_VARIANT:                     MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.MC_TYPE:                        MedialCaesura.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_PRESENT:                True,
             Exposition.S_THEME_KEY:                    Key.G_MAJOR,
             Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
             Exposition.EEC_ESC_PRESENT:                False,
 
-            Exposition.C_THEME_PRESENT:                True,
             Exposition.C_THEME_KEY:                    Key.G_MAJOR,
             Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
         }
@@ -170,7 +176,7 @@ class Beethoven5_4(SonataDataClass):
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Development.OPENING_KEY:             Key.A_MAJOR,
-            Development.KEYS_TONICIZED:          [
+            Development.DEVELOPMENT_KEYS:        [
                 Key.A_MAJOR,
                 Key.A_MINOR,
                 Key.F_MAJOR,
