@@ -17,13 +17,24 @@ class Field(sql.Identifier):
     """
     A composable instance for a field that allows it to work as an element in a query using psycopg's sql module.
 
-    This is a clone of sql.Identifier except that it is hashable (as the unquoted string value).
-    This usefully allows us to store sets or dicts of Fields as if they were strings.
+    This is a clone of sql.Identifier except that it allows for an optional display name and it is hashable (as the
+    unquoted string value). This usefully allows us to store sets or dicts of Fields as if they were strings.
 
-    Note that by subclassesing Identifier directly we inherit its useful ability to properly quote things with escaping.
-    Because all of our field names will be cased, this is especially important and thus all fields should always be
-    encased in double quotes.
+    Note that by subclassing Identifier directly we inherit its useful ability to properly quote things with escaping.
     """
+    def __init__(self, name: str, display_name: Union[str, None] = None):
+        """
+        Constructs a field with a raw name and an optional display name.
+
+        If no display_name is provided, then we will use the raw_name as the display name.
+
+        :param name: the name of the field (required)
+        :param display_name: the display name (optional)
+        """
+        # This assigned the name to be "_wrapped"
+        super().__init__(name)
+
+        self._display_name = display_name if display_name is not None else name
 
     def __hash__(self):
         """
@@ -39,6 +50,14 @@ class Field(sql.Identifier):
         :return: the field name
         """
         return self._wrapped
+
+    @property
+    def display_name(self) -> str:
+        """
+        Returns the display name of the field
+        :return:
+        """
+        return self._display_name
 
 
 class Schema(sql.Identifier):
@@ -357,16 +376,9 @@ class TableError(Exception):
 
 
 if __name__ == '__main__':
-    with LocalhostCursor() as cur:
-        print(Field("Hello").as_string(cur))
-        print(SQLType.TEXT.as_string(cur))
+    with LocalhostCursor(dict_cursor=True) as cur:
+        cur.execute("SELECT * FROM sonata_archives.column_display")
+        a = cur.fetchone()
+        print(dict(a))
+        print(**a)
 
-        st = SchemaTable("a", "b")
-        l = [(Field("Hello"), SQLType.TEXT),
-             (Field("Bob"), SQLType.NUMERIC_WITH_PRECISION_SCALE(3, 2))]
-        print(create_table_from_field_sql_type_tuples(st, l).as_string(cur))
-
-        a = SQLType.TEXT
-        b = SQLType.TEXT
-
-        print(a == b)

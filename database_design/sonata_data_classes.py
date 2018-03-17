@@ -119,7 +119,8 @@ class PieceDataClass(DataClass, ABC):
         if Piece.FULL_NAME not in piece_dict:
             piece_dict[Piece.FULL_NAME] = cls.create_full_name(name=piece_dict.get(Piece.NAME),
                                                                catalogue_id=piece_dict.get(Piece.CATALOGUE_ID),
-                                                               nickname=piece_dict.get(Piece.NICKNAME))
+                                                               nickname=piece_dict.get(Piece.NICKNAME),
+                                                               global_key=piece_dict.get(Piece.GLOBAL_KEY))
             # Note: using .get() instead of [] so no key error if not there
 
         # Use postgres's brand-new ON CONFLICT framework that allows for upserting
@@ -132,27 +133,34 @@ class PieceDataClass(DataClass, ABC):
         cur.execute(upsert_sql)
 
     @classmethod
-    def create_full_name(cls, name: str, catalogue_id: Union[str, None], nickname: Union[str, None]):
+    def create_full_name(cls, name: str, catalogue_id: Union[str, None] = None, nickname: Union[str, None] = None,
+                         global_key: Union[KeyStruct, None] = None):
         """
-        Given the name, catalogue_id and nickname, creates the full name for the piece
+        Given the name, catalogue_id, nickname and global key, creates the full name for the piece
 
-        :param name: the name of the piece
-        :param catalogue_id: the catalogue id, like opus no
-        :param nickname: the nickname
+        :param name: the str name of the piece, like Symphony No. 5 (required)
+        :param catalogue_id: the str catalogue id, like Opus No. (optional)
+        :param nickname: the str nickname (optional)
+        :param global_key: the global key of the piece, stored in a KeyStruct (optional)
         :return: a string like <piece_name> "<nickname>", <catalogue_id> or parts of this if the latter two are blank.
-        Will raise an exception if all 3 are blank
+        Will raise an exception if all name is blank or None, or if global key was not a KeyStruct
         """
 
         if name is None or name == "":
             raise Exception("The piece must have a name and it was left blank or None")
-        elif (catalogue_id is None or catalogue_id == "") and (nickname is None or nickname == ""):
-            return name
-        elif catalogue_id is None or catalogue_id == "":
-            return "{} \"{}\"".format(name, nickname)
-        elif nickname is None or nickname == "":
-            return "{}, {}".format(name, catalogue_id)
-        else:
-            return "{}, {} \"{}\"".format(name, catalogue_id, nickname)
+
+        full_name = name
+        if global_key is not None:
+            validate_is_key_struct(global_key)
+            full_name = "{} in {}".format(full_name, global_key.key_name_with_major_implied)
+
+        if catalogue_id is not None:
+            full_name = "{}, {}".format(full_name, catalogue_id)
+
+        if nickname is not None:
+            full_name = "{} \"{}\"".format(full_name, nickname)
+
+        return full_name
 
 
 class SonataDataClass(DataClass, ABC):

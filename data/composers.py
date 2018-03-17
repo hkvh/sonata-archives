@@ -278,7 +278,7 @@ class Mendelssohn(ComposerDataClass):
         return {
             Composer.ID:                "mendelssohn",
             Composer.SURNAME:           "Mendelssohn",
-            Composer.FULL_NAME:         "Jakob Ludwig Felix Mendelssohn Bartholdy",
+            Composer.FULL_NAME:         "Jakob Ludwig Felix Mendelssohn-Bartholdy",
             Composer.BIRTH_DATE:        date(1809, 2, 3),
             Composer.DEATH_DATE:        date(1847, 11, 4),
             Composer.NATIONALITY:       "German",

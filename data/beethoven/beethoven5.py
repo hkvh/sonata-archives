@@ -57,29 +57,29 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.OPENING_TEMPO:                              "Allegro con brio",
-            Exposition.P_THEME_KEY:                                Key.C_MINOR,
-            Exposition.P_THEME_PHRASE_STRUCTURE:                   PhraseStructure.SENTENCE,
-            Exposition.P_THEME_ENDING_CADENCE:                     Cadence.HC,
+            Exposition.OPENING_TEMPO:                  "Allegro con brio",
+            Exposition.P_THEME_KEY:                    Key.C_MINOR,
+            Exposition.P_THEME_PHRASE_STRUCTURE:       PhraseStructure.SENTENCE,
+            Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
 
-            Exposition.TR_THEME_OPENING_KEY:                       Key.C_MINOR,
-            Exposition.TR_THEME_CHROMATICALLY_ALTERED_PREDOMINANT: False,
-            Exposition.TR_THEME_HAMMER_BLOW_COUNT:                 2,
-            Exposition.TR_THEME_ENERGY:                            EnergyChange.ENERGY_GAIN_CRESCENDO,
-            Exposition.TR_THEME_DOMINANT_LOCK:                     False,
-            Exposition.TR_THEME_ENDING_KEY:                        Key.E_FLAT_MAJOR,
+            Exposition.TR_THEME_OPENING_KEY:           Key.C_MINOR,
+            Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
+            Exposition.TR_THEME_HAMMER_BLOW_COUNT:     2,
+            Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_GAIN_CRESCENDO,
+            Exposition.TR_THEME_DOMINANT_LOCK:         False,
+            Exposition.TR_THEME_ENDING_KEY:            Key.E_FLAT_MAJOR,
             # Uses A dim7 / C as vii˚7/B-flat
-            Exposition.TR_THEME_ENDING_CADENCE:                    Cadence.HC_V6,
-            Exposition.MC_VARIANT:                                 MedialCaesura.GENERAL_PAUSE,
+            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
+            Exposition.MC_VARIANT:                     MedialCaesura.GENERAL_PAUSE,
 
-            Exposition.S_THEME_KEY:                                Key.E_FLAT_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:                         Key.E_FLAT_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:                     Cadence.PAC_MAJOR,
-            Exposition.EEC_ESC_PRESENT:                            True,
+            Exposition.S_THEME_KEY:                    Key.E_FLAT_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
+            Exposition.EEC_ESC_PRESENT:                True,
 
-            Exposition.C_THEME_KEY:                                Key.E_FLAT_MAJOR,
-            Exposition.C_THEME_P_BASED:                            True,
-            Exposition.C_THEME_ENDING_KEY:                         Key.E_FLAT_MAJOR,
+            Exposition.C_THEME_KEY:                    Key.E_FLAT_MAJOR,
+            Exposition.C_THEME_P_BASED:                True,
+            Exposition.C_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
         }
 
     @classmethod
@@ -143,27 +143,27 @@ class Beethoven5_4(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.OPENING_TEMPO:                              "Allegro",
-            Exposition.P_THEME_KEY:                                Key.C_MAJOR,
+            Exposition.OPENING_TEMPO:                  "Allegro",
+            Exposition.P_THEME_KEY:                    Key.C_MAJOR,
 
-            Exposition.TR_THEME_OPENING_KEY:                       Key.C_MAJOR,
-            Exposition.TR_THEME_PHRASE_STRUCTURE:                  PhraseStructure.COMPOUND_SENTENCE,
-            Exposition.TR_THEME_CHROMATICALLY_ALTERED_PREDOMINANT: False,
-            Exposition.TR_THEME_ENERGY:                            EnergyChange.ENERGY_STASIS_FORTE,
-            Exposition.TR_THEME_DOMINANT_LOCK:                     True,
-            Exposition.TR_THEME_ENDING_KEY:                        Key.G_MAJOR,
-            Exposition.TR_THEME_ENDING_CADENCE:                    Cadence.HC,
-            Exposition.MC_VARIANT:                                 MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.TR_THEME_OPENING_KEY:           Key.C_MAJOR,
+            Exposition.TR_THEME_PHRASE_STRUCTURE:      PhraseStructure.COMPOUND_SENTENCE,
+            Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
+            Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
+            Exposition.TR_THEME_DOMINANT_LOCK:         True,
+            Exposition.TR_THEME_ENDING_KEY:            Key.G_MAJOR,
+            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
+            Exposition.MC_VARIANT:                     MedialCaesura.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_PRESENT:                            True,
-            Exposition.S_THEME_KEY:                                Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:                         Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:                     Cadence.HC,
-            Exposition.EEC_ESC_PRESENT:                            False,
+            Exposition.S_THEME_PRESENT:                True,
+            Exposition.S_THEME_KEY:                    Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
+            Exposition.EEC_ESC_PRESENT:                False,
 
-            Exposition.C_THEME_PRESENT:                            True,
-            Exposition.C_THEME_KEY:                                Key.G_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:                         Key.C_MINOR,
+            Exposition.C_THEME_PRESENT:                True,
+            Exposition.C_THEME_KEY:                    Key.G_MAJOR,
+            Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
         }
 
     @classmethod

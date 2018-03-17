@@ -120,20 +120,20 @@ class KeyStruct(object):
     AEOLIAN = "Aeolian"
     LOCRIAN = "Locrian"
 
-    def __init__(self, tonic_name: str, tonic_pitch_class: int, minor: bool = False):
+    def __init__(self, tonic_name: str, tonic_pitch_class: int, is_minor: bool = False):
         """
         Instantiates a KeyStruct with a tonic name and tonic pitch class (0-11) and whether it should be major or minor.
 
         :param tonic_name: the name of the tonic key (use non-ASCII chars for ♭ and ♯)
         :param tonic_pitch_class: the tonic's pitch class, a number from 0 - 11 where 0 = C, 1 = C♯ ... 11 = B
-        :param minor: whether this should be minor instead of major, defaults to False.
+        :param is_minor: whether this should be minor instead of major, defaults to False.
         """
         validate_pitch_class(tonic_pitch_class)
         self._tonic_pitch_class = tonic_pitch_class
 
         self._tonic_name = tonic_name
-        self._minor = minor
-        self._mode = self.MINOR if minor else self.MAJOR
+        self._is_minor = is_minor
+        self._mode = self.MINOR if is_minor else self.MAJOR
 
     @property
     def key_name(self):
@@ -142,6 +142,18 @@ class KeyStruct(object):
         :return: the key name
         """
         return "{} {}".format(self._tonic_name, self._mode)
+
+    @property
+    def key_name_with_major_implied(self):
+        """
+        Often major keys are implied (i.e. Symphony in D) so this will get the key name but suppress the "Major"
+
+        :return: the key's tonic pitch and then "minor" if is_minor, but nothing if it's major
+        """
+        if self.is_minor:
+            return self.key_name
+        else:
+            return self._tonic_name
 
     @property
     def tonic_pitch_class(self) -> int:
@@ -174,7 +186,16 @@ class KeyStruct(object):
 
         # Compute the relative pitch_class by subtracting in modulo-12 arithmetic
         relative_pitch_class = (self.tonic_pitch_class - tonic_key.tonic_pitch_class) % 12
-        return RelativeKey.get_relative_key(relative_pitch_class, self._minor)
+        return RelativeKey.get_relative_key(relative_pitch_class, self._is_minor)
+
+    @property
+    def is_minor(self) -> bool:
+        """
+        Returns whether self is minor or not
+
+        :return: True if is minor, False if not
+        """
+        return self._is_minor
 
 
 def validate_is_key_struct(param) -> None:
@@ -193,45 +214,45 @@ class Key(object):
     An enum for all 30 (non-double flat or double sharp) keys (leveraging the KeyStructs)
     """
     C_MAJOR = KeyStruct('C', 0)
-    C_MINOR = KeyStruct('C', 0, minor=True)
+    C_MINOR = KeyStruct('C', 0, is_minor=True)
 
     C_SHARP_MAJOR = KeyStruct('C♯', 1)
-    C_SHARP_MINOR = KeyStruct('C♯', 1, minor=True)
+    C_SHARP_MINOR = KeyStruct('C♯', 1, is_minor=True)
     D_FLAT_MAJOR = KeyStruct('D♭', 1)
 
     D_MAJOR = KeyStruct('D', 2)
-    D_MINOR = KeyStruct('D', 2, minor=True)
+    D_MINOR = KeyStruct('D', 2, is_minor=True)
 
-    D_SHARP_MINOR = KeyStruct('D♯', 3, minor=True)
+    D_SHARP_MINOR = KeyStruct('D♯', 3, is_minor=True)
     E_FLAT_MAJOR = KeyStruct('E♭', 3)
-    E_FLAT_MINOR = KeyStruct('E♭', 3, minor=True)
+    E_FLAT_MINOR = KeyStruct('E♭', 3, is_minor=True)
 
     E_MAJOR = KeyStruct('E', 4)
-    E_MINOR = KeyStruct('E', 4, minor=True)
+    E_MINOR = KeyStruct('E', 4, is_minor=True)
 
     F_MAJOR = KeyStruct('F', 5)
-    F_MINOR = KeyStruct('F', 5, minor=True)
+    F_MINOR = KeyStruct('F', 5, is_minor=True)
 
     F_SHARP_MAJOR = KeyStruct('F♯', 6)
-    F_SHARP_MINOR = KeyStruct('F♯', 6, minor=True)
+    F_SHARP_MINOR = KeyStruct('F♯', 6, is_minor=True)
     G_FLAT_MAJOR = KeyStruct('G♭', 6)
 
     G_MAJOR = KeyStruct('G', 7)
-    G_MINOR = KeyStruct('G', 7, minor=True)
+    G_MINOR = KeyStruct('G', 7, is_minor=True)
 
-    G_SHARP_MINOR = KeyStruct('G♯', 8, minor=True)
+    G_SHARP_MINOR = KeyStruct('G♯', 8, is_minor=True)
     A_FLAT_MAJOR = KeyStruct('A♭', 8)
-    A_FLAT_MINOR = KeyStruct('A♭', 8, minor=True)
+    A_FLAT_MINOR = KeyStruct('A♭', 8, is_minor=True)
 
     A_MAJOR = KeyStruct('A', 9)
-    A_MINOR = KeyStruct('A', 9, minor=True)
+    A_MINOR = KeyStruct('A', 9, is_minor=True)
 
-    A_SHARP_MINOR = KeyStruct('A♯', 10, minor=True)
+    A_SHARP_MINOR = KeyStruct('A♯', 10, is_minor=True)
     B_FLAT_MAJOR = KeyStruct('B♭', 10)
-    B_FLAT_MINOR = KeyStruct('B♭', 10, minor=True)
+    B_FLAT_MINOR = KeyStruct('B♭', 10, is_minor=True)
 
     B_MAJOR = KeyStruct('B', 11)
-    B_MINOR = KeyStruct('B', 11, minor=True)
+    B_MINOR = KeyStruct('B', 11, is_minor=True)
     C_FLAT_MAJOR = KeyStruct('C♭', 11)
 
 

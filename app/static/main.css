@@ -1,72 +1,110 @@
+/***** All Pages *****/
+
 p {
     font-size: 14px;
 }
 
-.composers li {
-    font-size: 16px;
-}
-
-.pieces li {
-    font-size: 16px;
-}
-
-col.composer_attributes_key  {
-    width: 175px
-}
-
-col.composer_attributes_value {
-    width: 500px
-}
-
-col.piece_attributes_key  {
-    width: 190px
-}
-
-col.piece_attributes_value {
-    width: 700px
-}
-
-table.sonata_attributes {
-    table-layout: fixed;
-}
-
-col.sonata_attributes_key  {
-    width: 210px
-}
-
-col.sonata_attributes_value {
-    width: 300px
-}
-
-table.sonata_block_attributes {
-    table-layout: fixed;
-}
-
-col.sonata_block_attributes_key  {
-    width: 250px
-}
-
-col.sonata_block_attributes_value {
-    width: 200px
-}
-
-td.right_align {
-    text-align: right;
+td {
+    padding: 1px;
 }
 
 h1.composer_surname {
     font-size: 36px;
 }
 
-h2.piece_attributes {
-    font-size: 28px;
-    margin-bottom: 20px;
+tr:hover {
+    background-color: #f2f2f2;
+}
 
+/**** Index ***/
+
+
+/***** Composers *****/
+
+h1.composers {
+    font-size: 32px;
+}
+
+.composers li {
+    font-size: 16px;
+}
+
+/***** Composer *****/
+
+h2.composer_attributes {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+col.composer_attributes_key {
+    width: 250px;
+}
+
+col.composer_attributes_value {
+    width: 450px;
+}
+
+h2.composer_attributes {
+    margin-bottom: 15px;
+}
+
+h2.pieces {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.pieces li {
+    font-size: 16px;
+}
+
+
+
+/***** Piece *****/
+
+h2.piece_attributes {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+col.piece_attributes_key {
+    width: 190px;
+}
+
+col.piece_attributes_value {
+    width: 200px;
 }
 
 h3.sonata_name {
     font-size: 26px;
     margin-bottom: 30px;
+}
+
+table.sonata_attributes {
+    table-layout: fixed;
+}
+
+col.sonata_attributes_key {
+    width: 220px;
+}
+
+col.sonata_attributes_value {
+    width: 250px;
+}
+
+table.sonata_block_attributes {
+    table-layout: fixed;
+}
+
+col.sonata_block_attributes_key {
+    width: 250px;
+}
+
+col.sonata_block_attributes_value {
+    width: 200px;
+}
+
+td.right_align {
+    text-align: right;
 }
 
 h4.sonata_block_attributes {
@@ -80,17 +118,19 @@ table.sonata_block_attributes {
 
 #sonata_attribute_box {
     float: left;
-    width: 50%
+    width: 50%;
 }
+
 #sonata_image_box {
     float: left;
-    width: 50%
+    width: 50%;
 }
 
 .container {
     margin-bottom: 40px;
 }
- /*Clear floats after the columns */
+
+/*Clear floats after the columns */
 .container:after {
     content: "";
     display: table;
@@ -106,10 +146,10 @@ hr {
 /* Uncomment this to see the div border */
 
 /*div {*/
-    /*border: 1px dashed red;*/
-    /*margin-bottom: 10px;*/
+/*border: 1px dashed red;*/
+/*margin-bottom: 10px;*/
 /*}*/
 
 /*table {*/
-    /*border: 1px dashed blue;*/
+/*border: 1px dashed blue;*/
 /*}*/

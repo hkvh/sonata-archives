@@ -9,12 +9,14 @@ import logging
 import os
 
 from psycopg2 import extensions, sql
+from psycopg2.extras import execute_values
 
 from database_design.sonata_data_classes import DataClass
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
-    Recapitulation, Coda, sonata_archives_schema
+    Recapitulation, Coda, sonata_archives_schema, ColumnDisplay
 from directories import DATA_DIR, ROOT_DIR
 from general_utils.postgres_utils import LocalhostCursor
+from general_utils.sql_utils import execute_values_insert_query
 
 log = logging.getLogger(__name__)
 
@@ -42,8 +44,9 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
     log.info("\n\n" + create_schema_sql.as_string(cursor) + "\n")
     cursor.execute(create_schema_sql)
 
-    # Loop over all objects twice to both create them and add their constraints
+    # Loop over all table specs objects twice to both create them and add their constraints
     sonata_table_specs = [
+        ColumnDisplay,
         Composer,
         Piece,
         Introduction,
@@ -63,6 +66,21 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
         create_constraint_sql = table.create_constraints_sql()
         log.info("\n" + create_constraint_sql.as_string(cursor) + "\n")
         cursor.execute(create_constraint_sql)
+
+    # Finally, the column display table can now be filled, since it only depends on the Fields of the other tables
+    # Loop through all tables (excluding the first column display table)
+    for table in sonata_table_specs[1:]:
+
+        # Get all fields in the table (as Field objects)
+        fields = [x[0] for x in table.field_sql_type_list()]
+
+        # For each field in the table, create tuples of type (table_name, field.name, field.display_name)
+        data = [(table.schema_table().table.string, field.name, field.display_name) for field in fields]
+        print(data)
+        # Batch insert them
+        insert_query = execute_values_insert_query(ColumnDisplay.schema_table())
+        log.info(insert_query.as_string(cursor))
+        execute_values(cursor, insert_query.as_string(cursor), data)
 
 
 def upsert_all_data(cursor: extensions.cursor) -> None:

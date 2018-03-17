@@ -6,7 +6,7 @@ from flask_bootstrap import Bootstrap
 from psycopg2 import sql
 
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
-    Recapitulation, Coda
+    Recapitulation, Coda, ColumnDisplay
 from general_utils.postgres_utils import LocalhostCursor
 
 log = logging.getLogger(__name__)
@@ -33,6 +33,13 @@ def composers():
 
         cur.execute(select_comps_query)
         comp_tuples = cur.fetchall()
+
+        # Create "Surname, Firstname" format by splitting on " "
+        comp_tuples = [(comp_id, "{}, {}".format(comp_fn.split(' ')[-1], ' '.join(comp_fn.split(' ')[:-1])))
+                       for comp_id, comp_fn in comp_tuples]
+
+        # Sort by the name
+        comp_tuples.sort(key=lambda x: x[1])
 
     return render_template('composers.html', composer_id_name_tuples=comp_tuples)
 
@@ -64,7 +71,6 @@ def composer(composer_id: str):
                     composer_st=Composer.schema_table())
         cur.execute(select_comp_info_query)
 
-        # TODO Have display names for all fields
         comp_info_dict = dict(cur.fetchone())
 
         # Remove information that we don't want to display
@@ -86,6 +92,15 @@ def composer(composer_id: str):
 
         cur.execute(select_comp_pieces_query)
         piece_tuples = cur.fetchall()
+
+        # Sort by the name
+        piece_tuples.sort(key=lambda x: x[1])
+
+        # Change info dict to have display name keys instead of raw field name keys
+        comp_info_dict = ColumnDisplay.create_new_dict_with_display_name_keys(
+            cursor=cur,
+            table_name=Composer.schema_table().table.string,
+            dict_with_column_name_keys=comp_info_dict)
 
     return render_template('composer.html',
                            composer_id=composer_id,
@@ -125,7 +140,10 @@ def piece(composer_id: str, piece_id: str):
     # Use a dict cursor to have each record return a dict instead of a tuple
     with LocalhostCursor(dict_cursor=True) as cur:
 
-        # #### Piece Info Dict and Piece Name ####
+        ###################################
+        #  Piece Info Dict and Piece Name #
+        ###################################
+
         select_piece_info_query = sql.SQL("""
             SELECT *
             FROM {piece_st}
@@ -146,11 +164,19 @@ def piece(composer_id: str, piece_id: str):
         piece_name = piece_info_dict.pop(Piece.FULL_NAME.string)
         composer_id_of_piece = piece_info_dict.pop(Piece.COMPOSER_ID.string)
 
+        # Change info dict to have display name keys instead of raw field name keys
+        piece_info_dict = ColumnDisplay.create_new_dict_with_display_name_keys(
+            cursor=cur,
+            table_name=Piece.schema_table().table.string,
+            dict_with_column_name_keys=piece_info_dict)
+
         if composer_id != composer_id_of_piece:
             raise Exception("Bad composer id \"{}\" in URL! Piece with id \"{}\" should have composer id \"{}\""
                             "".format(composer_id, piece_id, composer_id_of_piece))
 
-        # #### Composer Surname ####
+        ####################
+        # Composer Surname #
+        ####################
         select_comp_surname_query = sql.SQL("""
                         SELECT {surname}
                         FROM {composer_st}
@@ -162,7 +188,9 @@ def piece(composer_id: str, piece_id: str):
         cur.execute(select_comp_surname_query)
         composer_surname = cur.fetchone()[0]
 
-        # ### Sonatas Info Dict
+        ######################
+        # Sonatas Info Dicts #
+        ######################
         select_sonatas_query = sql.SQL("""
                          SELECT *
                          FROM {sonata_st}
@@ -178,9 +206,10 @@ def piece(composer_id: str, piece_id: str):
         sonatas_blocks_info_dict = {}
         sonatas_lilypond_image_settings_dict = {}
 
-        for result in cur:
-            sonata_info_dict = dict(result)
+        sonatas_data = cur.fetchall()
 
+        for result in sonatas_data:
+            sonata_info_dict = dict(result)
             # Remove information that we don't want to display (grab various ids and info we need while popping)
             sonata_info_dict.pop(Sonata.PIECE_ID.string)
 
@@ -192,6 +221,12 @@ def piece(composer_id: str, piece_id: str):
             recap_id = sonata_info_dict.pop(Sonata.RECAPITULATION_ID.string)
             coda_id = sonata_info_dict.pop(Sonata.CODA_ID.string)
             lilypond_image_settings = sonata_info_dict.pop(Sonata.LILYPOND_IMAGE_SETTINGS.string)
+
+            # Change info dict to have display name keys instead of raw field name keys
+            sonata_info_dict = ColumnDisplay.create_new_dict_with_display_name_keys(
+                cursor=cur,
+                table_name=Sonata.schema_table().table.string,
+                dict_with_column_name_keys=sonata_info_dict)
 
             # Movement Number 0 means the piece is itself a sonata
             if movement_num == 0:
@@ -218,7 +253,9 @@ def piece(composer_id: str, piece_id: str):
             block_ids = [intro_id, expo_id, dev_id, recap_id, coda_id]
             block_table_specs = [Introduction, Exposition, Development, Recapitulation, Coda]
 
-            # #### Sonatas Blocks Info Dict ####
+            #############################
+            # Sonatas Blocks Info Dicts #
+            #############################
             for block_id, block_table_spec in zip(block_ids, block_table_specs):
 
                 # if there is no block id, that means the block is missing, so we can skip
@@ -240,20 +277,26 @@ def piece(composer_id: str, piece_id: str):
                         # Remove information that we don't want to display
                         sonata_block_info_dict.pop(block_table_spec.ID.string)
 
+                        # Change info dict to have display name keys instead of raw field name keys
+                        sonata_block_info_dict = ColumnDisplay.create_new_dict_with_display_name_keys(
+                            cursor=cur,
+                            table_name=block_table_spec.schema_table().table.string,
+                            dict_with_column_name_keys=sonata_block_info_dict)
+
                         sonatas_blocks_info_dict[sonata_name][block_name] = sonata_block_info_dict
 
         log.debug('sonatas_lilypond_image_settings_dict: {}'.format(sonatas_lilypond_image_settings_dict))
 
-        return render_template('piece.html',
-                               composer_id=composer_id,
-                               composer_surname=composer_surname,
-                               piece_name=piece_name,
-                               piece_info_dict=piece_info_dict,
-                               sonatas_info_dict=sonatas_info_dict,
-                               sonatas_blocks_info_dict=sonatas_blocks_info_dict,
-                               sonatas_lilypond_image_settings_dict=sonatas_lilypond_image_settings_dict,
-                               IMAGE_PATH=Sonata.IMAGE_PATH,
-                               IMAGE_WIDTH=Sonata.IMAGE_WIDTH)
+    return render_template('piece.html',
+                           composer_id=composer_id,
+                           composer_surname=composer_surname,
+                           piece_name=piece_name,
+                           piece_info_dict=piece_info_dict,
+                           sonatas_info_dict=sonatas_info_dict,
+                           sonatas_blocks_info_dict=sonatas_blocks_info_dict,
+                           sonatas_lilypond_image_settings_dict=sonatas_lilypond_image_settings_dict,
+                           IMAGE_PATH=Sonata.IMAGE_PATH,
+                           IMAGE_WIDTH=Sonata.IMAGE_WIDTH)
 
 
 if __name__ == '__main__':
