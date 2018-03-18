@@ -5,6 +5,7 @@ from data.composers import Beethoven
 from database_design.sonata_data_classes import PieceDataClass, SonataDataClass
 from database_design.sonata_table_specs import *
 from enums.key_enums import Key
+from enums.measure_enums import *
 from enums.sonata_enums import *
 from general_utils.sql_utils import Field
 
@@ -56,7 +57,7 @@ class Beethoven2_1(SonataDataClass):
     @classmethod
     def introduction_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Introduction.MEASURES:                measure_number_range(1, 33),
+            Introduction.MEASURES:                MeasureRange(1, 33),
             Introduction.OPENING_TEMPO:           "Adagio molto",
             Introduction.OPENING_KEY:             Key.D_MAJOR,
             Introduction.INTRODUCTION_OTHER_KEYS: [
@@ -69,10 +70,10 @@ class Beethoven2_1(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.MEASURES:                   measure_number_range(34, 133),
+            Exposition.MEASURES:                   MeasureRange(34, 133),
             Exposition.OPENING_TEMPO:              "Allegro con brio",
 
-            Exposition.P_THEME_MEASURES:           measure_number_range(34, 57),
+            Exposition.P_THEME_MEASURES:           MeasureRange(34, 57),
             Exposition.P_THEME_PHRASE_STRUCTURE: {
                 'P1': PhraseStructure.COMPOUND_SENTENCE,
             },
@@ -80,7 +81,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.P_THEME_ENDING_KEY:         Key.D_MINOR,
             Exposition.P_THEME_ENDING_CADENCE:     Cadence.IAC_V6_i,
 
-            Exposition.TR_THEME_MEASURES:          measure_number_range(57, 71),
+            Exposition.TR_THEME_MEASURES:          MeasureRange(57, 71),
             # Debating whether to start TR on A minor section at m. 61
             # (would be similar to recap recap D minor start at m. 233
             # – no other recap option since no m. 57-60 corresponding measures)
@@ -93,9 +94,9 @@ class Beethoven2_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:    Cadence.HC,
 
             Exposition.MC_TYPE:                    MedialCaesura.CAESURA_FILL_CASCADE,
-            Exposition.MC_MEASURES:                measure_number_range(71, 72),
+            Exposition.MC_MEASURES:                MeasureRange(71, 72),
 
-            Exposition.S_THEME_MEASURES:           measure_number_range(73, 112),
+            Exposition.S_THEME_MEASURES:           MeasureRange(73, 112),
             Exposition.S_THEME_PHRASE_STRUCTURE:   {
                 'S1':   PhraseStructure.COMPOUND_PERIOD_OF_PERIODS,
             },
@@ -105,7 +106,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.EEC_ESC_PRESENT:            True,
             Exposition.EEC_ESC_STRENGTH:           "Flute plays soprano 3ˆ, but otherwise feels like strong PAC",
 
-            Exposition.C_THEME_MEASURES:           measure_number_range(112, 133),
+            Exposition.C_THEME_MEASURES:           MeasureRange(112, 133),
             Exposition.C_THEME_OPENING_KEY:        Key.A_MAJOR,
             Exposition.C_THEME_OTHER_KEYS:         [Key.D_MINOR],
             Exposition.C_THEME_P_BASED:            True,
@@ -115,7 +116,7 @@ class Beethoven2_1(SonataDataClass):
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.MEASURES:                   measure_number_range(134, 216),
+            Development.MEASURES:                   MeasureRange(134, 216),
             Development.OPENING_KEY:                Key.D_MINOR,
             Development.DEVELOPMENT_ENDING_KEY:     Key.D_MAJOR,
             Development.DEVELOPMENT_ENDING_CADENCE: Cadence.PAC_MAJOR
@@ -127,26 +128,26 @@ class Beethoven2_1(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict()
 
         recap_changes = {
-            Recapitulation.MEASURES:                        measure_number_range(216, 298),
+            Recapitulation.MEASURES:                        MeasureRange(216, 298),
 
-            Recapitulation.P_THEME_MEASURES:                measure_number_range(216, 233),
+            Recapitulation.P_THEME_MEASURES:                MeasureRange(216, 233),
             Recapitulation.P_THEME_ENDING_KEY:              Key.D_MAJOR,
             Recapitulation.P_THEME_ENDING_CADENCE:          Cadence.HC,
 
-            Recapitulation.TR_THEME_MEASURES:               measure_number_range(233, 243),
+            Recapitulation.TR_THEME_MEASURES:               MeasureRange(233, 243),
             Recapitulation.TR_THEME_OPENING_KEY:            Key.D_MINOR,
 
             Recapitulation.TR_THEME_ENDING_KEY:             Key.D_MINOR,
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR Theme beginning elided",
             # If decide to move exposition TR to m. 61, then TR exactly like recap
 
-            Recapitulation.MC_MEASURES:                     measure_number_range(243, 244),
+            Recapitulation.MC_MEASURES:                     MeasureRange(243, 244),
 
-            Recapitulation.S_THEME_MEASURES:                measure_number_range(245, 284),
+            Recapitulation.S_THEME_MEASURES:                MeasureRange(245, 284),
             Recapitulation.S_THEME_OPENING_KEY:             Key.D_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.D_MAJOR,
 
-            Recapitulation.C_THEME_MEASURES:                measure_number_range(284, 305),
+            Recapitulation.C_THEME_MEASURES:                MeasureRange(284, 305),
             Exposition.C_THEME_OPENING_KEY:                 Key.D_MAJOR,
             Exposition.C_THEME_OTHER_KEYS:                  [Key.G_MINOR],
             Exposition.C_THEME_ENDING_KEY:                  Key.D_MAJOR
@@ -158,7 +159,7 @@ class Beethoven2_1(SonataDataClass):
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Coda.MEASURES:    measure_number_range(306, 360),
+            Coda.MEASURES:    MeasureRange(306, 360),
             Coda.OPENING_KEY: Key.G_MAJOR,
             Coda.ENDING_KEY:  Key.D_MAJOR,
         }

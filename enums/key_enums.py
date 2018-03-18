@@ -163,12 +163,6 @@ class KeyStruct(object):
         """
         return self._tonic_pitch_class
 
-    def __str__(self) -> str:
-        """
-        Override built-in to return key_name
-        """
-        return self.key_name
-
     def __repr__(self) -> str:
         """
         Override built-in to return key_name

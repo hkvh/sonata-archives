@@ -11,6 +11,7 @@ from psycopg2 import sql, extensions
 from enums.key_enums import KeyStruct, validate_is_key_struct
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, SonataBlockTableSpecification
+from enums.measure_enums import validate_is_measure_range
 from general_utils.sql_utils import Field, upsert_sql_from_field_value_dict
 
 log = logging.getLogger(__name__)
@@ -305,6 +306,31 @@ class SonataDataClass(DataClass, ABC):
         return new_obj
 
     @classmethod
+    def _convert_measure_ranges_to_counts(cls, obj):
+        """
+        Recursive helper method that traverses a scalar, dict or list object (or any composition of them) and
+        converts all measure ranges it finds to their counts. Assumes that all non-dict keys in the nested
+        structure were MeasureRange instances.
+
+        :param obj: the scalar KeyStruct, dict or list to operate on
+        :return: the object converted
+        :raises TypeError if any of the values of the dict / list were NOT MeasureRanges
+        """
+        if isinstance(obj, list):
+            new_obj = []
+            for x in obj:
+                new_obj.append(cls._convert_measure_ranges_to_counts(x))
+        elif isinstance(obj, dict):
+            new_obj = {}
+            for k, v in obj.items():
+                new_obj[k] = cls._convert_measure_ranges_to_counts(v)
+        else:
+            validate_is_measure_range(obj)  # Make sure any scalars are a key struct before trying to convert
+            new_obj = obj.count
+
+        return new_obj
+
+    @classmethod
     def augment_with_derived_fields(cls, attribute_dict: Dict[Field, Any],
                                     sonata_block_cls: Type[SonataBlockTableSpecification]) -> Dict[Field, Any]:
         """
@@ -312,9 +338,15 @@ class SonataDataClass(DataClass, ABC):
         we never instantiate those classes) and augments it with derived fields that can be built through
         the sonata block table spec class.
 
-        Right now the only derived fields we add are relative keys that correspond to absolute keys, so if any
-        attribute dict specifies an absolute key we will dynamically detect that and derive its relative key and add it
-        to the attribute dict to be inserted. (Will also detect Lists and Dicts and relativize everything inside them.)
+        Right now the only derived fields we add are:
+
+        1. Relative keys that correspond to absolute keys, so if any attribute dict specifies an absolute key we will
+        dynamically detect that and derive its relative key and add it to the attribute dict to be inserted. (Will
+        also detect Lists and Dicts and relativize everything inside them.)
+
+        2. Measure Counts that correspond to measure ranges, so if any attribute dict specifies a measure range we
+        will dynamically detect that and derive the counts and add it to the attribute dict to be inserted. (Will
+        also detect Lists and Dicts and relativize everything inside them.)
 
         :param attribute_dict: the attribute dict to augment
         :param sonata_block_cls: the class of the sonata block that we will use to add the derived fields
@@ -328,6 +360,10 @@ class SonataDataClass(DataClass, ABC):
             if field in sonata_block_cls.absolute_key_fields():
                 relative_key_field = sonata_block_cls.get_relative_from_absolute(field)
                 new_attribute_dict[relative_key_field] = cls._convert_absolute_to_relative(value)
+
+            if field in sonata_block_cls.measure_range_fields():
+                measure_count_field = sonata_block_cls.get_measure_count_from_measure_range(field)
+                new_attribute_dict[measure_count_field] = cls._convert_measure_ranges_to_counts(value)
 
         return new_attribute_dict
 

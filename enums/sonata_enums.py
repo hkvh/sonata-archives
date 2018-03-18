@@ -154,20 +154,5 @@ class MedialCaesura(object):
     CAESURA_FILL_CASCADE = "Caesura Fill Cascade"
 
 
-def measure_number_range(start_measure_num: int, end_measure_num: int):
-    """
-    Takes start and end measure numbers and turns them into a range
-
-    :param start_measure_num: the start measure (inclusive)
-    :param end_measure_num: the end measure (inclusive)
-    :return: a range string with both start and end measures
-    """
-    if start_measure_num > end_measure_num:
-        raise Exception("Start measure {} was greater than end measure {}".format(start_measure_num, end_measure_num))
-    if start_measure_num == end_measure_num:
-        return "m. {}".format(start_measure_num)
-    return "mm. {} - {}".format(start_measure_num, end_measure_num)
-
-
 if __name__ == '__main__':
     pass

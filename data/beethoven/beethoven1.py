@@ -5,6 +5,7 @@ from data.composers import Beethoven
 from database_design.sonata_data_classes import PieceDataClass, SonataDataClass
 from database_design.sonata_table_specs import *
 from enums.key_enums import Key
+from enums.measure_enums import *
 from enums.sonata_enums import *
 from general_utils.sql_utils import Field
 
@@ -55,7 +56,7 @@ class Beethoven1_1(SonataDataClass):
     @classmethod
     def introduction_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Introduction.MEASURES:                measure_number_range(1, 12),
+            Introduction.MEASURES:                MeasureRange(1, 12),
             Introduction.OPENING_TEMPO:           "Adagio molto",
             Introduction.OPENING_KEY:             Key.F_MAJOR,
             Introduction.INTRODUCTION_OTHER_KEYS: [Key.G_MAJOR],
@@ -65,16 +66,16 @@ class Beethoven1_1(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.MEASURES:                       measure_number_range(13, 109),
+            Exposition.MEASURES:                       MeasureRange(13, 109),
             Exposition.OPENING_TEMPO:                  "Allegro con brio",
 
-            Exposition.P_THEME_MEASURES:               measure_number_range(13, 33),
+            Exposition.P_THEME_MEASURES:               MeasureRange(13, 33),
             Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
             Exposition.P_THEME_PHRASE_STRUCTURE:       [PhraseStructure.COMPOUND_SENTENCE],
             Exposition.P_THEME_ENDING_KEY:             Key.C_MAJOR,
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
-            Exposition.TR_THEME_MEASURES:              measure_number_range(33, 52),
+            Exposition.TR_THEME_MEASURES:              MeasureRange(33, 52),
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MAJOR,
             Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_GAIN_CRESCENDO,
             Exposition.TR_THEME_DOMINANT_LOCK:         True,
@@ -84,16 +85,16 @@ class Beethoven1_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
 
             Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE,
-            Exposition.MC_MEASURES:                    measure_number_range(52, 52),
+            Exposition.MC_MEASURES:                    MeasureRange(52),
 
-            Exposition.S_THEME_MEASURES:               measure_number_range(53, 88),
+            Exposition.S_THEME_MEASURES:               MeasureRange(53, 88),
             Exposition.S_THEME_OPENING_KEY:            Key.G_MAJOR,
             Exposition.S_THEME_OTHER_KEYS:             [Key.G_MINOR],
             Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
             Exposition.EEC_ESC_PRESENT:                True,
 
-            Exposition.C_THEME_MEASURES:               measure_number_range(88, 109),
+            Exposition.C_THEME_MEASURES:               MeasureRange(88, 109),
             Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
             Exposition.C_THEME_P_BASED:                True,
         }
@@ -101,7 +102,7 @@ class Beethoven1_1(SonataDataClass):
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.MEASURES:                   measure_number_range(110, 178),
+            Development.MEASURES:                   MeasureRange(110, 178),
             Development.OPENING_KEY:                Key.A_MAJOR,
             Development.DEVELOPMENT_OTHER_KEYS:     [
                 Key.G_MAJOR,
@@ -123,24 +124,24 @@ class Beethoven1_1(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict()
 
         recap_changes = {
-            Recapitulation.MEASURES:                        measure_number_range(178, 298),
+            Recapitulation.MEASURES:                        MeasureRange(178, 298),
 
-            Recapitulation.P_THEME_MEASURES:                measure_number_range(178, 198),
+            Recapitulation.P_THEME_MEASURES:                MeasureRange(178, 198),
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "P1.3 extended and P1.4 elided",
             Recapitulation.P_THEME_ENDING_KEY:              Key.G_MAJOR,
 
-            Recapitulation.TR_THEME_MEASURES:               measure_number_range(198, 204),
+            Recapitulation.TR_THEME_MEASURES:               MeasureRange(198, 204),
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR Theme shortened and no exposition TR motives appear",
 
-            Recapitulation.MC_MEASURES:                     measure_number_range(204, 205),
+            Recapitulation.MC_MEASURES:                     MeasureRange(204, 205),
             Recapitulation.MC_TYPE:                         MedialCaesura.CAESURA_FILL,
 
-            Recapitulation.S_THEME_MEASURES:                measure_number_range(206, 241),
+            Recapitulation.S_THEME_MEASURES:                MeasureRange(206, 241),
             Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.S_THEME_OTHER_KEYS:              [Key.C_MINOR],
             Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
 
-            Recapitulation.C_THEME_MEASURES:                measure_number_range(241, 259),
+            Recapitulation.C_THEME_MEASURES:                MeasureRange(241, 259),
             Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
         }
 
@@ -150,7 +151,7 @@ class Beethoven1_1(SonataDataClass):
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Coda.MEASURES:        measure_number_range(259, 298),
+            Coda.MEASURES:        MeasureRange(259, 298),
             Coda.OPENING_KEY:     Key.F_MAJOR,
             Coda.CODA_OTHER_KEYS: [Key.D_MINOR],
             Coda.ENDING_KEY:      Key.C_MAJOR,

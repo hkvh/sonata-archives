@@ -250,6 +250,23 @@ class SonataBlockTableSpecification(TableSpecification):
     # All blocks must have the same ID column
     ID = Field("id")
 
+    @staticmethod
+    def get_relative_from_absolute(absolute_key_field: Field) -> Field:
+        """
+        Given a field name with the word 'key' implying absolute, dynamically replaces it with 'relative key'.
+
+        :param absolute_key_field: the name of the absolute key field. Must contain the word "key"
+        :return: a new Field with key switched out for relative key as its name
+        """
+        name = absolute_key_field.name
+        display_name = absolute_key_field.display_name
+
+        if 'key' not in name or 'Key' not in display_name:
+            raise Exception("Field {} with display_name {} marked as an absolute key field but didn't contain \"key\" "
+                            "in its name or \"Key\" in its display name!".format(name, display_name))
+        else:
+            return Field(name.replace('key', 'relative_key'), display_name=display_name.replace('Key', 'Relative Key'))
+
     @classmethod
     @abstractmethod
     def absolute_key_fields(cls) -> Set[Field]:
@@ -258,6 +275,34 @@ class SonataBlockTableSpecification(TableSpecification):
         corresponding relative key.
 
         :return: a set of fields corresponding to all the fields that are for absolute keys
+        """
+
+    @staticmethod
+    def get_measure_count_from_measure_range(measure_range_field: Field) -> Field:
+        """
+        Given a field name with the word 'measures', dynamically replaces it with 'measure count.
+
+        :param measure_range_field: the name of the measure range. Must contain the word "measures"
+        :return: a new Field with 'measures' switched out for 'measure count as its name
+        """
+        name = measure_range_field.name
+        display_name = measure_range_field.display_name
+
+        if 'measures' not in name or ('Measures' not in display_name and 'Measure(s)' not in display_name):
+            raise Exception("Field {} with display_name {} marked as a MeasureRange but didn't contain \"measures\" "
+                            "in its name or \"Measures\" in its display name!".format(name, display_name))
+        else:
+            return Field(name.replace('measures', 'measure_count'),
+                         display_name=display_name.replace('Measures', 'Measure Count'))
+
+    @classmethod
+    @abstractmethod
+    def measure_range_fields(cls) -> Set[Field]:
+        """
+        Returns a set of all measure range fields, which will be the set of fields for which we will add a
+        corresponding measure counts.
+
+        :return: a set of fields corresponding to all the fields that are for measure ranges.
         """
 
     @classmethod
@@ -271,29 +316,18 @@ class SonataBlockTableSpecification(TableSpecification):
         Any derived fields will change this order, however
         """
 
-    @staticmethod
-    def get_relative_from_absolute(absolute_key_field: Field) -> Field:
-        """
-        Given a field name with the word key, dynamically replaces it with relative key.
-        :param absolute_key_field: the name of the absolute key field. Must contain the word "key"
-        :return: a new Field with key switched out for relative key as its name
-        """
-        name = absolute_key_field.name
-        display_name = absolute_key_field.display_name
-
-        if 'key' not in name or 'Key' not in display_name:
-            raise Exception("Field {} marked as an absolute key field but didn't contain \"key\""
-                            "in its name or \"Key\" in its display name!".format(name))
-        else:
-            return Field(name.replace('key', 'relative_key'), display_name=display_name.replace('Key', 'Relative Key'))
-
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         """
         We override this to add in derived fields from the preliminary list created in the pre_derived field list.
 
-        Right now, the only derived fields are the relative keys built from every absolute key field specified in
-        absolute_key_fields using the staticmethod get_relative_from_absolute.
+        Right now, the only derived fields are:
+
+        1. The relative keys built from every absolute key field specified in absolute_key_fields using the
+        staticmethod get_relative_from_absolute.
+
+        2. The measure counts built from every measure range field specified in measure_range_fields using the
+        staticmethod get_measure_count_from_measure_range
 
         :return: a list of tuple pairs of fields with their sql type in the ordinal order that we want them in the table
         """
@@ -311,6 +345,14 @@ class SonataBlockTableSpecification(TableSpecification):
                                     "".format(field.name, cls.__name__, sql_type))
                 relative_key_field = cls.get_relative_from_absolute(field)
                 new_list.append((relative_key_field, sql_type))
+
+            if field in cls.measure_range_fields():
+                if sql_type != SQLType.TEXT and sql_type != SQLType.JSONB:
+                    raise Exception("Field \"{}\" in class {} was marked as a measure range, which means it "
+                                    "should have a SQLType of TEXT OR JSONB instead of {}"
+                                    "".format(field.name, cls.__name__, sql_type))
+                measure_count_field = cls.get_measure_count_from_measure_range(field)
+                new_list.append((measure_count_field, sql_type))
 
         return new_list
 
@@ -353,6 +395,12 @@ class Introduction(SonataBlockTableSpecification):
             cls.INTRO_THEME_KEY,
             cls.INTRODUCTION_OTHER_KEYS,
             cls.ENDING_KEY,
+        }
+
+    @classmethod
+    def measure_range_fields(cls) -> Set[Field]:
+        return {
+            cls.MEASURES,
         }
 
     @classmethod
@@ -471,6 +519,17 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_OPENING_KEY,
             cls.C_THEME_OTHER_KEYS,
             cls.C_THEME_ENDING_KEY
+        }
+    
+    @classmethod
+    def measure_range_fields(cls) -> Set[Field]:
+        return {
+            cls.MEASURES,
+            cls.P_THEME_MEASURES,
+            cls.TR_THEME_MEASURES,
+            cls.MC_MEASURES,
+            cls.S_THEME_MEASURES,
+            cls.C_THEME_MEASURES,
         }
 
     # Helper methods so the recap can easily insert new attributes after or before phases of the exposition
@@ -591,6 +650,7 @@ class Development(SonataBlockTableSpecification):
 
     # Episodes
     NUM_EPISODES = Field("num_episodes", "Development Episodes")
+    EPISODE_MEASURES = Field("episode_measures", "Episode Measures")  # a map of episode to a measure range
     EPISODE_DESCRIPTIONS = Field("episode_descriptions", "Episode Descriptions")
     EPISODE_TONAL_MAP = Field("episode_tonal_map", "Episode Tonal Map")  # a map of episode to the keys used
     EPISODE_THEME_MAP = Field("episode_theme_map",
@@ -620,6 +680,13 @@ class Development(SonataBlockTableSpecification):
             cls.DEVELOPMENT_THEME_KEY,
             cls.DEVELOPMENT_ENDING_KEY,
         }
+    
+    @classmethod
+    def measure_range_fields(cls) -> Set[Field]:
+        return {
+            cls.MEASURES,
+            cls.EPISODE_MEASURES,
+        }
 
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
@@ -635,6 +702,7 @@ class Development(SonataBlockTableSpecification):
 
             # Episodes
             (cls.NUM_EPISODES, SQLType.INTEGER),
+            (cls.EPISODE_MEASURES, SQLType.JSONB),
             (cls.EPISODE_DESCRIPTIONS, SQLType.JSONB),
             (cls.EPISODE_THEME_MAP, SQLType.JSONB),
             (cls.EPISODE_TONAL_MAP, SQLType.JSONB),
@@ -753,7 +821,7 @@ class Coda(SonataBlockTableSpecification):
     OPENING_TEMPO = Field("opening_tempo", "Coda Opening Tempo")
     OPENING_KEY = Field("opening_key", "Coda Opening Key")
 
-    CODA_OTHER_KEYS = Field("coda_keys", "Coda Other Key(s)")  # a JSONArray of keys tonicized
+    CODA_OTHER_KEYS = Field("coda_other_keys", "Coda Other Key(s)")  # a JSONArray of keys tonicized
     P_THEME_RECALLED = Field("p_theme_recalled", "P Theme Recalled")
     TR_THEME_RECALLED = Field("tr_theme_recalled", "TR Theme Recalled")
     S_THEME_RECALLED = Field("s_theme_recalled", "S Theme Recalled")
@@ -773,6 +841,12 @@ class Coda(SonataBlockTableSpecification):
             cls.OPENING_KEY,
             cls.CODA_THEME_KEY,
             cls.ENDING_KEY,
+        }
+
+    @classmethod
+    def measure_range_fields(cls) -> Set[Field]:
+        return {
+            cls.MEASURES
         }
 
     @classmethod
