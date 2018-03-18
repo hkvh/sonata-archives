@@ -129,6 +129,7 @@ class PhraseStructure(object):
     # Large (16+ measure) Phrase Units
     COMPOUND_PERIOD = "Compound Period"  # A large period where each ant + cons is a medium phrase structure
     COMPOUND_SENTENCE = "Compound Sentence"  # A large sentence where the presentation contains 2 compound BIs
+    COMPOUND_PERIOD_OF_PERIODS = "Compound Period (of Periods)"  # Compound Period where each halves are periods
 
 
 class EnergyChange(object):

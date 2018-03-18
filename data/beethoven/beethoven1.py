@@ -66,10 +66,11 @@ class Beethoven1_1(SonataDataClass):
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Exposition.MEASURES:                       measure_number_range(13, 109),
+            Exposition.OPENING_TEMPO:                  "Allegro con brio",
 
             Exposition.P_THEME_MEASURES:               measure_number_range(13, 33),
             Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
-            Exposition.P_THEME_PHRASE_STRUCTURE:       PhraseStructure.COMPOUND_SENTENCE,
+            Exposition.P_THEME_PHRASE_STRUCTURE:       [PhraseStructure.COMPOUND_SENTENCE],
             Exposition.P_THEME_ENDING_KEY:             Key.C_MAJOR,
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
@@ -89,6 +90,7 @@ class Beethoven1_1(SonataDataClass):
             Exposition.S_THEME_OPENING_KEY:            Key.G_MAJOR,
             Exposition.S_THEME_OTHER_KEYS:             [Key.G_MINOR],
             Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
             Exposition.EEC_ESC_PRESENT:                True,
 
             Exposition.C_THEME_MEASURES:               measure_number_range(88, 109),

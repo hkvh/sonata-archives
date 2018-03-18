@@ -454,6 +454,7 @@ class Exposition(SonataBlockTableSpecification):
     C_THEME_OTHER_KEYS = Field("c_theme_other_keys", "C Theme Other Key(s)")
     C_THEME_PHRASE_STRUCTURE = Field("c_theme_phrase_structure", "C Theme Phrase Structure")
     C_THEME_ENDING_KEY = Field("c_theme_ending_key", "C Theme Ending Key")
+    C_THEME_ENDING_CADENCE = Field("c_theme_ending_cadence", "C Theme Ending Cadence")
 
     @classmethod
     def absolute_key_fields(cls) -> Set[Field]:
@@ -488,7 +489,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.P_THEME_MEASURES, SQLType.TEXT),
             (cls.P_THEME_OPENING_KEY, SQLType.TEXT),
             (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
             (cls.P_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
@@ -502,7 +503,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.TR_THEME_OPENING_KEY, SQLType.TEXT),
             (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
             (cls.TR_THEME_OTHER_KEYS, SQLType.TEXT),  # JSONArray
             (cls.TR_THEME_CHROMATIC_PREDOMINANT, SQLType.BOOLEAN),
             (cls.TR_THEME_DOMINANT_LOCK, SQLType.BOOLEAN),
@@ -529,7 +530,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.S_THEME_OPENING_KEY, SQLType.TEXT),
             (cls.S_THEME_DESCRIPTION, SQLType.TEXT),
             (cls.S_THEME_P_BASED, SQLType.TEXT),
-            (cls.S_THEME_PHRASE_STRUCTURE, SQLType.TEXT),
+            (cls.S_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
             (cls.S_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
@@ -549,6 +550,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.C_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
             (cls.C_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
+            (cls.C_THEME_ENDING_CADENCE, SQLType.TEXT),
         ]
 
     # Builds this from all the private methods
