@@ -62,43 +62,42 @@ class Beethoven5_1(SonataDataClass):
             Exposition.OPENING_TEMPO:                  "Allegro con brio",
 
             Exposition.P_THEME_MEASURES:               measure_number_range(1, 21),
-            Exposition.P_THEME_KEY:                    Key.C_MINOR,
+            Exposition.P_THEME_OPENING_KEY:            Key.C_MINOR,
             Exposition.P_THEME_PHRASE_STRUCTURE:       PhraseStructure.SENTENCE,
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
 
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MINOR,
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
-            Exposition.TR_THEME_HAMMER_BLOW_COUNT:     2,
-            Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_GAIN_CRESCENDO,
-            Exposition.TR_THEME_DOMINANT_LOCK:         False,
-            Exposition.TR_THEME_ENDING_KEY:            Key.E_FLAT_MAJOR,
+            Exposition.TR_THEME_HAMMER_BLOW_COUNT: 2,
+            Exposition.TR_THEME_ENERGY:            EnergyChange.ENERGY_GAIN_CRESCENDO,
+            Exposition.TR_THEME_DOMINANT_LOCK:     False,
+            Exposition.TR_THEME_ENDING_KEY:     Key.E_FLAT_MAJOR,
             # Uses A dim7 / C as vii˚7/B-flat
-            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
-            Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE,
+            Exposition.TR_THEME_ENDING_CADENCE: Cadence.HC_V6,
+            Exposition.MC_TYPE:                 MedialCaesura.GENERAL_PAUSE,
 
-            Exposition.S_THEME_KEY:                    Key.E_FLAT_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
-            Exposition.EEC_ESC_PRESENT:                True,
+            Exposition.S_THEME_OPENING_KEY:     Key.E_FLAT_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:      Key.E_FLAT_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:  Cadence.PAC_MAJOR,
+            Exposition.EEC_ESC_PRESENT:         True,
 
-            Exposition.C_THEME_KEY:                    Key.E_FLAT_MAJOR,
-            Exposition.C_THEME_P_BASED:                True,
-            Exposition.C_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
+            Exposition.C_THEME_OPENING_KEY:     Key.E_FLAT_MAJOR,
+            Exposition.C_THEME_P_BASED:         True,
+            Exposition.C_THEME_ENDING_KEY:      Key.E_FLAT_MAJOR,
         }
 
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.OPENING_KEY:             Key.F_MINOR,
-            Development.DEVELOPMENT_KEYS:        [
+            Development.OPENING_KEY:            Key.F_MINOR,
+            Development.DEVELOPMENT_OTHER_KEYS:       [
                 Key.F_MINOR,
                 Key.C_MINOR,
                 Key.G_MINOR,
                 Key.C_MINOR,
                 Key.F_MINOR,
-                Key.C_MINOR,
             ],
-            Development.RETRANSITION_ENDING_KEY: Key.C_MINOR,
+            Development.DEVELOPMENT_ENDING_KEY: Key.C_MINOR,
         }
 
     @classmethod
@@ -108,9 +107,9 @@ class Beethoven5_1(SonataDataClass):
         recap_changes = {
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "Oboe has mournful Adagio interlude",
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "Reaches same C dim chord, but resolves differently",
-            Recapitulation.S_THEME_KEY:                     Key.C_MAJOR,
+            Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
-            Recapitulation.C_THEME_KEY:                     Key.C_MAJOR,
+            Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY:              Key.C_MAJOR,
             Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Final Cadence elided into onset of Coda"
         }
@@ -152,32 +151,31 @@ class Beethoven5_4(SonataDataClass):
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
             Exposition.OPENING_TEMPO:                  "Allegro",
-            Exposition.P_THEME_KEY:                    Key.C_MAJOR,
+            Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
 
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MAJOR,
             Exposition.TR_THEME_PHRASE_STRUCTURE:      PhraseStructure.COMPOUND_SENTENCE,
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
             Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
             Exposition.TR_THEME_DOMINANT_LOCK:         True,
-            Exposition.TR_THEME_ENDING_KEY:            Key.G_MAJOR,
-            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
-            Exposition.MC_TYPE:                        MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.TR_THEME_ENDING_KEY:     Key.G_MAJOR,
+            Exposition.TR_THEME_ENDING_CADENCE: Cadence.HC,
+            Exposition.MC_TYPE:                 MedialCaesura.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_KEY:                    Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
-            Exposition.EEC_ESC_PRESENT:                False,
+            Exposition.S_THEME_OPENING_KEY:     Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:      Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:  Cadence.HC,
+            Exposition.EEC_ESC_PRESENT:         False,
 
-            Exposition.C_THEME_KEY:                    Key.G_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
+            Exposition.C_THEME_OPENING_KEY:     Key.G_MAJOR,
+            Exposition.C_THEME_ENDING_KEY:      Key.C_MINOR,
         }
 
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.OPENING_KEY:             Key.A_MAJOR,
-            Development.DEVELOPMENT_KEYS:        [
-                Key.A_MAJOR,
+            Development.OPENING_KEY:            Key.A_MAJOR,
+            Development.DEVELOPMENT_OTHER_KEYS:       [
                 Key.A_MINOR,
                 Key.F_MAJOR,
                 Key.B_FLAT_MAJOR,
@@ -185,9 +183,8 @@ class Beethoven5_4(SonataDataClass):
                 Key.D_FLAT_MAJOR,
                 Key.C_MAJOR,
                 Key.G_MAJOR,
-                Key.C_MINOR,
             ],
-            Development.RETRANSITION_ENDING_KEY: Key.C_MINOR,
+            Development.DEVELOPMENT_ENDING_KEY: Key.C_MINOR,
 
         }
 
@@ -196,11 +193,11 @@ class Beethoven5_4(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict()
 
         recap_changes = {
-            Recapitulation.S_THEME_KEY:        Key.C_MAJOR,
-            Recapitulation.S_THEME_ENDING_KEY: Key.C_MAJOR,
+            Recapitulation.S_THEME_OPENING_KEY: Key.C_MAJOR,
+            Recapitulation.S_THEME_ENDING_KEY:  Key.C_MAJOR,
 
-            Recapitulation.C_THEME_KEY:        Key.C_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY: Key.C_MAJOR,
+            Recapitulation.C_THEME_OPENING_KEY: Key.C_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY:  Key.C_MAJOR,
         }
 
         recap_dict.update(recap_changes)

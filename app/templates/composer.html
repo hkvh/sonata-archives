@@ -1,26 +1,28 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-	<h1 class="composer_surname">{{ composer_surname }}</h1>
-	<hr>
-	<h2 class="composer_attributes">Biographical Information</h2>
-	<table class="composer_attributes">
-		<col class="composer_attributes_key">
-		<col class="composer_attributes_value">
-		{% for key, value in composer_info_dict.items() %}
-			<tr>
-				<td>{{ key }}</td>
-				<td>{{ value }}</td>
-			</tr>
-		{% endfor %}
-	</table>
-	<hr>
-	<h2 class="pieces">Pieces Analyzed </h2>
-	{% for piece_id, piece_name in piece_id_name_tuples %}
-		<ul class="pieces">
-			<li><a href="/composers/{{ composer_id }}/{{ piece_id }}">{{ piece_name }}</a></li>
-		</ul>
-	{% endfor %}
-	<hr>
+    <h1 class="composer_surname">{{ composer_surname }}</h1>
+    <hr>
+    <h2 class="composer_attributes">Biographical Information</h2>
+    <table class="composer_attributes">
+        <col class="composer_attributes_key">
+        <col class="composer_attributes_value">
+        {% for attribute, value in composer_info_dict.items() %}
+            {% if value is not none %}
+                <tr>
+                    <td>{{ attribute }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <hr>
+    <h2 class="pieces">Pieces Analyzed </h2>
+    {% for piece_id, piece_name in piece_id_name_tuples %}
+        <ul class="pieces">
+            <li><a href="/composers/{{ composer_id }}/{{ piece_id }}">{{ piece_name }}</a></li>
+        </ul>
+    {% endfor %}
+    <hr>
 {% endblock %}
 
