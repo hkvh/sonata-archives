@@ -19,6 +19,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="/index">Home</a></li>
+                    <li><a href="/pieces">Pieces</a></li>
                     <li><a href="/composers">Composers</a></li>
                     <li><a href="/composers/{{ composer_id }}">{{ composer_surname }}</a></li>
                 </ul>
@@ -44,17 +45,18 @@
         {% endfor %}
     </table>
     <hr>
-    {% for sonata_name in sonatas_info_dict %}
-
-        {% if sonata_name != 'Itself' %}
-            <h3 class="sonata_name"> {{ sonata_name }}</h3>
+    {% for movement_num in sonatas_info_dict %}
+        {# movement_num 0 means the piece is itself the sonata #}
+        {% if movement_num != 0 %}
+            <a name="{{ movement_num }}"></a>
+            <h3 class="sonata_name">Movement {{ movement_num }}</h3>
         {% endif %}
         <div class="container">
             <div id="sonata_attribute_box">
                 <table class="sonata_attributes">
                     <col class="sonata_attributes_key">
                     <col class="sonata_attributes_value">
-                    {% for attribute, value in sonatas_info_dict[sonata_name].items() %}
+                    {% for attribute, value in sonatas_info_dict[movement_num].items() %}
                         {% if value is not none %}
                             <tr>
                                 <td>{{ attribute }}</td>
@@ -63,12 +65,12 @@
                         {% endif %}
                     {% endfor %}
                 </table>
-                {% for block_name in sonatas_blocks_info_dict[sonata_name] %}
+                {% for block_name in sonatas_blocks_info_dict[movement_num] %}
                     <h4 class="sonata_block_attributes"> {{ block_name }}</h4>
                     <table class="sonata_block_attributes">
                         <col class=sonata_block_attributes_key>
                         <col class="sonata_block_attributes_value">
-                        {% for attribute, value in sonatas_blocks_info_dict[sonata_name][block_name].items() %}
+                        {% for attribute, value in sonatas_blocks_info_dict[movement_num][block_name].items() %}
                             {% if value is not none %}
 
                                 {% if value is mapping %} {# Check if dict #}
@@ -110,9 +112,9 @@
             </div>
             <div id="sonata_image_box">
 
-                {% if sonata_name in sonatas_lilypond_image_settings_dict %}
-                    <img src="{{ sonatas_lilypond_image_settings_dict[sonata_name][IMAGE_PATH] }}"
-                         width={{ sonatas_lilypond_image_settings_dict[sonata_name][IMAGE_WIDTH] }}>
+                {% if movement_num in sonatas_lilypond_image_settings_dict %}
+                    <img src="{{ sonatas_lilypond_image_settings_dict[movement_num][IMAGE_PATH] }}"
+                         width={{ sonatas_lilypond_image_settings_dict[movement_num][IMAGE_WIDTH] }}>
                 {% endif %}
             </div>
         </div>

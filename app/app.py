@@ -44,6 +44,55 @@ def composers():
     return render_template('composers.html', composer_id_name_tuples=comp_tuples)
 
 
+@app.route('/pieces')
+def pieces():
+    # The main goal for this method is to render pieces.html with the following:
+    #
+    # 1. pieces_comp_tuples: List[Tuple[str, str, str]]
+    # a list of tuples of (comp_id, piece_id, piece_name_with_composer) for all pieces analyzed
+    #
+    # 2. pieces_movements_dict: Dict[str, List[int]]
+    # a dict mapping piece id --> lists of the analyzed movement nums
+    # Use a dict cursor to have fetchone return a dict instead of a tuple
+
+    with LocalhostCursor() as cur:
+        select_pieces_query = sql.SQL("""
+                  SELECT comp.{comp_id}, piece.{piece_id}, 
+                         comp.{comp_surname} || ' ' || piece.{piece_full_name} as cfn
+                  FROM {piece_st} AS piece
+                  JOIN {comp_st} AS comp
+                  ON (piece.{piece_comp_id} = comp.{comp_id})
+                  ORDER BY cfn ASC;
+        """).format(piece_id=Piece.ID,
+                    piece_full_name=Piece.FULL_NAME,
+                    piece_comp_id=Piece.COMPOSER_ID,
+                    piece_st=Piece.schema_table(),
+                    comp_id=Composer.ID,
+                    comp_surname=Composer.SURNAME,
+                    comp_st=Composer.schema_table())
+
+        cur.execute(select_pieces_query)
+        pieces_comp_tuples = cur.fetchall()
+
+        select_pieces_movements_query = sql.SQL("""
+                    SELECT {sonata_piece_id}, {sonata_movement_num}
+                    FROM {sonata_st}
+                    ORDER BY {sonata_movement_num};
+        """).format(sonata_piece_id=Sonata.PIECE_ID,
+                    sonata_movement_num=Sonata.MOVEMENT_NUM,
+                    sonata_st=Sonata.schema_table())
+
+        cur.execute(select_pieces_movements_query)
+
+        pieces_movements_dict = {}
+        for piece_id, movement_num in cur:
+            movement_list = pieces_movements_dict.setdefault(piece_id, [])
+            movement_list.append(movement_num)
+
+    return render_template('pieces.html', pieces_comp_tuples=pieces_comp_tuples,
+                           pieces_movements_dict=pieces_movements_dict)
+
+
 @app.route('/composers/<composer_id>')
 def composer(composer_id: str):
     # The main goal for this method is to render composer.html with the following:
@@ -57,8 +106,11 @@ def composer(composer_id: str):
     # 3. comp_info_dict: Dict[str, Any]]
     # a dict that contains all composer-level attributes and values
     #
-    # 4. piece_tuples: List[Tuple[str, str]]
+    # 4. piece_id_name_tuples: List[Tuple[str, str]]
     # a list of tuples of (piece_id, piece_name) for all pieces for this composer
+    #
+    # 5. pieces_movements_dict: Dict[str, List[int]]
+    # a dict mapping piece id --> lists of the analyzed movement nums
 
     # Use a dict cursor to have fetchone return a dict instead of a tuple
     with LocalhostCursor(dict_cursor=True) as cur:
@@ -91,10 +143,10 @@ def composer(composer_id: str):
                     piece_st=Piece.schema_table())
 
         cur.execute(select_comp_pieces_query)
-        piece_tuples = cur.fetchall()
+        piece_id_name_tuples = cur.fetchall()
 
         # Sort by the name
-        piece_tuples.sort(key=lambda x: x[1])
+        piece_id_name_tuples.sort(key=lambda x: x[1])
 
         # Change info dict to have display name keys instead of raw field name keys
         comp_info_dict = ColumnDisplay.create_new_dict_with_display_name_keys(
@@ -102,11 +154,35 @@ def composer(composer_id: str):
             table_name=Composer.schema_table().table.string,
             dict_with_column_name_keys=comp_info_dict)
 
+        select_pieces_movements_query = sql.SQL("""
+                            SELECT s.{sonata_piece_id}, s.{sonata_movement_num}
+                            FROM {sonata_st} AS s
+                            JOIN {piece_st} AS p
+                            ON s.{sonata_piece_id} = p.{piece_id} 
+                            WHERE p.{piece_comp_id} = {composer_id}
+                            ORDER BY s.{sonata_movement_num};
+                """).format(sonata_piece_id=Sonata.PIECE_ID,
+                            sonata_movement_num=Sonata.MOVEMENT_NUM,
+                            sonata_comp_id=Sonata.PIECE_ID,
+                            piece_id=Piece.ID,
+                            piece_comp_id=Piece.COMPOSER_ID,
+                            composer_id=sql.Literal(composer_id),
+                            piece_st=Piece.schema_table(),
+                            sonata_st=Sonata.schema_table())
+
+        cur.execute(select_pieces_movements_query)
+
+        pieces_movements_dict = {}
+        for piece_id, movement_num in cur:
+            movement_list = pieces_movements_dict.setdefault(piece_id, [])
+            movement_list.append(movement_num)
+
     return render_template('composer.html',
                            composer_id=composer_id,
                            composer_surname=composer_surname,
                            composer_info_dict=comp_info_dict,
-                           piece_id_name_tuples=piece_tuples)
+                           piece_id_name_tuples=piece_id_name_tuples,
+                           pieces_movements_dict=pieces_movements_dict)
 
 
 @app.route('/composers/<composer_id>/<piece_id>')
@@ -126,14 +202,14 @@ def piece(composer_id: str, piece_id: str):
     # a dict of piece-level attribtues and values
     #
     # 5. sonatas_info_dict: Dict[str, Dict[str, Any]]
-    # a dict that maps sonata names to dicts of sonata-level attributes and values
+    # a dict that maps movement_num to dicts of sonata-level attributes and values
     #
     # 6. sonatas_lilypond_image_settings_dict: Dict[str, Dict[str, Any]]
-    # a dict that maps sonata names to an image settings dict containing settings for the lilypond file
+    # a dict that maps movement_num to an image settings dict containing settings for the lilypond file
     # Right now, the only setting it should have is "image_width"
     #
     # 7. sonatas_blocks_info_dict: Dict[str, Dict[str, Dict[str, Any]]]
-    # nested dicts that map sonata_name --> block name --> block-level dict of attributes and values
+    # nested dicts that map movement_num --> block name --> block-level dict of attributes and values
     #
     # If sonata name = 'Itself' then this means the piece is a single-movement work that is the sonata
 
@@ -228,13 +304,7 @@ def piece(composer_id: str, piece_id: str):
                 table_name=Sonata.schema_table().table.string,
                 dict_with_column_name_keys=sonata_info_dict)
 
-            # Movement Number 0 means the piece is itself a sonata
-            if movement_num == 0:
-                sonata_name = 'Itself'
-            else:
-                sonata_name = 'Movement {}'.format(movement_num)
-
-            sonatas_info_dict[sonata_name] = sonata_info_dict
+            sonatas_info_dict[movement_num] = sonata_info_dict
 
             # If settings to the lilypond image were provided for this sonata, we should expect the image to exist
             if lilypond_image_settings is not None:
@@ -246,9 +316,9 @@ def piece(composer_id: str, piece_id: str):
                 if Sonata.IMAGE_WIDTH not in lilypond_image_settings:
                     lilypond_image_settings[Sonata.IMAGE_WIDTH] = 400
 
-                sonatas_lilypond_image_settings_dict[sonata_name] = lilypond_image_settings
+                sonatas_lilypond_image_settings_dict[movement_num] = lilypond_image_settings
 
-            sonatas_blocks_info_dict[sonata_name] = {}
+            sonatas_blocks_info_dict[movement_num] = {}
 
             block_ids = [intro_id, expo_id, dev_id, recap_id, coda_id]
             block_table_specs = [Introduction, Exposition, Development, Recapitulation, Coda]
@@ -283,7 +353,7 @@ def piece(composer_id: str, piece_id: str):
                             table_name=block_table_spec.schema_table().table.string,
                             dict_with_column_name_keys=sonata_block_info_dict)
 
-                        sonatas_blocks_info_dict[sonata_name][block_name] = sonata_block_info_dict
+                        sonatas_blocks_info_dict[movement_num][block_name] = sonata_block_info_dict
 
         log.debug('sonatas_lilypond_image_settings_dict: {}'.format(sonatas_lilypond_image_settings_dict))
 

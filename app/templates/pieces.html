@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1 class="all_pieces">Pieces</h1>
+    <hr>
+    <p>The following is a list of all pieces (and their sonata movements) that have been analyzed:</p>
+    {% for composer_id, piece_id, piece_name_with_composer in pieces_comp_tuples %}
+        <ul class="all_pieces">
+            <li><a href="/composers/{{ composer_id }}/{{ piece_id }}">{{ piece_name_with_composer }}</a></li>
+            <ul class="all_pieces">
+                {% for movement_num in pieces_movements_dict[piece_id] %}
+                    {# movement_num 0 means the piece is itself the sonata #}
+                    {% if movement_num != 0 %}
+                        <li>
+                            <a href="/composers/{{ composer_id }}/{{ piece_id }}#{{ movement_num }}">Movement {{ movement_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </ul>
+    {% endfor %}
+{% endblock %}
+

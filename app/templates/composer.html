@@ -17,10 +17,21 @@
         {% endfor %}
     </table>
     <hr>
-    <h2 class="pieces">Pieces Analyzed </h2>
+    <h2 class="composer_pieces">Pieces Analyzed </h2>
+    <p>The following is a list of all {{ composer_surname }} pieces (and their sonata movements) that have been analyzed:</p>
     {% for piece_id, piece_name in piece_id_name_tuples %}
-        <ul class="pieces">
+        <ul class="composer_pieces">
             <li><a href="/composers/{{ composer_id }}/{{ piece_id }}">{{ piece_name }}</a></li>
+            <ul class="composer_pieces">
+                {% for movement_num in pieces_movements_dict[piece_id] %}
+                    {# movement_num 0 means the piece is itself the sonata #}
+                    {% if movement_num != 0 %}
+                        <li>
+                            <a href="/composers/{{ composer_id }}/{{ piece_id }}#{{ movement_num }}">Movement {{ movement_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </ul>
     {% endfor %}
     <hr>

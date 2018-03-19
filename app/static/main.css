@@ -19,6 +19,18 @@ tr:hover {
 /**** Index ***/
 
 
+/**** Pieces ***/
+
+h1.all_pieces {
+    font-size: 32px;
+
+}
+
+.all_pieces li {
+    font-size: 16px;
+}
+
+
 /***** Composers *****/
 
 h1.composers {
@@ -48,12 +60,12 @@ h2.composer_attributes {
     margin-bottom: 15px;
 }
 
-h2.pieces {
-    font-size: 22px;
+h2.composer_pieces {
+    font-size: 24px;
     margin-bottom: 15px;
 }
 
-.pieces li {
+.composer_pieces li {
     font-size: 16px;
 }
 
