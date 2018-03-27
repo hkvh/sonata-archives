@@ -79,17 +79,17 @@ class Beethoven5_1(SonataDataClass):
             # Uses A dim7 / C as vii˚7/B-flat
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
 
-            Exposition.MC_MEASURES:                    MeasureRange(59),
-            Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE,
+            Exposition.MC_MEASURES:                    MeasureRange(59, 63),
+            Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE_WITH_S0,
 
-            Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),
+            Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),  # S1.1 starts in m.for 64
             Exposition.S_THEME_OPENING_KEY:            Key.E_FLAT_MAJOR,
             Exposition.S_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
             Exposition.EEC_ESC_PRESENT:                True,
 
-            Exposition.C_THEME_MEASURES:               MeasureRange(110, 124),
+            Exposition.C_THEME_MEASURES:               MeasureRange(111, 124),
             Exposition.C_THEME_OPENING_KEY:            Key.E_FLAT_MAJOR,
             Exposition.C_THEME_P_BASED:                True,
             Exposition.C_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
@@ -130,7 +130,7 @@ class Beethoven5_1(SonataDataClass):
             Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
 
-            Recapitulation.C_THEME_MEASURES:                MeasureRange(362, 374),
+            Recapitulation.C_THEME_MEASURES:                MeasureRange(363, 374),
             Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY:              Key.C_MAJOR,
             Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Ending Cadence resolution elided into onset of Coda: "
@@ -182,8 +182,14 @@ class Beethoven5_4(SonataDataClass):
             Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
             Exposition.P_THEME_ENDING_KEY:             Key.C_MAJOR,
 
+            # TODO Create P Types
+            Exposition.P_THEME_DESCRIPTION:            "Grand Antecedent",
+
             Exposition.TR_THEME_MEASURES:              MeasureRange(26, 43),
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MAJOR,
+
+            # TODO Create TR Types
+            Exposition.TR_THEME_DESCRIPTION:           "Dissolving Continuation",
             Exposition.TR_THEME_PHRASE_STRUCTURE:      [PhraseStructure.COMPOUND_SENTENCE],
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
             Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,

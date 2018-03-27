@@ -149,6 +149,7 @@ class MedialCaesura(object):
     """
 
     GENERAL_PAUSE = "General Pause"
+    GENERAL_PAUSE_WITH_S0 = "General Pause with S0"
     CAESURA_FILL = "Caesura Fill"
     CAESURA_FILL_RISE = "Caesura Fill Rise"
     CAESURA_FILL_CASCADE = "Caesura Fill Cascade"
