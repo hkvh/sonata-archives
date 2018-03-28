@@ -76,7 +76,7 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
 
         # For each field in the table, create tuples of type (table_name, field.name, field.display_name)
         data = [(table.schema_table().table.string, field.name, field.display_name) for field in fields]
-        print(data)
+
         # Batch insert them
         insert_query = execute_values_insert_query(ColumnDisplay.schema_table())
         log.info(insert_query.as_string(cursor))

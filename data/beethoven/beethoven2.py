@@ -74,7 +74,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.OPENING_TEMPO:              "Allegro con brio",
 
             Exposition.P_THEME_MEASURES:           MeasureRange(34, 57),
-            Exposition.P_THEME_PHRASE_STRUCTURE: {
+            Exposition.P_THEME_PHRASE_STRUCTURE:   {
                 'P1': PhraseStructure.COMPOUND_SENTENCE,
             },
             Exposition.P_THEME_OPENING_KEY:        Key.D_MAJOR,
@@ -93,12 +93,12 @@ class Beethoven2_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_KEY:        Key.A_MINOR,
             Exposition.TR_THEME_ENDING_CADENCE:    Cadence.HC,
 
-            Exposition.MC_TYPE:                    MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.MC_STYLE:                   MedialCaesura.CAESURA_FILL_CASCADE,
             Exposition.MC_MEASURES:                MeasureRange(71, 72),
 
             Exposition.S_THEME_MEASURES:           MeasureRange(73, 112),
             Exposition.S_THEME_PHRASE_STRUCTURE:   {
-                'S1':   PhraseStructure.COMPOUND_PERIOD_OF_PERIODS,
+                'S1': PhraseStructure.COMPOUND_PERIOD_OF_PERIODS,
             },
             Exposition.S_THEME_OPENING_KEY:        Key.A_MAJOR,
             Exposition.S_THEME_ENDING_KEY:         Key.A_MAJOR,

@@ -80,7 +80,7 @@ class Beethoven5_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
 
             Exposition.MC_MEASURES:                    MeasureRange(59, 63),
-            Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE_WITH_S0,
+            Exposition.MC_STYLE:                       MedialCaesura.GENERAL_PAUSE_WITH_S0,
 
             Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),  # S1.1 starts in m.for 64
             Exposition.S_THEME_OPENING_KEY:            Key.E_FLAT_MAJOR,
@@ -181,15 +181,12 @@ class Beethoven5_4(SonataDataClass):
             Exposition.P_THEME_MEASURES:               MeasureRange(1, 26),
             Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
             Exposition.P_THEME_ENDING_KEY:             Key.C_MAJOR,
-
-            # TODO Create P Types
-            Exposition.P_THEME_DESCRIPTION:            "Grand Antecedent",
+            Exposition.P_THEME_TYPE:                   PrimaryThemeType.GRAND_ANTECEDENT,
 
             Exposition.TR_THEME_MEASURES:              MeasureRange(26, 43),
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MAJOR,
 
-            # TODO Create TR Types
-            Exposition.TR_THEME_DESCRIPTION:           "Dissolving Continuation",
+            Exposition.TR_THEME_TYPE:                  TransitionType.DISSOLVING_CONTINUATION,
             Exposition.TR_THEME_PHRASE_STRUCTURE:      [PhraseStructure.COMPOUND_SENTENCE],
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
             Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
@@ -198,7 +195,7 @@ class Beethoven5_4(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
 
             Exposition.MC_MEASURES:                    MeasureRange(43, 44),
-            Exposition.MC_TYPE:                        MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.MC_STYLE:                       MedialCaesura.CAESURA_FILL_CASCADE,
 
             Exposition.S_THEME_MEASURES:               MeasureRange(45, 63),
             # could be 45 if include S headmotive
@@ -241,6 +238,7 @@ class Beethoven5_4(SonataDataClass):
             Recapitulation.P_THEME_MEASURES:    MeasureRange(207, 232),
 
             Recapitulation.TR_THEME_MEASURES:   MeasureRange(232, 252),
+            Recapitulation.TR_THEME_ENDING_KEY: Key.C_MAJOR,
 
             Recapitulation.MC_MEASURES:         MeasureRange(252, 253),
 

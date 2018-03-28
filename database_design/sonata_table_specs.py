@@ -288,7 +288,7 @@ class SonataBlockTableSpecification(TableSpecification):
         name = measure_range_field.name
         display_name = measure_range_field.display_name
 
-        if 'measures' not in name or ('Measures' not in display_name and 'Measure(s)' not in display_name):
+        if 'measures' not in name or 'Measures' not in display_name:
             raise Exception("Field {} with display_name {} marked as a MeasureRange but didn't contain \"measures\" "
                             "in its name or \"Measures\" in its display name!".format(name, display_name))
         else:
@@ -444,13 +444,17 @@ class Exposition(SonataBlockTableSpecification):
     # Recap will override the display names on all of these
     NUM_CYCLES = Field("num_cycles", "Exposition Number of Cycles")  # does not include literal exposition repeats
     MEASURES = Field("measures", "Exposition Measures")
+    CONTINUOUS = Field("continuous", "Continuous Exposition")  # No TR, MC or S
+    DUTCHMAN_TYPE = Field("dutchman_type", "Dutchman-Type Exposition")  # Maximally contrasting Masculine P, Feminine S
     OPENING_TEMPO = Field("opening_tempo", "Exposition Opening Tempo")
 
     # P
     P_THEME_MEASURES = Field("p_theme_measures", "P Theme Measures")
     P_THEME_OPENING_KEY = Field("p_theme_opening_key", "P Theme Opening Key")
     P_THEME_DESCRIPTION = Field("p_theme_description", "P Theme Description")
+    P_THEME_TYPE = Field("p_theme_type", "P Theme Type")
     P_THEME_PHRASE_STRUCTURE = Field("p_theme_phrase_structure", "P Theme Phrase Structure")
+    P_THEME_STRUCTURAL_PAC_COUNT = Field("p_theme_structural_pac_count", "P Theme Structural PAC Count")
     P_THEME_OTHER_KEYS = Field("p_theme_other_keys", "P Theme Other Key(s)")
     P_THEME_ENDING_KEY = Field("p_theme_ending_key", "P Theme Ending Key")
     P_THEME_ENDING_CADENCE = Field("p_theme_ending_cadence", "P Theme Ending Cadence")
@@ -460,6 +464,8 @@ class Exposition(SonataBlockTableSpecification):
     TR_THEME_MEASURES = Field("tr_theme_measures", "TR Theme Measures")
     TR_THEME_OPENING_KEY = Field("tr_theme_opening_key", "TR Theme Opening Key")
     TR_THEME_DESCRIPTION = Field("tr_theme_description", "TR Theme Description")
+    TR_THEME_TYPE = Field("tr_theme_type", "TR Theme Type")
+    TR_THEME_MODULE_TYPES = Field("tr_theme_module_types", "TR Theme Module Types")  # Only use if Mixed Transition
     TR_THEME_P_BASED = Field("tr_theme_p_based", "TR Theme P-Based")
     TR_THEME_PHRASE_STRUCTURE = Field("tr_theme_phrase_structure", "TR Theme Phrase Structure")
     TR_THEME_OTHER_KEYS = Field("tr_theme_other_keys", "TR Theme Other Key(s)")
@@ -467,13 +473,14 @@ class Exposition(SonataBlockTableSpecification):
     TR_THEME_DOMINANT_LOCK = Field("tr_theme_dominant_lock", "TR Theme Dominant Lock")
     TR_THEME_ENERGY = Field("tr_theme_energy", "TR Theme Energy")
     TR_THEME_HAMMER_BLOW_COUNT = Field("tr_final_hammer_blow_count", "TR Theme Final Hammer Blows")
-    TR_THEME_ENDING_KEY = Field("tr_theme_ending_key", "TR Theme Ending Key")
+    TR_THEME_ENDING_KEY = Field("tr_theme_ending_key", "TR Theme Ending Key")  #
     TR_THEME_ENDING_CADENCE = Field("tr_theme_ending_cadence", "TR Theme Ending Cadence")
 
     # MC
     MC_PRESENT = Field("mc_present", "MC Present")
-    MC_MEASURES = Field("mc_measures", "MC Measure(s)")
-    MC_TYPE = Field("mc_type", "MC Type")
+    MC_MEASURES = Field("mc_measures", "MC Measures")
+    _MC_TYPE = Field("mc_type", "MC Type")   # Derived field from TR Ending Relative Key and Ending Cadence
+    MC_STYLE = Field("mc_style", "MC Style")  # Whether caesura fill, general pause, S0 affect etc.
 
     # S
     S_THEME_PRESENT = Field("s_theme_present", "S Theme Present")
@@ -539,6 +546,8 @@ class Exposition(SonataBlockTableSpecification):
             (cls.ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.MEASURES, SQLType.TEXT),
+            (cls.CONTINUOUS, SQLType.BOOLEAN_DEFAULT_FALSE),
+            (cls.DUTCHMAN_TYPE, SQLType.BOOLEAN_DEFAULT_FALSE),
             (cls.OPENING_TEMPO, SQLType.TEXT),
         ]
 
@@ -548,7 +557,9 @@ class Exposition(SonataBlockTableSpecification):
             (cls.P_THEME_MEASURES, SQLType.TEXT),
             (cls.P_THEME_OPENING_KEY, SQLType.TEXT),
             (cls.P_THEME_DESCRIPTION, SQLType.TEXT),
-            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.P_THEME_TYPE, SQLType.TEXT),
+            (cls.P_THEME_PHRASE_STRUCTURE, SQLType.JSONB),  # JSONObject mapping P module to their phrase structure
+            (cls.P_THEME_STRUCTURAL_PAC_COUNT, SQLType.INTEGER),
             (cls.P_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
@@ -560,9 +571,11 @@ class Exposition(SonataBlockTableSpecification):
             (cls.TR_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.TR_THEME_MEASURES, SQLType.TEXT),
             (cls.TR_THEME_OPENING_KEY, SQLType.TEXT),
-            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.TR_THEME_DESCRIPTION, SQLType.TEXT),
+            (cls.TR_THEME_TYPE, SQLType.TEXT),
+            (cls.TR_THEME_MODULE_TYPES, SQLType.JSONB),  # JSONObject mapping TR module to TR Type if TR Type = Mixed
             (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
+            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
             (cls.TR_THEME_OTHER_KEYS, SQLType.TEXT),  # JSONArray
             (cls.TR_THEME_CHROMATIC_PREDOMINANT, SQLType.BOOLEAN),
             (cls.TR_THEME_DOMINANT_LOCK, SQLType.BOOLEAN),
@@ -578,7 +591,8 @@ class Exposition(SonataBlockTableSpecification):
         return [
             (cls.MC_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.MC_MEASURES, SQLType.TEXT),
-            (cls.MC_TYPE, SQLType.TEXT),
+            (cls._MC_TYPE, SQLType.TEXT),  # Derived field
+            (cls.MC_STYLE, SQLType.TEXT),
         ]
 
     @classmethod
@@ -742,6 +756,8 @@ class Recapitulation(Exposition):
     # Override the display names on these exposition attributes
     NUM_CYCLES = Field("num_cycles", "Recapitulation Number of Cycles")  # does not include literal exposition repeats
     MEASURES = Field("measures", "Recapitulation Measures")
+    CONTINUOUS = Field("continuous", "Continuous Recapitulation")
+    DUTCHMAN_TYPE = Field("dutchman_type", "Dutchman-Type Recapitulation")  # Apotheosis of S as redemptive agent
     OPENING_TEMPO = Field("opening_tempo", "Recapitulation Opening Tempo")
 
     # P

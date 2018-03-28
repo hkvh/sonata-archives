@@ -84,7 +84,7 @@ class Beethoven1_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_KEY:            Key.C_MAJOR,
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
 
-            Exposition.MC_TYPE:                        MedialCaesura.GENERAL_PAUSE,
+            Exposition.MC_STYLE:                       MedialCaesura.GENERAL_PAUSE,
             Exposition.MC_MEASURES:                    MeasureRange(52),
 
             Exposition.S_THEME_MEASURES:               MeasureRange(53, 88),
@@ -134,7 +134,7 @@ class Beethoven1_1(SonataDataClass):
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR Theme shortened and no exposition TR motives appear",
 
             Recapitulation.MC_MEASURES:                     MeasureRange(204, 205),
-            Recapitulation.MC_TYPE:                         MedialCaesura.CAESURA_FILL,
+            Recapitulation.MC_STYLE:                        MedialCaesura.CAESURA_FILL,
 
             Recapitulation.S_THEME_MEASURES:                MeasureRange(206, 241),
             Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,

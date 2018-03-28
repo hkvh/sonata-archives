@@ -12,6 +12,7 @@ from enums.key_enums import KeyStruct, validate_is_key_struct
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, SonataBlockTableSpecification
 from enums.measure_enums import validate_is_measure_range
+from enums.sonata_enums import MedialCaesura
 from general_utils.sql_utils import Field, upsert_sql_from_field_value_dict
 
 log = logging.getLogger(__name__)
@@ -348,6 +349,9 @@ class SonataDataClass(DataClass, ABC):
         will dynamically detect that and derive the counts and add it to the attribute dict to be inserted. (Will
         also detect Lists and Dicts and relativize everything inside them.)
 
+        3. The MC Type: if this block is the Exposition or Recapitulation and MC is present,
+        then we use TR Ending Relative Key and TR Ending Relative Cadence to compute it (i.e. I: HC)
+
         :param attribute_dict: the attribute dict to augment
         :param sonata_block_cls: the class of the sonata block that we will use to add the derived fields
         :return: a new attribute dict with the derived fields added
@@ -364,6 +368,18 @@ class SonataDataClass(DataClass, ABC):
             if field in sonata_block_cls.measure_range_fields():
                 measure_count_field = sonata_block_cls.get_measure_count_from_measure_range(field)
                 new_attribute_dict[measure_count_field] = cls._convert_measure_ranges_to_counts(value)
+
+        # Expo or Recap and MC Present, add the MC Type
+        if (sonata_block_cls in {Exposition, Recapitulation}) and new_attribute_dict.get(Exposition.MC_PRESENT, True):
+            if Exposition.TR_THEME_ENDING_KEY not in new_attribute_dict:
+                raise Exception("Must specify TR Ending Key for {} (or mark MC not Present)!"
+                                "".format(cls.id()))
+            if Exposition.TR_THEME_ENDING_CADENCE not in new_attribute_dict:
+                raise Exception("Must specify TR Ending Cadence for {} (or mark MC not Present)!"
+                                "".format(cls.id()))
+            tr_relative_key = new_attribute_dict[Exposition.get_relative_from_absolute(Exposition.TR_THEME_ENDING_KEY)]
+            tr_cadence = new_attribute_dict[Exposition.TR_THEME_ENDING_CADENCE]
+            new_attribute_dict[Exposition._MC_TYPE] = MedialCaesura.compute_mc_type(tr_relative_key, tr_cadence)
 
         return new_attribute_dict
 

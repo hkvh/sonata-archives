@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 import logging
 
-from flask import Flask, render_template
+import os
+from flask import Flask, render_template, send_from_directory
 from flask_bootstrap import Bootstrap
 from psycopg2 import sql
 
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, ColumnDisplay
+from directories import APP_DIR
 from general_utils.postgres_utils import LocalhostCursor
 
 log = logging.getLogger(__name__)
@@ -58,7 +60,7 @@ def pieces():
     with LocalhostCursor() as cur:
         select_pieces_query = sql.SQL("""
                   SELECT comp.{comp_id}, piece.{piece_id}, 
-                         comp.{comp_surname} || ' ' || piece.{piece_full_name} as cfn
+                         comp.{comp_surname} || ' ' || piece.{piece_full_name} AS cfn
                   FROM {piece_st} AS piece
                   JOIN {comp_st} AS comp
                   ON (piece.{piece_comp_id} = comp.{comp_id})
@@ -367,6 +369,12 @@ def piece(composer_id: str, piece_id: str):
                            sonatas_lilypond_image_settings_dict=sonatas_lilypond_image_settings_dict,
                            IMAGE_PATH=Sonata.IMAGE_PATH,
                            IMAGE_WIDTH=Sonata.IMAGE_WIDTH)
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(APP_DIR, 'static'),
+                               'favicon.ico')
 
 
 if __name__ == '__main__':
