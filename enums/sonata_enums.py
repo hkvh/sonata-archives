@@ -222,6 +222,8 @@ class MedialCaesura(object):
     CAESURA_FILL = "Caesura Fill"
     CAESURA_FILL_RISE = "Caesura Fill Rise"
     CAESURA_FILL_CASCADE = "Caesura Fill Cascade"
+    CAESURA_FILL_CASCADE_AS_S0 = "Caesura Fill Cascade as S0"
+
 
     @staticmethod
     def compute_mc_type(relative_key: str, cadence_type: str):

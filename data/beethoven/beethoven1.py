@@ -71,7 +71,7 @@ class Beethoven1_1(SonataDataClass):
 
             Exposition.P_THEME_MEASURES:               MeasureRange(13, 33),
             Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
-            Exposition.P_THEME_PHRASE_STRUCTURE:       [PhraseStructure.COMPOUND_SENTENCE],
+            Exposition.P_MODULE_PHRASE_STRUCTURE:      [PhraseStructure.COMPOUND_SENTENCE],
             Exposition.P_THEME_ENDING_KEY:             Key.C_MAJOR,
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
@@ -108,8 +108,8 @@ class Beethoven1_1(SonataDataClass):
                 Key.G_MAJOR,
                 Key.C_MINOR,
                 Key.F_MINOR,
-                Key.B_FLAT_MAJOR,
-                Key.E_FLAT_MAJOR,
+                Key.BES_MAJOR,
+                Key.EES_MAJOR,
                 Key.F_MINOR,
                 Key.G_MINOR,
                 Key.D_MINOR,

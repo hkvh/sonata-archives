@@ -66,7 +66,9 @@ class Beethoven5_1(SonataDataClass):
 
             Exposition.P_THEME_MEASURES:               MeasureRange(1, 21),
             Exposition.P_THEME_OPENING_KEY:            Key.C_MINOR,
-            Exposition.P_THEME_PHRASE_STRUCTURE:       [PhraseStructure.SENTENCE],
+            Exposition.P_MODULE_PHRASE_STRUCTURE:      {
+                "P1": PhraseStructure.SENTENCE
+            },
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
 
             Exposition.TR_THEME_MEASURES:              MeasureRange(22, 58),
@@ -75,24 +77,28 @@ class Beethoven5_1(SonataDataClass):
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:     2,
             Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_GAIN_CRESCENDO,
             Exposition.TR_THEME_DOMINANT_LOCK:         False,
-            Exposition.TR_THEME_ENDING_KEY:            Key.E_FLAT_MAJOR,
+            Exposition.TR_THEME_ENDING_KEY:            Key.EES_MAJOR,
             # Uses A dim7 / C as vii˚7/B-flat
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
 
-            Exposition.MC_MEASURES:                    MeasureRange(59, 63),
+            Exposition.MC_MEASURES:                    MeasureRange(58, 62),
             Exposition.MC_STYLE:                       MedialCaesura.GENERAL_PAUSE_WITH_S0,
 
-            Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),  # S1.1 starts in m.for 64
-            Exposition.S_THEME_OPENING_KEY:            Key.E_FLAT_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
+            Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),
+            Exposition.S_MODULE_MEASURES: {
+                "S0": MeasureRange(59, 62),
+                "S1": MeasureRange(63, 110)
+            },
+            Exposition.S_THEME_OPENING_KEY:            Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:             Key.EES_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
             Exposition.EEC_ESC_PRESENT:                True,
 
-            Exposition.C_THEME_MEASURES:               MeasureRange(111, 124),
-            Exposition.C_THEME_OPENING_KEY:            Key.E_FLAT_MAJOR,
+            Exposition.C_THEME_MEASURES:               MeasureRange(110, 124),
+            Exposition.C_THEME_OPENING_KEY:            Key.EES_MAJOR,
             Exposition.C_THEME_P_BASED:                True,
-            Exposition.C_THEME_ENDING_KEY:             Key.E_FLAT_MAJOR,
+            Exposition.C_THEME_ENDING_KEY:             Key.EES_MAJOR,
             Exposition.C_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
         }
 
@@ -124,13 +130,17 @@ class Beethoven5_1(SonataDataClass):
             Recapitulation.TR_THEME_MEASURES:               MeasureRange(269, 302),
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "Reaches same C dim chord, but resolves differently",
 
-            Recapitulation.MC_MEASURES:                     MeasureRange(302),
+            Recapitulation.MC_MEASURES:                     MeasureRange(302, 305),
 
             Recapitulation.S_THEME_MEASURES:                MeasureRange(303, 362),
+            Exposition.S_MODULE_MEASURES: {
+                "S0": MeasureRange(303, 305),
+                "S1": MeasureRange(306, 362)
+            },
             Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
 
-            Recapitulation.C_THEME_MEASURES:                MeasureRange(363, 374),
+            Recapitulation.C_THEME_MEASURES:                MeasureRange(362, 374),
             Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY:              Key.C_MAJOR,
             Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Ending Cadence resolution elided into onset of Coda: "
@@ -218,9 +228,9 @@ class Beethoven5_4(SonataDataClass):
             Development.DEVELOPMENT_OTHER_KEYS: [
                 Key.A_MINOR,
                 Key.F_MAJOR,
-                Key.B_FLAT_MAJOR,
-                Key.B_FLAT_MINOR,
-                Key.D_FLAT_MAJOR,
+                Key.BES_MAJOR,
+                Key.BES_MINOR,
+                Key.DES_MAJOR,
                 Key.C_MAJOR,
                 Key.G_MAJOR,
             ],

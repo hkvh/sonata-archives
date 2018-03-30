@@ -61,7 +61,7 @@ class Beethoven2_1(SonataDataClass):
             Introduction.OPENING_TEMPO:           "Adagio molto",
             Introduction.OPENING_KEY:             Key.D_MAJOR,
             Introduction.INTRODUCTION_OTHER_KEYS: [
-                Key.B_FLAT_MAJOR,
+                Key.BES_MAJOR,
                 Key.D_MINOR,
             ],
             Introduction.ENDING_KEY:              Key.D_MAJOR,
@@ -74,7 +74,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.OPENING_TEMPO:              "Allegro con brio",
 
             Exposition.P_THEME_MEASURES:           MeasureRange(34, 57),
-            Exposition.P_THEME_PHRASE_STRUCTURE:   {
+            Exposition.P_MODULE_PHRASE_STRUCTURE:  {
                 'P1': PhraseStructure.COMPOUND_SENTENCE,
             },
             Exposition.P_THEME_OPENING_KEY:        Key.D_MAJOR,
@@ -97,7 +97,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.MC_MEASURES:                MeasureRange(71, 72),
 
             Exposition.S_THEME_MEASURES:           MeasureRange(73, 112),
-            Exposition.S_THEME_PHRASE_STRUCTURE:   {
+            Exposition.S_MODULE_PHRASE_STRUCTURE:  {
                 'S1': PhraseStructure.COMPOUND_PERIOD_OF_PERIODS,
             },
             Exposition.S_THEME_OPENING_KEY:        Key.A_MAJOR,

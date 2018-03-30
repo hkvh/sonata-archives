@@ -210,16 +210,16 @@ class Key(object):
     C_MAJOR = KeyStruct('C', 0)
     C_MINOR = KeyStruct('C', 0, is_minor=True)
 
-    C_SHARP_MAJOR = KeyStruct('C♯', 1)
-    C_SHARP_MINOR = KeyStruct('C♯', 1, is_minor=True)
-    D_FLAT_MAJOR = KeyStruct('D♭', 1)
+    CIS_MAJOR = KeyStruct('C♯', 1)
+    CIS_MINOR = KeyStruct('C♯', 1, is_minor=True)
+    DES_MAJOR = KeyStruct('D♭', 1)
 
     D_MAJOR = KeyStruct('D', 2)
     D_MINOR = KeyStruct('D', 2, is_minor=True)
 
-    D_SHARP_MINOR = KeyStruct('D♯', 3, is_minor=True)
-    E_FLAT_MAJOR = KeyStruct('E♭', 3)
-    E_FLAT_MINOR = KeyStruct('E♭', 3, is_minor=True)
+    DIS_MINOR = KeyStruct('D♯', 3, is_minor=True)
+    EES_MAJOR = KeyStruct('E♭', 3)
+    EES_MINOR = KeyStruct('E♭', 3, is_minor=True)
 
     E_MAJOR = KeyStruct('E', 4)
     E_MINOR = KeyStruct('E', 4, is_minor=True)
@@ -227,28 +227,28 @@ class Key(object):
     F_MAJOR = KeyStruct('F', 5)
     F_MINOR = KeyStruct('F', 5, is_minor=True)
 
-    F_SHARP_MAJOR = KeyStruct('F♯', 6)
-    F_SHARP_MINOR = KeyStruct('F♯', 6, is_minor=True)
-    G_FLAT_MAJOR = KeyStruct('G♭', 6)
+    FIS_MAJOR = KeyStruct('F♯', 6)
+    FIS_MINOR = KeyStruct('F♯', 6, is_minor=True)
+    GES_MAJOR = KeyStruct('G♭', 6)
 
     G_MAJOR = KeyStruct('G', 7)
     G_MINOR = KeyStruct('G', 7, is_minor=True)
 
-    G_SHARP_MINOR = KeyStruct('G♯', 8, is_minor=True)
-    A_FLAT_MAJOR = KeyStruct('A♭', 8)
-    A_FLAT_MINOR = KeyStruct('A♭', 8, is_minor=True)
+    GIS_MINOR = KeyStruct('G♯', 8, is_minor=True)
+    AES_MAJOR = KeyStruct('A♭', 8)
+    AES_MINOR = KeyStruct('A♭', 8, is_minor=True)
 
     A_MAJOR = KeyStruct('A', 9)
     A_MINOR = KeyStruct('A', 9, is_minor=True)
 
-    A_SHARP_MINOR = KeyStruct('A♯', 10, is_minor=True)
-    B_FLAT_MAJOR = KeyStruct('B♭', 10)
-    B_FLAT_MINOR = KeyStruct('B♭', 10, is_minor=True)
+    AIS_MINOR = KeyStruct('A♯', 10, is_minor=True)
+    BES_MAJOR = KeyStruct('B♭', 10)
+    BES_MINOR = KeyStruct('B♭', 10, is_minor=True)
 
     B_MAJOR = KeyStruct('B', 11)
     B_MINOR = KeyStruct('B', 11, is_minor=True)
-    C_FLAT_MAJOR = KeyStruct('C♭', 11)
+    CES_MAJOR = KeyStruct('C♭', 11)
 
 
 if __name__ == '__main__':
-    print(Key.E_FLAT_MINOR.relative_key_wrt(Key.C_FLAT_MAJOR))
+    print(Key.EES_MINOR.relative_key_wrt(Key.CES_MAJOR))
