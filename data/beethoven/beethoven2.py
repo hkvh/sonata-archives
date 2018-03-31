@@ -103,7 +103,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.S_THEME_OPENING_KEY:        Key.A_MAJOR,
             Exposition.S_THEME_ENDING_KEY:         Key.A_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:     Cadence.IAC_MAJOR,
-            Exposition.EEC_ESC_PRESENT:            True,
+            Exposition.EEC_ESC_SECURED:            True,
             Exposition.EEC_ESC_STRENGTH:           "Flute plays soprano 3ˆ, but otherwise feels like strong PAC",
 
             Exposition.C_THEME_MEASURES:           MeasureRange(112, 133),

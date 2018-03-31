@@ -82,24 +82,24 @@ class Beethoven5_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
 
             Exposition.MC_MEASURES:                    MeasureRange(58, 62),
-            Exposition.MC_STYLE:                       MedialCaesura.GENERAL_PAUSE_WITH_S0,
+            Exposition.MC_STYLE:               MedialCaesura.GENERAL_PAUSE_WITH_S0,
 
-            Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),
-            Exposition.S_MODULE_MEASURES: {
+            Exposition.S_THEME_MEASURES:       MeasureRange(59, 110),
+            Exposition.S_MODULE_MEASURES:      {
                 "S0": MeasureRange(59, 62),
                 "S1": MeasureRange(63, 110)
             },
-            Exposition.S_THEME_OPENING_KEY:            Key.EES_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:             Key.EES_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
+            Exposition.S_THEME_OPENING_KEY:    Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:     Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE: Cadence.PAC_MAJOR,
 
-            Exposition.EEC_ESC_PRESENT:                True,
+            Exposition.EEC_ESC_SECURED:        True,
 
-            Exposition.C_THEME_MEASURES:               MeasureRange(110, 124),
-            Exposition.C_THEME_OPENING_KEY:            Key.EES_MAJOR,
-            Exposition.C_THEME_P_BASED:                True,
-            Exposition.C_THEME_ENDING_KEY:             Key.EES_MAJOR,
-            Exposition.C_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
+            Exposition.C_THEME_MEASURES:       MeasureRange(110, 124),
+            Exposition.C_THEME_OPENING_KEY:    Key.EES_MAJOR,
+            Exposition.C_THEME_P_BASED:        True,
+            Exposition.C_THEME_ENDING_KEY:     Key.EES_MAJOR,
+            Exposition.C_THEME_ENDING_CADENCE: Cadence.PAC_MAJOR,
         }
 
     @classmethod
@@ -204,20 +204,20 @@ class Beethoven5_4(SonataDataClass):
             Exposition.TR_THEME_ENDING_KEY:            Key.G_MAJOR,
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
 
-            Exposition.MC_MEASURES:                    MeasureRange(43, 44),
-            Exposition.MC_STYLE:                       MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.MC_MEASURES:            MeasureRange(43, 44),
+            Exposition.MC_STYLE:               MedialCaesura.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_MEASURES:               MeasureRange(45, 63),
+            Exposition.S_THEME_MEASURES:       MeasureRange(45, 63),
             # could be 45 if include S headmotive
-            Exposition.S_THEME_OPENING_KEY:            Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
-            Exposition.EEC_ESC_PRESENT:                False,
+            Exposition.S_THEME_OPENING_KEY:    Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:     Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE: Cadence.HC,
+            Exposition.EEC_ESC_SECURED:        False,
 
-            Exposition.C_THEME_MEASURES:               MeasureRange(64, 85),
-            Exposition.C_THEME_P_BASED:                False,
-            Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
+            Exposition.C_THEME_MEASURES:       MeasureRange(64, 85),
+            Exposition.C_THEME_P_BASED:        False,
+            Exposition.C_THEME_OPENING_KEY:    Key.G_MAJOR,
+            Exposition.C_THEME_ENDING_KEY:     Key.C_MINOR,
         }
 
     @classmethod

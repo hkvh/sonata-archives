@@ -472,9 +472,12 @@ class Exposition(SonataBlockTableSpecification):
     TR_THEME_PHRASE_STRUCTURE = Field("tr_theme_phrase_structure", "TR Theme Phrase Structure")
     TR_THEME_OTHER_KEYS = Field("tr_theme_other_keys", "TR Theme Other Key(s)")
     TR_THEME_CHROMATIC_PREDOMINANT = Field("tr_theme_chromatic_predominant", "TR Theme Chromatic Predominant")
+
     TR_THEME_DOMINANT_LOCK = Field("tr_theme_dominant_lock", "TR Theme Dominant Lock")
     TR_THEME_ENERGY = Field("tr_theme_energy", "TR Theme Energy")
     TR_THEME_HAMMER_BLOW_COUNT = Field("tr_final_hammer_blow_count", "TR Theme Final Hammer Blows")
+    # The measures of any quasi-MC Effects - these will all be single measures, so no need for counts
+    TR_THEME_MC_EFFECT_MEASURES = Field("tr_theme_mc_effect_measures", "TR Theme MC Effect Measures")
     TR_THEME_ENDING_KEY = Field("tr_theme_ending_key", "TR Theme Ending Key")  #
     TR_THEME_ENDING_CADENCE = Field("tr_theme_ending_cadence", "TR Theme Ending Cadence")
 
@@ -488,6 +491,8 @@ class Exposition(SonataBlockTableSpecification):
     S_THEME_PRESENT = Field("s_theme_present", "S Theme Present")
     S_THEME_TYPE = Field("s_theme_type", "S Theme Type")
     S_THEME_MEASURES = Field("s_theme_measures", "S Theme Measures")
+    # This will be a JSON Array of all evaded cadence measure, since all will be 1 measure long, no need for counts
+    S_ATTENUATED_EVADED_PAC_MEASURES = Field("s_attenuated_evaded_pac_measures", "S Attenuated/Evaded PAC Measure(s)")
     S_MODULE_MEASURES = Field("s_module_measures", "S Module Measures")
     S_MODULE_PHRASE_STRUCTURE = Field("s_module_phrase_structure", "S Module Phrase Structure")
     S_THEME_OPENING_KEY = Field("s_theme_opening_key", "S Theme Opening Key")
@@ -500,8 +505,8 @@ class Exposition(SonataBlockTableSpecification):
     # EEC
     # Note: naming raw name with both EEC and ESC so Recap can truly inherit all fields from Exposition
     # Only its display name will be different for Recap
-    EEC_ESC_PRESENT = Field("eec_esc_present", "EEC Present")
-    EEC_ESC_FAKE_OUT_COUNT = Field("eec_esc_fake_out_count", "EEC Fake Outs")
+    EEC_ESC_SECURED = Field("eec_esc_secured", "EEC Secured")
+    EEC_ESC_MEASURE = Field("eec_esc_measure", "EEC Measure")  # Always will be 1 measure long, so no need for counts
     EEC_ESC_STRENGTH = Field("eec_esc_strength", "EEC Strength")
 
     # C
@@ -548,6 +553,8 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_MEASURES,
             cls.C_MODULE_MEASURES,
         }
+        # Don't put TR MC Effect and S Evaded PAC and EEC Measures since those will always be 1
+        # and are thus not worth computing counts for
 
     # Helper methods so the recap can easily insert new attributes after or before phases of the exposition
     @classmethod
@@ -593,6 +600,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.TR_THEME_DOMINANT_LOCK, SQLType.BOOLEAN),
             (cls.TR_THEME_ENERGY, SQLType.TEXT),
             (cls.TR_THEME_HAMMER_BLOW_COUNT, SQLType.INTEGER),
+            (cls.TR_THEME_MC_EFFECT_MEASURES, SQLType.JSONB),  # A JSON Array of the measure numbers
             (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -613,6 +621,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.S_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.S_THEME_TYPE, SQLType.TEXT),
             (cls.S_THEME_MEASURES, SQLType.TEXT),
+            (cls.S_ATTENUATED_EVADED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
             (cls.S_MODULE_MEASURES, SQLType.JSONB),  # JSONObject mapping S module to their measure ranges
             (cls.S_MODULE_PHRASE_STRUCTURE, SQLType.JSONB),  # JSONObject mapping S module to their phrase structures
             (cls.S_THEME_OPENING_KEY, SQLType.TEXT),
@@ -621,8 +630,8 @@ class Exposition(SonataBlockTableSpecification):
             (cls.S_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
-            (cls.EEC_ESC_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
-            (cls.EEC_ESC_FAKE_OUT_COUNT, SQLType.INTEGER),
+            (cls.EEC_ESC_SECURED, SQLType.BOOLEAN_DEFAULT_TRUE),
+            (cls.EEC_ESC_MEASURE, SQLType.TEXT),
             (cls.EEC_ESC_STRENGTH, SQLType.TEXT),
         ]
 
@@ -789,8 +798,8 @@ class Recapitulation(Exposition):
     # ESC
 
     # Override the display name since EEC vs ESC only core sonata thing named differently between the two halfs
-    EEC_ESC_PRESENT = Field("eec_esc_present", "ESC Present")
-    EEC_ESC_FAKE_OUT_COUNT = Field("eec_esc_fake_out_count", "ESC Fake Outs")
+    EEC_ESC_SECURED = Field("eec_esc_secured", "ESC Secured")
+    EEC_ESC_MEASURE = Field("eec_esc_measure", "ESC Measure")
     EEC_ESC_STRENGTH = Field("eec_esc_strength", "ESC Strength")
 
     # C
