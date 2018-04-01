@@ -377,8 +377,5 @@ class TableError(Exception):
 
 if __name__ == '__main__':
     with LocalhostCursor(dict_cursor=True) as cur:
-        cur.execute("SELECT * FROM sonata_archives.column_display")
-        a = cur.fetchone()
-        print(dict(a))
-        print(**a)
+        pass
 

@@ -12,7 +12,7 @@ from general_utils.sql_utils import Field, SQLType, SchemaTable, create_table_fr
 
 class TableSpecification(ABC):
     """
-    An abstract base class for subclasses that will store the specification for a table or view.
+    An abstract base class for subclasses that will store the specification for a table.
 
     These objects are not meant to be instantiated - simply use their class methods and properties.
     """
@@ -37,12 +37,12 @@ class TableSpecification(ABC):
         """
 
     @classmethod
-    def create_table_sql(cls, drop_if_exists=True) -> sql.Composable:
+    def create_table_sql(cls, drop_if_exists: bool = True) -> sql.Composable:
         """
         Returns a create table sql script for this table using the field_sql_type_list. If drop_if_exists is true
         we will replace the table by drop cascading it
 
-        :param drop_if_exists:
+        :param drop_if_exists: whether to drop cascade the table if it already exists, defaults to true.
         :return: the create table script as a SQL Composable
         """
         create_table_sql = create_table_from_field_sql_type_tuples(cls.schema_table(), cls.field_sql_type_list())

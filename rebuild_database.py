@@ -14,6 +14,7 @@ from psycopg2.extras import execute_values
 from database_design.sonata_data_classes import DataClass
 from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
     Recapitulation, Coda, sonata_archives_schema, ColumnDisplay
+from database_design.sonata_view_specs import ExpositionRecapitulation
 from directories import DATA_DIR, ROOT_DIR
 from general_utils.postgres_utils import LocalhostCursor
 from general_utils.sql_utils import execute_values_insert_query
@@ -61,13 +62,13 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
         log.info("\n\n" + create_table_sql.as_string(cursor) + "\n")
         cursor.execute(create_table_sql)
 
-    # Execute constrain sql only after making all tables
+    # Execute constraint sql only after making all tables
     for table in sonata_table_specs:
         create_constraint_sql = table.create_constraints_sql()
         log.info("\n" + create_constraint_sql.as_string(cursor) + "\n")
         cursor.execute(create_constraint_sql)
 
-    # Finally, the column display table can now be filled, since it only depends on the Fields of the other tables
+    # The column display table can now be filled, since it only depends on the Fields of the other tables
     # Loop through all tables (excluding the first column display table)
     for table in sonata_table_specs[1:]:
 
@@ -81,6 +82,31 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
         insert_query = execute_values_insert_query(ColumnDisplay.schema_table())
         log.info(insert_query.as_string(cursor))
         execute_values(cursor, insert_query.as_string(cursor), data)
+
+
+def create_all_views(cursor: extensions.cursor, drop_if_exists: bool = True) -> None:
+    """
+    This function creates all sonata views (should be run only after all tables have been created).
+
+    :param cursor: the postgres cursor to use to upsert the data
+    :param drop_if_exists: if true, will wipe out the existing tables and rebuild
+    """
+
+    log.info('#' * 40)
+    log.info('#' * 40)
+    log.info("CREATING ALL VIEWS")
+    log.info('#' * 40)
+    log.info('#' * 40)
+
+    # Loop over all view specs:
+    sonata_view_specs = [
+        ExpositionRecapitulation
+    ]
+
+    for view in sonata_view_specs:
+        create_view_sql = view.create_view_sql(cur, drop_if_exists)
+        log.info("\n\n" + create_view_sql.as_string(cursor) + "\n")
+        cursor.execute(create_view_sql)
 
 
 def upsert_all_data(cursor: extensions.cursor) -> None:
@@ -190,6 +216,9 @@ if __name__ == '__main__':
         create_all_tables(cur, drop_if_exists=True)
 
     # Need to leave the with block to commit the connection so that the tables exist
+    with LocalhostCursor() as cur:
+        create_all_views(cur, drop_if_exists=True)
+
     with LocalhostCursor() as cur:
         upsert_all_data(cur)
 
