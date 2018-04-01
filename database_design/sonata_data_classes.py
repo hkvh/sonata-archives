@@ -410,6 +410,28 @@ class SonataDataClass(DataClass, ABC):
         :param cur: the postgres cursor to use to upsert the data
         """
 
+        #########################
+        # SONATA INITIAL INSERT #
+        #########################
+
+        # First we insert the sonata attributes without the links to the blocks
+        # (Since the blocks link back to the sonata we need the sonata there before we insert the blocks)
+
+        sonata_dict = cls.sonata_attribute_dict()
+
+        # Add the sonata's own id to the dict (since already added the rest)
+        sonata_dict[Sonata.ID] = cls.id()
+
+        # Upsert Sonata (with only links to the blocks we upserted)
+        upsert_sql = upsert_sql_from_field_value_dict(Sonata.schema_table(), sonata_dict,
+                                                      conflict_field_list=[Sonata.ID])
+        log.info(upsert_sql.as_string(cur) + "\n")
+        cur.execute(upsert_sql)
+
+        #################
+        # SONATA BLOCKS
+        #################
+
         # Will auto-add ids for each of the 5 sonata blocks by appending i/e/d/r/c
         intro_id = "{}_i".format(cls.id())
         expo_id = "{}_e".format(cls.id())
@@ -417,17 +439,12 @@ class SonataDataClass(DataClass, ABC):
         recap_id = "{}_r".format(cls.id())
         coda_id = "{}_c".format(cls.id())
 
-        # Will be add these ids to the sonata dict if the booleans imply we should
-        sonata_dict = cls.sonata_attribute_dict()
-
-        #################
-        # SONATA BLOCKS
-        ################
         # Upsert the 2 essential sonata block tables that all sonatas have
 
         # Upsert Exposition
         block_dict = cls.augment_with_derived_fields(cls.exposition_attribute_dict(), Exposition)
-        block_dict[Exposition.ID] = expo_id
+        block_dict[SonataBlockTableSpecification.ID] = expo_id
+        block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
         sonata_dict[Sonata.EXPOSITION_ID] = expo_id
         upsert_sql = upsert_sql_from_field_value_dict(Exposition.schema_table(), block_dict,
                                                       conflict_field_list=[Exposition.ID])
@@ -436,7 +453,8 @@ class SonataDataClass(DataClass, ABC):
 
         # Upsert Recapitulation
         block_dict = cls.augment_with_derived_fields(cls.recapitulation_attribute_dict(), Recapitulation)
-        block_dict[Recapitulation.ID] = recap_id
+        block_dict[SonataBlockTableSpecification.ID] = recap_id
+        block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
         sonata_dict[Sonata.RECAPITULATION_ID] = recap_id
         upsert_sql = upsert_sql_from_field_value_dict(Recapitulation.schema_table(), block_dict,
                                                       conflict_field_list=[Recapitulation.ID])
@@ -448,7 +466,8 @@ class SonataDataClass(DataClass, ABC):
         # Upsert Introduction if boolean True
         if cls.sonata_attribute_dict()[Sonata.INTRODUCTION_PRESENT]:
             block_dict = cls.augment_with_derived_fields(cls.introduction_attribute_dict(), Introduction)
-            block_dict[Introduction.ID] = intro_id
+            block_dict[SonataBlockTableSpecification.ID] = intro_id
+            block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
             sonata_dict[Sonata.INTRODUCTION_ID] = intro_id
             upsert_sql = upsert_sql_from_field_value_dict(Introduction.schema_table(), block_dict,
                                                           conflict_field_list=[Introduction.ID])
@@ -465,7 +484,8 @@ class SonataDataClass(DataClass, ABC):
         # Upsert Development if boolean True
         if cls.sonata_attribute_dict()[Sonata.DEVELOPMENT_PRESENT]:
             block_dict = cls.augment_with_derived_fields(cls.development_attribute_dict(), Development)
-            block_dict[Development.ID] = devel_id
+            block_dict[SonataBlockTableSpecification.ID] = devel_id
+            block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
             sonata_dict[Sonata.DEVELOPMENT_ID] = devel_id
             upsert_sql = upsert_sql_from_field_value_dict(Development.schema_table(), block_dict,
                                                           conflict_field_list=[Development.ID])
@@ -482,7 +502,8 @@ class SonataDataClass(DataClass, ABC):
         # Upsert Coda if boolean True
         if cls.sonata_attribute_dict()[Sonata.CODA_PRESENT]:
             block_dict = cls.augment_with_derived_fields(cls.coda_attribute_dict(), Coda)
-            block_dict[Coda.ID] = coda_id
+            block_dict[SonataBlockTableSpecification.ID] = coda_id
+            block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
             sonata_dict[Sonata.CODA_ID] = coda_id
             upsert_sql = upsert_sql_from_field_value_dict(Coda.schema_table(), block_dict,
                                                           conflict_field_list=[Coda.ID])
@@ -496,18 +517,19 @@ class SonataDataClass(DataClass, ABC):
             log.info(delete_sql.as_string(cur) + "\n")
             cur.execute(delete_sql)
 
-        ###########
-        # SONATA #
-        ###########
-        # Finally add the sonata's own id to the dict (since already added the rest)
-        sonata_dict[Sonata.ID] = cls.id()
+        #################################
+        # SONATA UPDATE WITH BLOCK IDS
+        ################################
+
+        # Now that we have built the sonata blocks we can now update the sonata again with the id to the blocks
+        # (Notice above that we had been adding the ids to sonata_block so we can repeat the same insert)
 
         # Upsert Sonata (with only links to the blocks we upserted)
         upsert_sql = upsert_sql_from_field_value_dict(Sonata.schema_table(), sonata_dict,
                                                       conflict_field_list=[Sonata.ID])
 
-        # Note: because the FK constraints in the sonata table are cascade deletes, if any of the optional blocks
-        # were true and the delete from actually deleted rows, the sonata will have been deleted as well
-        # and this upsert is just an insert (so the link to the deleted block is wiped as well)
         log.info(upsert_sql.as_string(cur) + "\n")
         cur.execute(upsert_sql)
+
+        # Note: because the FK constraints between sonata and the blocks are cascade deletes, deleting any block
+        # or the sonata it links to sonata deletes everything relating to that sonata

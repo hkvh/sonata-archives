@@ -170,6 +170,7 @@ class SQLType(object):
     other object.
     """
     TEXT = SQLTypeStruct("TEXT")
+    TEXT_PRIMARY_KEY = SQLTypeStruct("TEXT PRIMARY KEY")
     DATE = SQLTypeStruct("DATE")
     TIMESTAMP = SQLTypeStruct("TIMESTAMP")
     JSONB = SQLTypeStruct("JSONB")

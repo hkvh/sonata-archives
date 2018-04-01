@@ -3,7 +3,7 @@
 A module containing the abstract base class specification for SQL tables (and views, which act like tables)
 """
 from abc import ABC, abstractmethod
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
 from psycopg2 import sql
 
@@ -54,9 +54,12 @@ class TableSpecification(ABC):
 
     @classmethod
     @abstractmethod
-    def create_constraints_sql(cls) -> sql.Composable:
+    def create_constraints_sql(cls) -> Union[sql.Composable, None]:
         """
         Returns a sql script that creates the constraints on this table (like PKs and FKs)
+
+        If the table has an ID column, it is better to make the ID the PK with SQLType TEXT_PRIMARY_KEY in the
+        field_sql_type_list and then use this only for ALTER TABLE SQL to make the foreign keys.
 
         :return: the sql as a Composable
         """

@@ -348,6 +348,7 @@ def piece(composer_id: str, piece_id: str):
 
                         # Remove information that we don't want to display
                         sonata_block_info_dict.pop(block_table_spec.ID.string)
+                        sonata_block_info_dict.pop(block_table_spec.SONATA_ID.string)
 
                         # Change info dict to have display name keys instead of raw field name keys
                         sonata_block_info_dict = ColumnDisplay.create_new_dict_with_display_name_keys(

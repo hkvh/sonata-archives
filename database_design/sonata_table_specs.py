@@ -3,7 +3,7 @@
 A module containing the specification for the base SQL tables (and views, which act like tables)
 """
 from abc import abstractmethod
-from typing import Tuple, List, Set, Any, Dict
+from typing import Tuple, List, Set, Any, Dict, Union
 
 from psycopg2 import sql, extensions
 
@@ -35,7 +35,7 @@ class ColumnDisplay(TableSpecification):
         ]
 
     @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
+    def create_constraints_sql(cls) -> Union[sql.Composable, None]:
         # Add a compound key since every table + column combo is unique
         return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({tn}, {cn});").format(st=cls.schema_table(),
                                                                                 tn=cls.TABLE_NAME,
@@ -97,7 +97,7 @@ class Composer(TableSpecification):
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
             (cls.FULL_NAME, SQLType.TEXT),
             (cls.SURNAME, SQLType.TEXT),
             (cls.NATIONALITY, SQLType.TEXT),
@@ -108,9 +108,8 @@ class Composer(TableSpecification):
         ]
 
     @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(),
-                                                                          id=cls.ID)
+    def create_constraints_sql(cls) -> Union[sql.Composable, None]:
+        return None
 
 
 class Piece(TableSpecification):
@@ -142,7 +141,7 @@ class Piece(TableSpecification):
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
             (cls.COMPOSER_ID, SQLType.TEXT),
             (cls.NAME, SQLType.TEXT),
             (cls.CATALOGUE_ID, SQLType.TEXT),
@@ -157,9 +156,8 @@ class Piece(TableSpecification):
         ]
 
     @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({comp_id}) REFERENCES {c_st}({c_id});") \
+    def create_constraints_sql(cls) -> Union[sql.Composable, None]:
+        return sql.SQL("ALTER TABLE {st} ADD FOREIGN KEY ({comp_id}) REFERENCES {c_st}({c_id});") \
             .format(st=cls.schema_table(), id=cls.ID, comp_id=cls.COMPOSER_ID,
                     c_st=Composer.schema_table(), c_id=Composer.ID)
 
@@ -201,7 +199,7 @@ class Sonata(TableSpecification):
     @classmethod
     def field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
             (cls.PIECE_ID, SQLType.TEXT),
             (cls.MOVEMENT_NUM, SQLType.INTEGER),
             (cls.SONATA_TYPE, SQLType.TEXT),
@@ -221,24 +219,23 @@ class Sonata(TableSpecification):
         ]
 
     @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
+    def create_constraints_sql(cls) -> Union[sql.Composable, None]:
         # Add ON DELETE CASCADE to the FK for the blocks so that if we delete a block it deletes the sonata
         # We are going to upsert the sonata at the end of adding all the blocks anyway, so this is just easier
         # to ensure that you clear its FK link to any block that has been deleted
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({piece_id}) REFERENCES {p_st}({p_id});\n"
+        return sql.SQL("ALTER TABLE {st} ADD FOREIGN KEY ({piece_id}) REFERENCES {p_st}({p_id});\n"
                        "ALTER TABLE {st} ADD FOREIGN KEY ({intro_id}) REFERENCES {i_st}({i_id}) ON DELETE CASCADE;\n"
                        "ALTER TABLE {st} ADD FOREIGN KEY ({expo_id}) REFERENCES {e_st}({e_id}) ON DELETE CASCADE;\n"
                        "ALTER TABLE {st} ADD FOREIGN KEY ({devel_id}) REFERENCES {d_st}({d_id}) ON DELETE CASCADE;\n"
                        "ALTER TABLE {st} ADD FOREIGN KEY ({recap_id}) REFERENCES {r_st}({r_id}) ON DELETE CASCADE;\n"
-                       "ALTER TABLE {st} ADD FOREIGN KEY ({coda_id}) REFERENCES {c_st}({c_id}) ON DELETE CASCADE;") \
-            .format(st=cls.schema_table(), id=cls.ID,
-                    piece_id=cls.PIECE_ID, p_st=Piece.schema_table(), p_id=Piece.ID,
-                    intro_id=cls.INTRODUCTION_ID, i_st=Introduction.schema_table(), i_id=Piece.ID,
-                    expo_id=cls.EXPOSITION_ID, e_st=Exposition.schema_table(), e_id=Piece.ID,
-                    devel_id=cls.DEVELOPMENT_ID, d_st=Development.schema_table(), d_id=Piece.ID,
-                    recap_id=cls.RECAPITULATION_ID, r_st=Recapitulation.schema_table(), r_id=Piece.ID,
-                    coda_id=cls.CODA_ID, c_st=Coda.schema_table(), c_id=Piece.ID)
+                       "ALTER TABLE {st} ADD FOREIGN KEY ({coda_id}) REFERENCES {c_st}({c_id}) ON DELETE CASCADE;"
+                       ).format(st=cls.schema_table(), id=cls.ID,
+                                piece_id=cls.PIECE_ID, p_st=Piece.schema_table(), p_id=Piece.ID,
+                                intro_id=cls.INTRODUCTION_ID, i_st=Introduction.schema_table(), i_id=Piece.ID,
+                                expo_id=cls.EXPOSITION_ID, e_st=Exposition.schema_table(), e_id=Piece.ID,
+                                devel_id=cls.DEVELOPMENT_ID, d_st=Development.schema_table(), d_id=Piece.ID,
+                                recap_id=cls.RECAPITULATION_ID, r_st=Recapitulation.schema_table(), r_id=Piece.ID,
+                                coda_id=cls.CODA_ID, c_st=Coda.schema_table(), c_id=Piece.ID)
 
 
 class SonataBlockTableSpecification(TableSpecification):
@@ -247,8 +244,9 @@ class SonataBlockTableSpecification(TableSpecification):
     across each of the sonata blocks
     """
 
-    # All blocks must have the same ID column
+    # All blocks must have the same ID column and piece ID
     ID = Field("id")
+    SONATA_ID = Field("sonata_id")
 
     @staticmethod
     def get_relative_from_absolute(absolute_key_field: Field) -> Field:
@@ -356,6 +354,12 @@ class SonataBlockTableSpecification(TableSpecification):
 
         return new_list
 
+    @classmethod
+    def create_constraints_sql(cls) -> Union[sql.Composable, None]:
+        return sql.SQL("ALTER TABLE {st} ADD FOREIGN KEY ({sonata_id}) REFERENCES {s_st}({s_id}) ON DELETE CASCADE;"
+                       ).format(st=cls.schema_table(), id=cls.ID, sonata_id=cls.SONATA_ID,
+                                s_st=Sonata.schema_table(), s_id=Sonata.ID)
+
 
 class Introduction(SonataBlockTableSpecification):
     """
@@ -397,7 +401,8 @@ class Introduction(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
+            (cls.SONATA_ID, SQLType.TEXT),
             (cls.MEASURES, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.INTRODUCTION_TYPE, SQLType.TEXT),
@@ -412,10 +417,6 @@ class Introduction(SonataBlockTableSpecification):
             (cls.ENDING_KEY, SQLType.TEXT),
             (cls.ENDING_CADENCE, SQLType.TEXT),
         ]
-
-    @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
 class Exposition(SonataBlockTableSpecification):
@@ -470,7 +471,7 @@ class Exposition(SonataBlockTableSpecification):
 
     # MC
     MC_PRESENT = Field("mc_present", "MC Present")
-    _MC_TYPE = Field("mc_type", "MC Type")   # Derived field from TR Ending Relative Key and Ending Cadence
+    _MC_TYPE = Field("mc_type", "MC Type")  # Derived field from TR Ending Relative Key and Ending Cadence
     MC_COMMENTS = Field("mc_comments", "MC Comments")
     MC_MEASURES = Field("mc_measures", "MC Measures")
     MC_STYLE = Field("mc_style", "MC Style")  # Whether caesura fill, general pause, S0 affect etc.
@@ -532,7 +533,7 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_OTHER_KEYS,
             cls.C_THEME_ENDING_KEY
         }
-    
+
     @classmethod
     def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
         return {
@@ -602,7 +603,8 @@ class Exposition(SonataBlockTableSpecification):
     @classmethod
     def _general_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
+            (cls.SONATA_ID, SQLType.TEXT),
             (cls.MEASURES, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.CONTINUOUS, SQLType.BOOLEAN_DEFAULT_FALSE),
@@ -711,10 +713,6 @@ class Exposition(SonataBlockTableSpecification):
         # Flatten list of lists
         return [item for sublist in list_of_lists for item in sublist]
 
-    @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
-
 
 class Development(SonataBlockTableSpecification):
     """
@@ -765,7 +763,7 @@ class Development(SonataBlockTableSpecification):
             cls.DEVELOPMENT_THEME_KEYS,
             cls.DEVELOPMENT_ENDING_KEY,
         }
-    
+
     @classmethod
     def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
         return {
@@ -776,7 +774,8 @@ class Development(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
+            (cls.SONATA_ID, SQLType.TEXT),
             (cls.MEASURES, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.DEVELOPMENT_TYPE, SQLType.TEXT),
@@ -807,10 +806,6 @@ class Development(SonataBlockTableSpecification):
             (cls.DEVELOPMENT_ENDING_KEY, SQLType.TEXT),
             (cls.DEVELOPMENT_ENDING_CADENCE, SQLType.TEXT),
         ]
-
-    @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
 
 
 class Recapitulation(Exposition):
@@ -892,10 +887,6 @@ class Recapitulation(Exposition):
         # Flatten list of lists
         return [item for sublist in list_of_lists for item in sublist]
 
-    @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)
-
 
 class Coda(SonataBlockTableSpecification):
     """
@@ -940,7 +931,8 @@ class Coda(SonataBlockTableSpecification):
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.ID, SQLType.TEXT),
+            (cls.ID, SQLType.TEXT_PRIMARY_KEY),
+            (cls.SONATA_ID, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.MEASURES, SQLType.TEXT),
             (cls.CODA_TYPE, SQLType.TEXT),
@@ -959,7 +951,3 @@ class Coda(SonataBlockTableSpecification):
             (cls.ENDING_KEY, SQLType.TEXT),
             (cls.ENDING_CADENCE, SQLType.TEXT),
         ]
-
-    @classmethod
-    def create_constraints_sql(cls) -> sql.Composable:
-        return sql.SQL("ALTER TABLE {st} ADD PRIMARY KEY ({id});").format(st=cls.schema_table(), id=cls.ID)

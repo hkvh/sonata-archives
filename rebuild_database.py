@@ -50,23 +50,25 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
         ColumnDisplay,
         Composer,
         Piece,
+        Sonata,
         Introduction,
         Exposition,
         Development,
         Recapitulation,
         Coda,
-        Sonata,  # Sonata objects contain FKs to all the blocks so the block PKs must be created first
     ]
     for table in sonata_table_specs:
         create_table_sql = table.create_table_sql(drop_if_exists)
         log.info("\n\n" + create_table_sql.as_string(cursor) + "\n")
         cursor.execute(create_table_sql)
 
-    # Execute constraint sql only after making all tables
+    # Execute constraint sql only after making all tables (the create scripts should make all PKs that use ID)
+    # So this should just be for FKs or compound PKs
     for table in sonata_table_specs:
         create_constraint_sql = table.create_constraints_sql()
-        log.info("\n" + create_constraint_sql.as_string(cursor) + "\n")
-        cursor.execute(create_constraint_sql)
+        if create_constraint_sql is not None:
+            log.info("\n" + create_constraint_sql.as_string(cursor) + "\n")
+            cursor.execute(create_constraint_sql)
 
     # The column display table can now be filled, since it only depends on the Fields of the other tables
     # Loop through all tables (excluding the first column display table)
