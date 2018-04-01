@@ -61,6 +61,7 @@ class Cadence(object):
     IAC_V_I6 = "IAC Inverted (Ⅴ - Ⅰ⁶)"
     IAC_V6_I6 = "IAC Inverted (Ⅴ⁶ - Ⅰ⁶)"
     IAC_V42_I6 = "IAC Evaded (Ⅴ⁴₂ - Ⅰ⁶)"
+    IAC_TONIC_BASS_PEDAL = "IAC Bass Pedal (Ⅴ over Tonic Pedal)"
 
     # Authentic Cadences in Minor
     PAC_MINOR = "PAC (Ⅴ - ⅰ)"  # PAC means root position with both chords AND soprano on scale degree 1^

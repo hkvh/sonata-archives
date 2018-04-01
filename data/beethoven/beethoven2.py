@@ -104,6 +104,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.S_THEME_ENDING_KEY:         Key.A_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:     Cadence.IAC_MAJOR,
             Exposition.EEC_ESC_SECURED:            True,
+            Exposition.EEC_ESC_MEASURE:            MeasureRange(112),
             Exposition.EEC_ESC_STRENGTH:           "Flute plays soprano 3ˆ, but otherwise feels like strong PAC",
 
             Exposition.C_THEME_MEASURES:           MeasureRange(112, 133),
@@ -125,9 +126,9 @@ class Beethoven2_1(SonataDataClass):
 
     @classmethod
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
-        recap_dict = cls.exposition_attribute_dict()
+        recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
-        recap_changes = {
+        recap_updates = {
             Recapitulation.MEASURES:                        MeasureRange(216, 298),
 
             Recapitulation.P_THEME_MEASURES:                MeasureRange(216, 233),
@@ -146,14 +147,15 @@ class Beethoven2_1(SonataDataClass):
             Recapitulation.S_THEME_MEASURES:                MeasureRange(245, 284),
             Recapitulation.S_THEME_OPENING_KEY:             Key.D_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.D_MAJOR,
+            Exposition.EEC_ESC_MEASURE:                     MeasureRange(284),
 
             Recapitulation.C_THEME_MEASURES:                MeasureRange(284, 305),
-            Exposition.C_THEME_OPENING_KEY:                 Key.D_MAJOR,
-            Exposition.C_THEME_OTHER_KEYS:                  [Key.G_MINOR],
-            Exposition.C_THEME_ENDING_KEY:                  Key.D_MAJOR
+            Recapitulation.C_THEME_OPENING_KEY:             Key.D_MAJOR,
+            Recapitulation.C_THEME_OTHER_KEYS:              [Key.G_MINOR],
+            Recapitulation.C_THEME_ENDING_KEY:              Key.D_MAJOR
         }
 
-        recap_dict.update(recap_changes)
+        recap_dict.update(recap_updates)
         return recap_dict
 
     @classmethod

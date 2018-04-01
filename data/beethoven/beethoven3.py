@@ -91,25 +91,26 @@ class Beethoven3_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
 
             Exposition.MC_STYLE:                       MedialCaesura.CAESURA_FILL_CASCADE_AS_S0,
-            Exposition.MC_MEASURES:            MeasureRange(45, 56),
+            Exposition.MC_MEASURES:                    MeasureRange(45, 56),
 
-            Exposition.S_THEME_MEASURES:       MeasureRange(45, 83),
-            Exposition.S_MODULE_MEASURES:      {
+            Exposition.S_THEME_MEASURES:               MeasureRange(45, 83),
+            Exposition.S_MODULE_MEASURES:              {
                 "S0": MeasureRange(45, 56),
                 "S1": MeasureRange(57, 83),
             },
-            Exposition.S_THEME_OPENING_KEY:    Key.BES_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:     Key.BES_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE: Cadence.PAC_MAJOR,
-            Exposition.EEC_ESC_SECURED:        True,
-            Exposition.C_THEME_MEASURES:       MeasureRange(83, 153),
-            Exposition.C_MODULE_MEASURES:      {
+            Exposition.S_THEME_OPENING_KEY:            Key.BES_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:             Key.BES_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
+            Exposition.EEC_ESC_SECURED:                True,
+            Exposition.EEC_ESC_MEASURE:                MeasureRange(83),
+            Exposition.C_THEME_MEASURES:               MeasureRange(83, 153),
+            Exposition.C_MODULE_MEASURES:              {
                 "C0": MeasureRange(83, 109),
                 "C1": MeasureRange(109, 153),
             },
-            Exposition.C_THEME_OPENING_KEY:    Key.BES_MAJOR,
-            Exposition.C_THEME_P_BASED:        True,
-            Exposition.C_THEME_ENDING_KEY:     Key.BES_MAJOR
+            Exposition.C_THEME_OPENING_KEY:            Key.BES_MAJOR,
+            Exposition.C_THEME_P_BASED:                True,
+            Exposition.C_THEME_ENDING_KEY:             Key.BES_MAJOR
         }
 
     @classmethod
@@ -124,6 +125,7 @@ class Beethoven3_1(SonataDataClass):
                 Key.G_MINOR,
                 Key.AES_MAJOR,
                 Key.F_MINOR,
+                Key.G_MINOR,
                 Key.A_MINOR,
                 Key.E_MINOR,
                 Key.C_MAJOR,
@@ -147,9 +149,9 @@ class Beethoven3_1(SonataDataClass):
 
     @classmethod
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
-        recap_dict = cls.exposition_attribute_dict()
+        recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
-        recap_changes = {
+        recap_updates = {
             Recapitulation.MEASURES:                        MeasureRange(398, 556),
 
             Recapitulation.P_THEME_MEASURES:                MeasureRange(398, 408),
@@ -175,17 +177,18 @@ class Beethoven3_1(SonataDataClass):
             },
             Recapitulation.S_THEME_OPENING_KEY:             Key.EES_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.EES_MAJOR,
+            Recapitulation.EEC_ESC_MEASURE:                 MeasureRange(486),
 
             Recapitulation.C_THEME_MEASURES:                MeasureRange(486, 556),
             Recapitulation.C_MODULE_MEASURES:               {
                 "C0": MeasureRange(486, 512),
                 "C1": MeasureRange(512, 556),
             },
-            Exposition.C_THEME_OPENING_KEY:                 Key.EES_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:                  Key.EES_MAJOR
+            Recapitulation.C_THEME_OPENING_KEY:             Key.EES_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY:              Key.EES_MAJOR
         }
 
-        recap_dict.update(recap_changes)
+        recap_dict.update(recap_updates)
         return recap_dict
 
     @classmethod

@@ -240,6 +240,21 @@ class SonataDataClass(DataClass, ABC):
         """
 
     @classmethod
+    def exposition_attribute_dict_without_fields_unlikely_to_be_same(cls) -> Dict[Field, Any]:
+        """
+        Grabs the exposition attribute dict but clears out every field specified in
+        fields_unlikely_to_be_same_for_exposition_and_recap so that it can be a good starting point for the recap dict
+        without accidentally including fields that are almost surely wrong unless overwritten.
+
+        :return: a dict of fields to their values
+        """
+        new_dict = cls.exposition_attribute_dict()
+        for field in Exposition.fields_unlikely_to_be_same_for_exposition_and_recap():
+            if field in new_dict:
+                del new_dict[field]
+        return new_dict
+
+    @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         """
         A method that contains a dictionary mapping attributes from the Coda table spec to their values. Not abstract
@@ -365,18 +380,18 @@ class SonataDataClass(DataClass, ABC):
                 relative_key_field = sonata_block_cls.get_relative_from_absolute(field)
                 new_attribute_dict[relative_key_field] = cls._convert_absolute_to_relative(value)
 
-            if field in sonata_block_cls.measure_range_fields():
+            if field in sonata_block_cls.measure_range_fields_to_compute_counts():
                 measure_count_field = sonata_block_cls.get_measure_count_from_measure_range(field)
                 new_attribute_dict[measure_count_field] = cls._convert_measure_ranges_to_counts(value)
 
         # Expo or Recap and MC Present, add the MC Type
         if (sonata_block_cls in {Exposition, Recapitulation}) and new_attribute_dict.get(Exposition.MC_PRESENT, True):
             if Exposition.TR_THEME_ENDING_KEY not in new_attribute_dict:
-                raise Exception("Must specify TR Ending Key for {} (or mark MC not Present)!"
-                                "".format(cls.id()))
+                raise Exception("Must specify TR Ending Key for {} in {} (or mark MC not Present)!"
+                                "".format(cls.id(), sonata_block_cls.__name__))
             if Exposition.TR_THEME_ENDING_CADENCE not in new_attribute_dict:
-                raise Exception("Must specify TR Ending Cadence for {} (or mark MC not Present)!"
-                                "".format(cls.id()))
+                raise Exception("Must specify TR Ending Cadence for {} in {} (or mark MC not Present)!"
+                                "".format(cls.id(), sonata_block_cls.__name__))
             tr_relative_key = new_attribute_dict[Exposition.get_relative_from_absolute(Exposition.TR_THEME_ENDING_KEY)]
             tr_cadence = new_attribute_dict[Exposition.TR_THEME_ENDING_CADENCE]
             new_attribute_dict[Exposition._MC_TYPE] = MedialCaesura.compute_mc_type(tr_relative_key, tr_cadence)

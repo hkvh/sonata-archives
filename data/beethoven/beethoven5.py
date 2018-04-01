@@ -82,24 +82,25 @@ class Beethoven5_1(SonataDataClass):
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
 
             Exposition.MC_MEASURES:                    MeasureRange(58, 62),
-            Exposition.MC_STYLE:               MedialCaesura.GENERAL_PAUSE_WITH_S0,
+            Exposition.MC_STYLE:                       MedialCaesura.GENERAL_PAUSE_WITH_S0,
 
-            Exposition.S_THEME_MEASURES:       MeasureRange(59, 110),
-            Exposition.S_MODULE_MEASURES:      {
+            Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),
+            Exposition.S_MODULE_MEASURES:              {
                 "S0": MeasureRange(59, 62),
                 "S1": MeasureRange(63, 110)
             },
-            Exposition.S_THEME_OPENING_KEY:    Key.EES_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:     Key.EES_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE: Cadence.PAC_MAJOR,
+            Exposition.S_THEME_OPENING_KEY:            Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:             Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
-            Exposition.EEC_ESC_SECURED:        True,
+            Exposition.EEC_ESC_SECURED:                True,
+            Exposition.EEC_ESC_MEASURE:                MeasureRange(110),
 
-            Exposition.C_THEME_MEASURES:       MeasureRange(110, 124),
-            Exposition.C_THEME_OPENING_KEY:    Key.EES_MAJOR,
-            Exposition.C_THEME_P_BASED:        True,
-            Exposition.C_THEME_ENDING_KEY:     Key.EES_MAJOR,
-            Exposition.C_THEME_ENDING_CADENCE: Cadence.PAC_MAJOR,
+            Exposition.C_THEME_MEASURES:               MeasureRange(110, 124),
+            Exposition.C_THEME_OPENING_KEY:            Key.EES_MAJOR,
+            Exposition.C_THEME_P_BASED:                True,
+            Exposition.C_THEME_ENDING_KEY:             Key.EES_MAJOR,
+            Exposition.C_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
         }
 
     @classmethod
@@ -121,7 +122,7 @@ class Beethoven5_1(SonataDataClass):
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
         recap_dict = cls.exposition_attribute_dict()
 
-        recap_changes = {
+        recap_updates = {
             Recapitulation.MEASURES:                        MeasureRange(248, 374),
 
             Recapitulation.P_THEME_MEASURES:                MeasureRange(248, 268),
@@ -133,12 +134,13 @@ class Beethoven5_1(SonataDataClass):
             Recapitulation.MC_MEASURES:                     MeasureRange(302, 305),
 
             Recapitulation.S_THEME_MEASURES:                MeasureRange(303, 362),
-            Exposition.S_MODULE_MEASURES: {
+            Recapitulation.S_MODULE_MEASURES:               {
                 "S0": MeasureRange(303, 305),
                 "S1": MeasureRange(306, 362)
             },
             Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
+            Recapitulation.EEC_ESC_MEASURE:                 MeasureRange(362),
 
             Recapitulation.C_THEME_MEASURES:                MeasureRange(362, 374),
             Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
@@ -147,7 +149,7 @@ class Beethoven5_1(SonataDataClass):
                                                             "I / C Major = V / F minor"
         }
 
-        recap_dict.update(recap_changes)
+        recap_dict.update(recap_updates)
         return recap_dict
 
     @classmethod
@@ -204,20 +206,19 @@ class Beethoven5_4(SonataDataClass):
             Exposition.TR_THEME_ENDING_KEY:            Key.G_MAJOR,
             Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
 
-            Exposition.MC_MEASURES:            MeasureRange(43, 44),
-            Exposition.MC_STYLE:               MedialCaesura.CAESURA_FILL_CASCADE,
+            Exposition.MC_MEASURES:                    MeasureRange(43, 44),
+            Exposition.MC_STYLE:                       MedialCaesura.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_MEASURES:       MeasureRange(45, 63),
+            Exposition.S_THEME_MEASURES:               MeasureRange(45, 63),
             # could be 45 if include S headmotive
-            Exposition.S_THEME_OPENING_KEY:    Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:     Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE: Cadence.HC,
-            Exposition.EEC_ESC_SECURED:        False,
-
-            Exposition.C_THEME_MEASURES:       MeasureRange(64, 85),
-            Exposition.C_THEME_P_BASED:        False,
-            Exposition.C_THEME_OPENING_KEY:    Key.G_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:     Key.C_MINOR,
+            Exposition.S_THEME_OPENING_KEY:            Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
+            Exposition.EEC_ESC_SECURED:                False,
+            Exposition.C_THEME_MEASURES:               MeasureRange(64, 85),
+            Exposition.C_THEME_P_BASED:                False,
+            Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
+            Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
         }
 
     @classmethod
@@ -240,9 +241,9 @@ class Beethoven5_4(SonataDataClass):
 
     @classmethod
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
-        recap_dict = cls.exposition_attribute_dict()
+        recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
-        recap_changes = {
+        recap_updates = {
             Recapitulation.MEASURES:            MeasureRange(207, 374),
 
             Recapitulation.P_THEME_MEASURES:    MeasureRange(207, 232),
@@ -256,13 +257,14 @@ class Beethoven5_4(SonataDataClass):
             # could be 253 if include S headmotive
             Recapitulation.S_THEME_OPENING_KEY: Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:  Key.C_MAJOR,
+            Recapitulation.EEC_ESC_SECURED:     False,
 
             Recapitulation.C_THEME_MEASURES:    MeasureRange(273, 294),  # or 293 depending on definition
             Recapitulation.C_THEME_OPENING_KEY: Key.C_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY:  Key.C_MAJOR,
         }
 
-        recap_dict.update(recap_changes)
+        recap_dict.update(recap_updates)
         return recap_dict
 
     @classmethod

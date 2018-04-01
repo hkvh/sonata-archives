@@ -127,20 +127,22 @@ class Beethoven1_1(SonataDataClass):
 
     @classmethod
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
-        recap_dict = cls.exposition_attribute_dict()
+        recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
-        recap_changes = {
+        recap_updates = {
             Recapitulation.MEASURES:                         MeasureRange(178, 298),
 
             Recapitulation.P_THEME_MEASURES:                 MeasureRange(178, 198),
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.3 extended and P1.4 elided",
             Recapitulation.P_THEME_ENDING_KEY:               Key.G_MAJOR,
+            Recapitulation.P_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
 
             Recapitulation.TR_THEME_MEASURES:                MeasureRange(198, 204),
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION:  "TR Theme shortened and no exposition TR motives appear",
-
+            Recapitulation.TR_THEME_ENDING_KEY:              Key.C_MAJOR,
             Recapitulation.MC_MEASURES:                      MeasureRange(204, 205),
             Recapitulation.MC_STYLE:                         MedialCaesura.CAESURA_FILL,
+            Recapitulation.MC_CHANGE_FROM_EXPOSITION:        "",
             Recapitulation.S_THEME_MEASURES:                 MeasureRange(206, 241),
             Recapitulation.S_ATTENUATED_EVADED_PAC_MEASURES: [MeasureRange(230)],
             Recapitulation.S_MODULE_MEASURES:                {
@@ -156,7 +158,7 @@ class Beethoven1_1(SonataDataClass):
             Recapitulation.C_THEME_OPENING_KEY:              Key.C_MAJOR,
         }
 
-        recap_dict.update(recap_changes)
+        recap_dict.update(recap_updates)
         return recap_dict
 
     @classmethod
