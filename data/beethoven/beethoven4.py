@@ -50,7 +50,7 @@ class Beethoven4_1(SonataDataClass):
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
 
             # Delete this attribute if did not render a lilypond image for this sonata
-            # Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 560}
+            Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 660}
         }
 
     @classmethod
@@ -133,8 +133,9 @@ class Beethoven4_1(SonataDataClass):
             Exposition.EEC_ESC_MEASURE:                  MeasureRange(177),
             Exposition.C_THEME_MEASURES:                 MeasureRange(177, 187),
             Exposition.C_THEME_COMMENTS:                 "Could maybe consider m. 141 EEC and S2 as C0 but the m. 141 "
-                                                         "cadence is attenuated, and the main motives after m. 141 link"
-                                                         "back to diminution of bass cadential motives in m. 135-140",
+                                                         "cadence is attenuated, and the S2.1 motives after m. 141 "
+                                                         "link back to diminution of bass cadential 1.4 motives "
+                                                         "in m. 135-140",
             Exposition.C_THEME_OPENING_KEY:              Key.BES_MAJOR,
             Exposition.C_THEME_ENDING_KEY:               Key.BES_MAJOR
         }
