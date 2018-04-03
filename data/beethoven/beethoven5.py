@@ -244,9 +244,9 @@ class Beethoven5_4(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
-            Recapitulation.MEASURES:            MeasureRange(207, 374),
+            Recapitulation.MEASURES:             MeasureRange(207, 374),
 
-            Recapitulation.P_THEME_MEASURES:    MeasureRange(207, 232),
+            Recapitulation.P_THEME_MEASURES:     MeasureRange(207, 232),
 
             Recapitulation.TR_THEME_MEASURES:   MeasureRange(232, 252),
             Recapitulation.TR_THEME_ENDING_KEY: Key.C_MAJOR,
@@ -258,6 +258,7 @@ class Beethoven5_4(SonataDataClass):
             Recapitulation.S_THEME_OPENING_KEY: Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:  Key.C_MAJOR,
             Recapitulation.EEC_ESC_SECURED:     False,
+            Recapitulation.ESC_SUBSTITUTE:      False,
 
             Recapitulation.C_THEME_MEASURES:    MeasureRange(273, 294),  # or 293 depending on definition
             Recapitulation.C_THEME_OPENING_KEY: Key.C_MAJOR,

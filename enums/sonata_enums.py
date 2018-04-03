@@ -221,10 +221,10 @@ class MedialCaesura(object):
     GENERAL_PAUSE = "General Pause"
     GENERAL_PAUSE_WITH_S0 = "General Pause with S0"
     CAESURA_FILL = "Caesura Fill"
+    DEFORMATION_CAESURA_FILL = "Deformational Caesura Fill"
     CAESURA_FILL_RISE = "Caesura Fill Rise"
     CAESURA_FILL_CASCADE = "Caesura Fill Cascade"
     CAESURA_FILL_CASCADE_AS_S0 = "Caesura Fill Cascade as S0"
-
 
     @staticmethod
     def compute_mc_type(relative_key: str, cadence_type: str):
@@ -235,6 +235,14 @@ class MedialCaesura(object):
         :return: the appropriate MC Type, like V: PAC (splitting cadence on ( and taking the first part)
         """
         return "{}: {} MC".format(relative_key, cadence_type.split('(')[0].rstrip())
+
+
+class ContinuousSubtype(object):
+    """
+    An enum to describe subtypes of continuous expositions/recapitulations (i.e. sonata blocks missing MC and S)
+    """
+    SUBTYPE_1_EXPANSION_SECTION = "Subtype 1: Expansion Section"
+    SUBTYPE_2_EARLY_PAC_REPETITIONS = "Subtype 2: Early PAC with Reiterations of Cadence"
 
 
 if __name__ == '__main__':

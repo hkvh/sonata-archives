@@ -432,6 +432,7 @@ class Exposition(SonataBlockTableSpecification):
     NUM_CYCLES = Field("num_cycles", "Exposition Number of Cycles")  # does not include literal exposition repeats
     MEASURES = Field("measures", "Exposition Measures")
     CONTINUOUS = Field("continuous", "Continuous Exposition")  # No TR, MC or S
+    CONTINUOUS_SUBTYPE = Field("continuous_subtype", "Continuous Exposition Subtype")
     DUTCHMAN_TYPE = Field("dutchman_type", "Dutchman-Type Exposition")  # Maximally contrasting Masculine P, Feminine S
     COMMENTS = Field("comments", "Exposition Comments")
     OPENING_TEMPO = Field("opening_tempo", "Exposition Opening Tempo")
@@ -485,8 +486,8 @@ class Exposition(SonataBlockTableSpecification):
     S_THEME_MEASURES = Field("s_theme_measures", "S Theme Measures")
     # This will be a JSON Array of all evaded cadence measure, since all will be 1 measure long, no need for counts
     S_ATTENUATED_EVADED_PAC_MEASURES = Field("s_attenuated_evaded_pac_measures", "S Attenuated/Evaded PAC Measure(s)")
-    # Similar to above but for non-PACs that would have been conclusive PACs if the tonic arrived due to dramatic Vs
-    # that resolve deceptively
+    # Similar to above but for non-PACs that would have been conclusive PACs (dramatic root position active Vs)
+    # but are either resolved imperfectly, deceptively, or with no resolution at all
     S_ABORTED_PAC_MEASURES = Field("s_aborted_pac_measures", "S Aborted PAC Measure(s)")
 
     S_MODULE_MEASURES = Field("s_module_measures", "S Module Measures")
@@ -502,7 +503,7 @@ class Exposition(SonataBlockTableSpecification):
     # Only its display name will be different for Recap
     EEC_ESC_SECURED = Field("eec_esc_secured", "EEC Secured")
     EEC_ESC_MEASURE = Field("eec_esc_measure", "EEC Measure")  # Always will be 1 measure long, so no need for counts
-    EEC_ESC_STRENGTH = Field("eec_esc_strength", "EEC Strength")
+    EEC_ESC_COMMENTS = Field("eec_esc_comments", "EEC Comments")
 
     # C
     C_THEME_PRESENT = Field("c_theme_present", "C Theme Present")
@@ -577,6 +578,7 @@ class Exposition(SonataBlockTableSpecification):
             cls.TR_THEME_COMMENTS,
             cls.MC_COMMENTS,
             cls.S_THEME_COMMENTS,
+            cls.EEC_ESC_COMMENTS,
             cls.C_THEME_COMMENTS,
 
             # Exposition Part 2 Keys that 99% of the time will be different in recap
@@ -608,6 +610,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.MEASURES, SQLType.TEXT),
             (cls.NUM_CYCLES, SQLType.INTEGER),
             (cls.CONTINUOUS, SQLType.BOOLEAN_DEFAULT_FALSE),
+            (cls.CONTINUOUS_SUBTYPE, SQLType.TEXT),
             (cls.DUTCHMAN_TYPE, SQLType.BOOLEAN_DEFAULT_FALSE),
             (cls.COMMENTS, SQLType.TEXT),
             (cls.OPENING_TEMPO, SQLType.TEXT),
@@ -680,7 +683,7 @@ class Exposition(SonataBlockTableSpecification):
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
             (cls.EEC_ESC_SECURED, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.EEC_ESC_MEASURE, SQLType.TEXT),
-            (cls.EEC_ESC_STRENGTH, SQLType.TEXT),
+            (cls.EEC_ESC_COMMENTS, SQLType.TEXT),
         ]
 
     @classmethod
@@ -823,9 +826,14 @@ class Recapitulation(Exposition):
     MEASURES = Field("measures", "Recapitulation Measures")
     NUM_CYCLES = Field("num_cycles", "Recapitulation Number of Cycles")  # does not include literal exposition repeats
     CONTINUOUS = Field("continuous", "Continuous Recapitulation")
+    CONTINUOUS_SUBTYPE = Field("continuous_subtype", "Continuous Recapitulation Subtype")
     DUTCHMAN_TYPE = Field("dutchman_type", "Dutchman-Type Recapitulation")  # Apotheosis of S as redemptive agent
     COMMENTS = Field("comments", "Recapitulation Comments")
     OPENING_TEMPO = Field("opening_tempo", "Recapitulation Opening Tempo")
+    # Override the display name since EEC vs ESC only core sonata thing named differently between the two halfs
+    EEC_ESC_SECURED = Field("eec_esc_secured", "ESC Secured")
+    EEC_ESC_MEASURE = Field("eec_esc_measure", "ESC Measure")
+    EEC_ESC_COMMENTS = Field("eec_esc_comments", "ESC Comments")
 
     # P
     P_THEME_PRESENT = Field("p_theme_present", "P Theme Present")  # Type 2 Sonatas don't recap P
@@ -841,11 +849,9 @@ class Recapitulation(Exposition):
     S_THEME_CHANGE_FROM_EXPOSITION = Field("s_theme_change_from_exposition", "S Theme Change From Exposition")
 
     # ESC
-
-    # Override the display name since EEC vs ESC only core sonata thing named differently between the two halfs
-    EEC_ESC_SECURED = Field("eec_esc_secured", "ESC Secured")
-    EEC_ESC_MEASURE = Field("eec_esc_measure", "ESC Measure")
-    EEC_ESC_STRENGTH = Field("eec_esc_strength", "ESC Strength")
+    # Only fill this field if ESC is not secured, which indicates whether there is any "wrong-key" substitute or not
+    # If true, then the eec_esc_measure refers to the false esc, since the real one was not secured
+    ESC_SUBSTITUTE = Field("esc_false_substitute", "ESC False/Substitute")
 
     # C
     C_THEME_CHANGE_FROM_EXPOSITION = Field("c_theme_change_from_exposition", "C Theme Change From Exposition")
@@ -877,6 +883,7 @@ class Recapitulation(Exposition):
             cls._s_field_sql_type_list(),
             [
                 (cls.S_THEME_CHANGE_FROM_EXPOSITION, SQLType.TEXT),
+                (cls.ESC_SUBSTITUTE, SQLType.BOOLEAN),
             ],
 
             cls._c_field_sql_type_list(),
