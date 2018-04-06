@@ -66,12 +66,29 @@ class Beethoven5_1(SonataDataClass):
 
             Exposition.P_THEME_MEASURES:               MeasureRange(1, 21),
             Exposition.P_THEME_OPENING_KEY:            Key.C_MINOR,
+            Exposition.P_THEME_TYPE:                   PrimaryThemeType.GRAND_ANTECEDENT,
+            Exposition.P_MODULE_MEASURES:              {
+                "P0":   MeasureRange(1, 5),
+                "P1.1": MeasureRange(6, 14),
+                "P1.2": MeasureRange(14, 21)
+            },
+            Exposition.P_THEME_COMMENTS:               "I am calling mm. 1-5 P0 since it is an opening motto cordoned "
+                                                       "off from the rest of P1, "
+                                                       "but it is a somewhat unusual P0 case since P1.1 "
+                                                       "is obviously completely derived from P0. "
+                                                       "(Hepokoski calls it P1.0 which is also defensible)",
             Exposition.P_MODULE_PHRASE_STRUCTURE:      {
                 "P1": PhraseStructure.SENTENCE
             },
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
-
+            Exposition.TR_THEME_TYPE:                  TransitionType.DISSOLVING_CONTINUATION,
             Exposition.TR_THEME_MEASURES:              MeasureRange(22, 58),
+            Exposition.TR_MODULE_MEASURES:             {
+                "TR0":   MeasureRange(22, 24),
+                "TR1.1": MeasureRange(25, 33),
+                "TR1.2": MeasureRange(33, 44),
+                "TR1.3": MeasureRange(44, 58),
+            },
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MINOR,
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:     2,
@@ -86,8 +103,10 @@ class Beethoven5_1(SonataDataClass):
 
             Exposition.S_THEME_MEASURES:               MeasureRange(59, 110),
             Exposition.S_MODULE_MEASURES:              {
-                "S0": MeasureRange(59, 62),
-                "S1": MeasureRange(63, 110)
+                "S0":   MeasureRange(59, 62),
+                "S1.1": MeasureRange(63, 74),
+                "S1.2": MeasureRange(75, 93),
+                "S1.3": MeasureRange(94, 110),
             },
             Exposition.S_THEME_OPENING_KEY:            Key.EES_MAJOR,
             Exposition.S_THEME_ENDING_KEY:             Key.EES_MAJOR,
@@ -126,17 +145,31 @@ class Beethoven5_1(SonataDataClass):
             Recapitulation.MEASURES:                        MeasureRange(248, 374),
 
             Recapitulation.P_THEME_MEASURES:                MeasureRange(248, 268),
-            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "Oboe has mournful Adagio interlude",
+            Recapitulation.P_MODULE_MEASURES:               {
+                "P0":   MeasureRange(248, 252),
+                "P1.1": MeasureRange(253, 261),
+                "P1.2": MeasureRange(261, 268)
+            },
+            Recapitulation.P_THEME_TYPE:                    PrimaryThemeType.GRAND_ANTECEDENT,
+            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "Oboe has mournful Adagio interlude on final HC",
 
             Recapitulation.TR_THEME_MEASURES:               MeasureRange(269, 302),
-            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "Reaches same C dim chord, but resolves differently",
+            Recapitulation.TR_MODULE_MEASURES:              {
+                "TR1.1": MeasureRange(269, 277),
+                "TR1.2": MeasureRange(277, 288),
+                "TR1.3": MeasureRange(288, 302),
+            },
+            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR0 not present. "
+                                                            "TR1.3 reaches same C dim chord, but resolves differently",
 
-            Recapitulation.MC_MEASURES:                     MeasureRange(302, 305),
+            Recapitulation.MC_MEASURES:                     MeasureRange(302, 306),
 
             Recapitulation.S_THEME_MEASURES:                MeasureRange(303, 362),
             Recapitulation.S_MODULE_MEASURES:               {
-                "S0": MeasureRange(303, 305),
-                "S1": MeasureRange(306, 362)
+                "S0":   MeasureRange(303, 306),
+                "S1.1": MeasureRange(307, 322),
+                "S1.2": MeasureRange(323, 345),
+                "S1.3": MeasureRange(346, 362),
             },
             Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
@@ -191,9 +224,16 @@ class Beethoven5_4(SonataDataClass):
             Exposition.OPENING_TEMPO:                  "Allegro",
 
             Exposition.P_THEME_MEASURES:               MeasureRange(1, 26),
+            Exposition.P_MODULE_MEASURES:              {
+                "P1.1":           MeasureRange(1, 4),
+                "P1.2":           MeasureRange(5, 12),
+                "P1.3":           MeasureRange(13, 18),
+                "P1.4":           MeasureRange(18, 22),
+                "P caesura fill": MeasureRange(22, 26),
+            },
+            Exposition.P_THEME_TYPE:                   PrimaryThemeType.GRAND_ANTECEDENT,
             Exposition.P_THEME_OPENING_KEY:            Key.C_MAJOR,
             Exposition.P_THEME_ENDING_KEY:             Key.C_MAJOR,
-            Exposition.P_THEME_TYPE:                   PrimaryThemeType.GRAND_ANTECEDENT,
 
             Exposition.TR_THEME_MEASURES:              MeasureRange(26, 43),
             Exposition.TR_THEME_OPENING_KEY:           Key.C_MAJOR,
@@ -212,10 +252,19 @@ class Beethoven5_4(SonataDataClass):
             Exposition.S_THEME_MEASURES:               MeasureRange(45, 63),
             # could be 45 if include S headmotive
             Exposition.S_THEME_OPENING_KEY:            Key.G_MAJOR,
+            Exposition.S_MODULE_MEASURES:              {
+                "S1.1": MeasureRange(45, 58),
+                "S1.2": MeasureRange(58, 63)
+            },
             Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
+            Exposition.S_ABORTED_PAC_MEASURES:         [MeasureRange(64)],
             Exposition.EEC_ESC_SECURED:                False,
             Exposition.C_THEME_MEASURES:               MeasureRange(64, 85),
+            Exposition.C_MODULE_MEASURES:              {
+                "C1.1": MeasureRange(64, 79),
+                "C1.2": MeasureRange(80, 85)
+            },
             Exposition.C_THEME_P_BASED:                False,
             Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
             Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
@@ -244,25 +293,44 @@ class Beethoven5_4(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
-            Recapitulation.MEASURES:             MeasureRange(207, 374),
+            Recapitulation.MEASURES:                       MeasureRange(207, 374),
 
-            Recapitulation.P_THEME_MEASURES:     MeasureRange(207, 232),
+            Recapitulation.P_THEME_MEASURES:               MeasureRange(207, 232),
+            Recapitulation.P_THEME_TYPE:                   PrimaryThemeType.GRAND_ANTECEDENT,
+            Exposition.P_MODULE_MEASURES:                  {
+                "P1.1":           MeasureRange(207, 210),
+                "P1.2":           MeasureRange(211, 218),
+                "P1.3":           MeasureRange(219, 224),
+                "P1.4":           MeasureRange(224, 228),
+                "P caesura fill": MeasureRange(228, 232),
+            },
+            Recapitulation.TR_THEME_MEASURES:              MeasureRange(232, 252),
+            Recapitulation.TR_THEME_ENDING_KEY:            Key.C_MAJOR,
 
-            Recapitulation.TR_THEME_MEASURES:   MeasureRange(232, 252),
-            Recapitulation.TR_THEME_ENDING_KEY: Key.C_MAJOR,
+            Recapitulation.MC_MEASURES:                    MeasureRange(252, 253),
 
-            Recapitulation.MC_MEASURES:         MeasureRange(252, 253),
-
-            Recapitulation.S_THEME_MEASURES:    MeasureRange(254, 272),
+            Recapitulation.S_THEME_MEASURES:               MeasureRange(254, 272),
             # could be 253 if include S headmotive
-            Recapitulation.S_THEME_OPENING_KEY: Key.C_MAJOR,
-            Recapitulation.S_THEME_ENDING_KEY:  Key.C_MAJOR,
-            Recapitulation.EEC_ESC_SECURED:     False,
-            Recapitulation.ESC_SUBSTITUTE:      False,
+            Recapitulation.S_THEME_OPENING_KEY:            Key.C_MAJOR,
+            Recapitulation.S_THEME_ENDING_KEY:             Key.C_MAJOR,
+            Recapitulation.S_MODULE_MEASURES:              {
+                "S1.1": MeasureRange(254, 267),
+                "S1.2": MeasureRange(267, 272)
+            },
+            Exposition.S_ABORTED_PAC_MEASURES:             [MeasureRange(273)],
+            Recapitulation.EEC_ESC_SECURED:                False,
+            Recapitulation.ESC_SUBSTITUTE:                 False,
 
-            Recapitulation.C_THEME_MEASURES:    MeasureRange(273, 294),  # or 293 depending on definition
-            Recapitulation.C_THEME_OPENING_KEY: Key.C_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY:  Key.C_MAJOR,
+            Recapitulation.C_THEME_MEASURES:               MeasureRange(273, 294),  # or 293 depending on definition
+            Recapitulation.C_MODULE_MEASURES:              {
+                "C1.1":    MeasureRange(273, 288),
+                "C1.2var": MeasureRange(289, 294)
+            },
+            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION: "C1.2 missing bass motives and instead holds C1.1 build-up "
+                                                           "static to lead to Coda",
+
+            Recapitulation.C_THEME_OPENING_KEY:            Key.C_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY:             Key.C_MAJOR,
         }
 
         recap_dict.update(recap_updates)

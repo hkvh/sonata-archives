@@ -69,7 +69,7 @@
 \markup{\huge P\super{1.3 ant}}
 \relative c'' {
     \key bes \major
-    \override Score.BarNumber.break-visibility = ##(#f #t #f)
+    \override Score.BarNumber.break-visibility = #end-of-line-invisible
     \set Score.currentBarNumber = #51
     \set Score.barNumberVisibility = #(every-nth-bar-number-visible 51)
     \time 2/2

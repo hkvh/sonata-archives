@@ -590,7 +590,6 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_ENDING_KEY,
 
             # P Things that often change
-            cls.P_THEME_TYPE,
             cls.P_MODULE_PHRASE_STRUCTURE,
             cls.P_THEME_STRUCTURAL_PAC_COUNT,
 
