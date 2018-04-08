@@ -62,7 +62,7 @@ if __name__ == '__main__':
                         format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
     filenames_list = [
-        'beethoven5_1'
+        'beethoven6_1'
     ]
 
     # Comment this out to use the filename_list

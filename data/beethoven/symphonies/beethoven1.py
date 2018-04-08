@@ -82,26 +82,26 @@ class Beethoven1_1(SonataDataClass):
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   True,
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:       3,
             Exposition.TR_THEME_ENDING_KEY:              Key.C_MAJOR,
-            Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC,
+            Exposition.TR_THEME_ENDING_CADENCE:   Cadence.HC,
 
-            Exposition.MC_STYLE:                         MedialCaesura.GENERAL_PAUSE,
-            Exposition.MC_MEASURES:                      MeasureRange(52),
+            Exposition.MC_STYLE:                  MedialCaesura.GENERAL_PAUSE,
+            Exposition.MC_MEASURES:               MeasureRange(52),
 
-            Exposition.S_THEME_MEASURES:                 MeasureRange(53, 88),
-            Exposition.S_MODULE_MEASURES:                {
+            Exposition.S_THEME_MEASURES:          MeasureRange(53, 88),
+            Exposition.S_MODULE_MEASURES:         {
                 "S1": MeasureRange(53, 77),
                 "S2": MeasureRange(77, 88),
             },
-            Exposition.S_THEME_OPENING_KEY:              Key.G_MAJOR,
-            Exposition.S_ATTENUATED_EVADED_PAC_MEASURES: [MeasureRange(77)],
-            Exposition.S_THEME_OTHER_KEYS:               [Key.G_MINOR],
-            Exposition.S_THEME_ENDING_KEY:               Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
-            Exposition.EEC_ESC_SECURED:                  True,
-            Exposition.EEC_ESC_MEASURE:                  MeasureRange(88),
+            Exposition.S_THEME_OPENING_KEY:       Key.G_MAJOR,
+            Exposition.S_ATTENUATED_PAC_MEASURES: [MeasureRange(77)],
+            Exposition.S_THEME_OTHER_KEYS:        [Key.G_MINOR],
+            Exposition.S_THEME_ENDING_KEY:        Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:    Cadence.PAC_MAJOR,
+            Exposition.EEC_ESC_SECURED:           True,
+            Exposition.EEC_ESC_MEASURE:           MeasureRange(88),
 
-            Exposition.C_THEME_MEASURES:                 MeasureRange(88, 109),
-            Exposition.C_THEME_OPENING_KEY:              Key.G_MAJOR,
+            Exposition.C_THEME_MEASURES:          MeasureRange(88, 109),
+            Exposition.C_THEME_OPENING_KEY:       Key.G_MAJOR,
             Exposition.C_THEME_P_BASED:                  True,
         }
 
@@ -144,7 +144,7 @@ class Beethoven1_1(SonataDataClass):
             Recapitulation.MC_STYLE:                         MedialCaesura.CAESURA_FILL,
             Recapitulation.MC_CHANGE_FROM_EXPOSITION:        "",
             Recapitulation.S_THEME_MEASURES:                 MeasureRange(206, 241),
-            Recapitulation.S_ATTENUATED_EVADED_PAC_MEASURES: [MeasureRange(230)],
+            Recapitulation.S_ATTENUATED_PAC_MEASURES:        [MeasureRange(230)],
             Recapitulation.S_MODULE_MEASURES:                {
                 "S1": MeasureRange(206, 230),
                 "S2": MeasureRange(230, 241),

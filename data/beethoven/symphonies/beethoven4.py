@@ -126,8 +126,8 @@ class Beethoven4_1(SonataDataClass):
                 Key.D_MINOR,
             ],
             Exposition.S_THEME_ENDING_KEY:               Key.BES_MAJOR,
-            Exposition.S_ATTENUATED_EVADED_PAC_MEASURES: [MeasureRange(141)],
-            Exposition.S_ABORTED_PAC_MEASURES:           [163, 167],
+            Exposition.S_ATTENUATED_PAC_MEASURES:        [MeasureRange(141)],
+            Exposition.S_EVADED_PAC_MEASURES:            [163, 167],
             Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
             Exposition.EEC_ESC_SECURED:                  True,
             Exposition.EEC_ESC_MEASURE:                  MeasureRange(177),
@@ -172,24 +172,24 @@ class Beethoven4_1(SonataDataClass):
                                                              "P2 absent entirely",
             Recapitulation.TR_THEME_MEASURES:                MeasureRange(351, 377),
 
-            Recapitulation.TR_THEME_ENDING_KEY:              Key.BES_MAJOR,
+            Recapitulation.TR_THEME_ENDING_KEY:       Key.BES_MAJOR,
 
-            Recapitulation.MC_MEASURES:                      MeasureRange(377, 380),
+            Recapitulation.MC_MEASURES:               MeasureRange(377, 380),
 
-            Recapitulation.S_THEME_MEASURES:                 MeasureRange(381, 486),
-            Recapitulation.S_MODULE_MEASURES:                {
+            Recapitulation.S_THEME_MEASURES:          MeasureRange(381, 486),
+            Recapitulation.S_MODULE_MEASURES:         {
                 "S0": MeasureRange(381, 415),
                 "S1": MeasureRange(415, 486),
             },
-            Recapitulation.S_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Recapitulation.S_ATTENUATED_EVADED_PAC_MEASURES: [MeasureRange(415)],
-            Recapitulation.S_ABORTED_PAC_MEASURES:           [437, 441],
-            Recapitulation.S_THEME_ENDING_KEY:               Key.BES_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                  MeasureRange(451),
+            Recapitulation.S_THEME_OPENING_KEY:       Key.BES_MAJOR,
+            Recapitulation.S_ATTENUATED_PAC_MEASURES: [MeasureRange(415)],
+            Recapitulation.S_EVADED_PAC_MEASURES:     [437, 441],
+            Recapitulation.S_THEME_ENDING_KEY:        Key.BES_MAJOR,
+            Recapitulation.EEC_ESC_MEASURE:           MeasureRange(451),
 
-            Recapitulation.C_THEME_MEASURES:                 MeasureRange(451, 461),
-            Recapitulation.C_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY:               Key.BES_MAJOR,
+            Recapitulation.C_THEME_MEASURES:          MeasureRange(451, 461),
+            Recapitulation.C_THEME_OPENING_KEY:       Key.BES_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY:        Key.BES_MAJOR,
             Recapitulation.C_THEME_ENDING_CADENCE:           Cadence.HC,
         }
 

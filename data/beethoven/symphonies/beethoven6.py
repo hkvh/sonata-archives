@@ -52,7 +52,7 @@ class Beethoven6_1(SonataDataClass):
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
 
             # Delete this attribute if did not render a lilypond image for this sonata
-            # Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 660}
+            Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 660}
         }
 
     @classmethod
@@ -105,19 +105,19 @@ class Beethoven6_1(SonataDataClass):
                 "S1.2": MeasureRange(93, 115),
             },
             Exposition.S_THEME_OPENING_KEY:            Key.C_MAJOR,
-            Exposition.S_ABORTED_PAC_MEASURES:         [100, 107, 111],
+            Exposition.S_EVADED_PAC_MEASURES:          [100, 107, 111],
             Exposition.S_THEME_ENDING_KEY:             Key.C_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
             Exposition.EEC_ESC_SECURED:                True,
             Exposition.EEC_ESC_MEASURE:                MeasureRange(115),
             Exposition.C_THEME_MEASURES:               MeasureRange(115, 138),
             Exposition.C_MODULE_MEASURES:              {
-                "C1":     MeasureRange(115, 135),
-                "C-Link": MeasureRange(135, 138)
+                "C1":   MeasureRange(115, 135),
+                "C-rt": MeasureRange(135, 138)
             },
             Exposition.C_THEME_OPENING_KEY:            Key.C_MAJOR,
             Exposition.C_THEME_ENDING_KEY:             Key.F_MAJOR,
-            Exposition.C_THEME_COMMENTS:               "C1 ends in C Major but 4-bar link veers back to F Major",
+            Exposition.C_THEME_COMMENTS:               "C1 ends in C Major but 4-bar C-rt veers back to F Major",
         }
 
     @classmethod
@@ -154,14 +154,14 @@ class Beethoven6_1(SonataDataClass):
                 "P1.0": MeasureRange(279, 288),
                 "P1.1": MeasureRange(289, 312),
             },
-            Recapitulation.P_MODULE_PHRASE_STRUCTURE: {
+            Recapitulation.P_MODULE_PHRASE_STRUCTURE:        {
                 "P1.0": PhraseStructure.ANTECEDENT,
                 "P1.1": PhraseStructure.SENTENCE,
             },
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.0 has new violin I countermelody and the half-cadence"
                                                              "fermata is expanded into a multi-measure figuration; "
-                                                             "P1.1 contains a novel tripleted ostinato and P1.2 is "
-                                                             "absent entirely",
+                                                             "P1.1 contains a novel tripleted ostinato countermelody "
+                                                             "throughout, and P1.2 is entirely absent",
             Recapitulation.TR_THEME_MEASURES:                MeasureRange(312, 328),
 
             Recapitulation.TR_THEME_ENDING_KEY:              Key.F_MAJOR,
@@ -176,21 +176,21 @@ class Beethoven6_1(SonataDataClass):
                 "S1.2": MeasureRange(372, 394),
             },
             Recapitulation.S_THEME_OPENING_KEY:              Key.F_MAJOR,
-            Recapitulation.S_ATTENUATED_EVADED_PAC_MEASURES: [MeasureRange(415)],
-            Recapitulation.S_ABORTED_PAC_MEASURES:           [379, 386, 390],
+            Recapitulation.S_ATTENUATED_PAC_MEASURES:        [MeasureRange(415)],
+            Recapitulation.S_EVADED_PAC_MEASURES:            [379, 386, 390],
             Recapitulation.S_THEME_ENDING_KEY:               Key.F_MAJOR,
             Recapitulation.EEC_ESC_MEASURE:                  MeasureRange(394),
 
             Recapitulation.C_THEME_MEASURES:                 MeasureRange(394, 417),
             Recapitulation.C_MODULE_MEASURES:                {
-                "C1":     MeasureRange(394, 414),
-                "C-Link": MeasureRange(414, 417)
+                "C1":   MeasureRange(394, 414),
+                "C-rt": MeasureRange(414, 417)
             },
             Recapitulation.C_THEME_OPENING_KEY:              Key.F_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY:               Key.BES_MAJOR,
             Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:   "C theme transposed up a fourth for tonic resolution (as"
                                                              "expected), leading to C Major C1. However,"
-                                                             "this creates a problem for the C link gesture"
+                                                             "this creates a problem for the C-rt gesture"
                                                              "that was already in tonic in exposition, so the exact"
                                                              " transposition accidentally veers us to the subdominant!"
         }

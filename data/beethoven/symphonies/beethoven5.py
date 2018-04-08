@@ -249,25 +249,25 @@ class Beethoven5_4(SonataDataClass):
             Exposition.MC_MEASURES:                    MeasureRange(43, 44),
             Exposition.MC_STYLE:                       MedialCaesura.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_MEASURES:               MeasureRange(45, 63),
+            Exposition.S_THEME_MEASURES:       MeasureRange(45, 63),
             # could be 45 if include S headmotive
-            Exposition.S_THEME_OPENING_KEY:            Key.G_MAJOR,
-            Exposition.S_MODULE_MEASURES:              {
+            Exposition.S_THEME_OPENING_KEY:    Key.G_MAJOR,
+            Exposition.S_MODULE_MEASURES:      {
                 "S1.1": MeasureRange(45, 58),
                 "S1.2": MeasureRange(58, 63)
             },
-            Exposition.S_THEME_ENDING_KEY:             Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.HC,
-            Exposition.S_ABORTED_PAC_MEASURES:         [MeasureRange(64)],
-            Exposition.EEC_ESC_SECURED:                False,
-            Exposition.C_THEME_MEASURES:               MeasureRange(64, 85),
-            Exposition.C_MODULE_MEASURES:              {
+            Exposition.S_THEME_ENDING_KEY:     Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE: Cadence.HC,
+            Exposition.S_EVADED_PAC_MEASURES:  [MeasureRange(64)],
+            Exposition.EEC_ESC_SECURED:        False,
+            Exposition.C_THEME_MEASURES:       MeasureRange(64, 85),
+            Exposition.C_MODULE_MEASURES:      {
                 "C1.1": MeasureRange(64, 79),
                 "C1.2": MeasureRange(80, 85)
             },
-            Exposition.C_THEME_P_BASED:                False,
-            Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:             Key.C_MINOR,
+            Exposition.C_THEME_P_BASED:        False,
+            Exposition.C_THEME_OPENING_KEY:    Key.G_MAJOR,
+            Exposition.C_THEME_ENDING_KEY:     Key.C_MINOR,
         }
 
     @classmethod
@@ -317,7 +317,7 @@ class Beethoven5_4(SonataDataClass):
                 "S1.1": MeasureRange(254, 267),
                 "S1.2": MeasureRange(267, 272)
             },
-            Exposition.S_ABORTED_PAC_MEASURES:             [MeasureRange(273)],
+            Exposition.S_EVADED_PAC_MEASURES:              [MeasureRange(273)],
             Recapitulation.EEC_ESC_SECURED:                False,
             Recapitulation.ESC_SUBSTITUTE:                 False,
 

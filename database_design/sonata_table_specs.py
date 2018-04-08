@@ -484,11 +484,12 @@ class Exposition(SonataBlockTableSpecification):
     S_THEME_TYPE = Field("s_theme_type", "S Theme Type")
     S_THEME_COMMENTS = Field("s_theme_comments", "S Theme Comments")
     S_THEME_MEASURES = Field("s_theme_measures", "S Theme Measures")
-    # This will be a JSON Array of all evaded cadence measure, since all will be 1 measure long, no need for counts
-    S_ATTENUATED_EVADED_PAC_MEASURES = Field("s_attenuated_evaded_pac_measures", "S Attenuated/Evaded PAC Measure(s)")
+    # This will be a JSON Array of all attenuated cadence measures, since all will be 1 measure long, no need for counts
+    # Attenuated meaning a PAC that is weakened in a way to diminish the effect
+    S_ATTENUATED_PAC_MEASURES = Field("s_attenuated_pac_measures", "S Attenuated PAC Measure(s)")
     # Similar to above but for non-PACs that would have been conclusive PACs (dramatic root position active Vs)
     # but are either resolved imperfectly, deceptively, or with no resolution at all
-    S_ABORTED_PAC_MEASURES = Field("s_aborted_pac_measures", "S Aborted PAC Measure(s)")
+    S_EVADED_PAC_MEASURES = Field("s_evaded_pac_measures", "S Evaded PAC Measure(s)")
 
     S_MODULE_MEASURES = Field("s_module_measures", "S Module Measures")
     S_MODULE_PHRASE_STRUCTURE = Field("s_module_phrase_structure", "S Module Phrase Structure")
@@ -568,8 +569,8 @@ class Exposition(SonataBlockTableSpecification):
         fields_to_exclude = {
             # Measure fields not those in the ones we already denoted to compute counts
             cls.TR_THEME_MC_EFFECT_MEASURES,
-            cls.S_ATTENUATED_EVADED_PAC_MEASURES,
-            cls.S_ABORTED_PAC_MEASURES,
+            cls.S_ATTENUATED_PAC_MEASURES,
+            cls.S_EVADED_PAC_MEASURES,
             cls.EEC_ESC_MEASURE,
 
             # Comments
@@ -674,8 +675,8 @@ class Exposition(SonataBlockTableSpecification):
             (cls.S_MODULE_MEASURES, SQLType.JSONB),  # JSONObject mapping S module to their measure ranges
             (cls.S_MODULE_PHRASE_STRUCTURE, SQLType.JSONB),  # JSONObject mapping S module to their phrase structures
             (cls.S_THEME_OPENING_KEY, SQLType.TEXT),
-            (cls.S_ATTENUATED_EVADED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
-            (cls.S_ABORTED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
+            (cls.S_ATTENUATED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
+            (cls.S_EVADED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
             (cls.S_THEME_P_BASED, SQLType.TEXT),
             (cls.S_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
