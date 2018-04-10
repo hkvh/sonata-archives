@@ -11,7 +11,7 @@ from psycopg2.extensions import register_adapter
 
 from credentials import pg_localhost
 from enums.key_enums import KeyStruct
-from enums.measure_enums import MeasureRange
+from enums.measure_enums import MR
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ register_adapter(list, StringConverterJSON)
 
 # We also want our KeyStruct to be adapted as a normal text string so we can insert it directly as text
 register_adapter(KeyStruct, lambda x: AsIs("'{}'".format(str(x))))
-register_adapter(MeasureRange, lambda x: AsIs("'{}'".format(str(x))))
+register_adapter(MR, lambda x: AsIs("'{}'".format(str(x))))
 
 
 class PostgresConnectionManager(object):

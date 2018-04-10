@@ -87,14 +87,14 @@ dolce = \markup { \italic dolce }
     e2:16\ff e16 c, d e f g a b | c e, f g a b c d e
 }
 
-\markup{\huge C\super{1.1}}
+\markup{\huge S\super{C 1.1}}
 \relative c'' {
     \set Score.currentBarNumber = #64
     \bar ""
     g2.\fp (fis4 | e d) d d |
 }
 
-\markup{\huge C\super{1.2}}
+\markup{\huge S\super{C 1.2}}
 \relative c, {
     \set Score.currentBarNumber = #80
     \bar ""

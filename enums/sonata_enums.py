@@ -49,6 +49,21 @@ class PieceType(object):
     STRING_QUARTET = "String Quartet"
 
 
+class Dynamics(object):
+    """
+    An enum to describe Dynamics
+    """
+
+    PIANISSISSIMO = "Pianississimo (ppp)"
+    PIANISSIMO = "Pianissimo (pp)"
+    PIANO = "Piano (p)"
+    MEZZO_PIANO = "Mezzo-Piano (mp)"
+    MEZZO_FORTE = "Mezzo-Forte (mf)"
+    FORTE = "Forte (f)"
+    FORTISSIMO = "Fortissimo (ff)"
+    FORTISSISSIMO = "Fortississimo (fff)"
+
+
 class Cadence(object):
     """
     An enum for Types of Cadences
@@ -140,54 +155,62 @@ class PhraseStructure(object):
     # @formatter:on
 
 
-class PrimaryThemeType(object):
+class PThemeType(object):
     """
     An enum to describe P Theme Type. Besides the P => TR merger, all of them should end with a phrase (i.e. some
     cadence.)
     """
     # Grows from generative fragments to a Teleogical goal
-    GENERATIVE_TO_TELEOLOGICAL = "Generative to Teleological"
+    GENERATIVE_TO_TELEOLOGICAL = "Generative to Teleological P"
 
     # The catch-all to describe a P that completes its phrase and is not an antecedent / has nothing elided by TR
     # For this, the specific phrase type should be handled by the P Phrase Types
-    COMPLETED_PHRASE_NON_ANTECEDENT = "Completed Phrase (Non-Antecedent)"
+    COMPLETED_PHRASE_NON_ANTECEDENT = "P as Completed Phrase (Non-Antecedent)"
 
     # Partial P => TR merger where P's completed phrase left in a state for TR to finish it
     # (I call this a partial merger because it means P+TR together form some type of phrase structure themselves)
-    ANTECEDENT = "Antecedent Phrase"
-    GRAND_ANTECEDENT = "Grand Antecedent"
-    GRAND_ANTECEDENT_PERIOD = "Grand Antecedent (Itself a Period)"
-    GRAND_ANTECEDENT_SENTENCE = "Grand Antecedent (Itself a Sentence)"
-    GRAND_ANTECEDENT_HYBRID_1 = "Grand Antecedent (Itself a Hybrid 1)"
-    GRAND_ANTECEDENT_HYBRID_2 = "Grand Antecedent (Itself a Hybrid 2)"
-    GRAND_ANTECEDENT_HYBRID_3 = "Grand Antecedent (Itself a Hybrid 3)"
-    GRAND_ANTECEDENT_HYBRID_4 = "Grand Antecedent (Itself a Hybrid 4)"
-    ABORTED_ROUNDED_BINARY = "Aborted Rounded Binary (No Reprise)"  # An ABA' binary where the A' will become TR
+    ANTECEDENT = "P as Antecedent Phrase"
+    GRAND_ANTECEDENT = "P as Grand Antecedent"
+    GRAND_ANTECEDENT_PERIOD = "P as Grand Antecedent (Itself a Period)"
+    GRAND_ANTECEDENT_SENTENCE = "P as Grand Antecedent (Itself a Sentence)"
+    GRAND_ANTECEDENT_HYBRID_1 = "P as Grand Antecedent (Itself a Hybrid 1)"
+    GRAND_ANTECEDENT_HYBRID_2 = "P as Grand Antecedent (Itself a Hybrid 2)"
+    GRAND_ANTECEDENT_HYBRID_3 = "P as Grand Antecedent (Itself a Hybrid 3)"
+    GRAND_ANTECEDENT_HYBRID_4 = "P as Grand Antecedent (Itself a Hybrid 4)"
+    ABORTED_ROUNDED_BINARY = "P as Aborted Rounded Binary (No Reprise)"  # An ABA' binary where the A' will become TR
 
     # Full P => TR merger where P + TR are so fully elided that they serve as a single phrase.
     # (The Only P that doesn't end in any cadence)
     P_TR_MERGER_SENTENCE_PRESENTATION = "P=>TR Merger: Sentence Presentation"
 
 
-class TransitionType(object):
+class ContinuousSubtype(object):
+    """
+    An enum to describe subtypes of continuous expositions/recapitulations (i.e. sonata blocks missing MC and S)
+    """
+    SUBTYPE_1_EXPANSION_SECTION = "Subtype 1: Expansion Section"
+    SUBTYPE_2_EARLY_PAC_REPETITIONS = "Subtype 2: Early PAC with Reiterations of Cadence"
+
+
+class TRThemeType(object):
     """
     An enum to describe TR Types. Besides the P=>TR Merger, all begin with the start of a phrase (i.e after a cedence)
     """
 
     # The catch-all categories for an independent TR that is not directly emulating P at the outset
-    INDEPENDENT_SEPARATELY_THEMATIZED = "Independent Separately Thematized"
-    INDEPENDENT_DEVELOPMENTAL = "Independent Developmental"
+    INDEPENDENT_SEPARATELY_THEMATIZED = "Independent Separately Thematized TR"
+    INDEPENDENT_DEVELOPMENTAL = "Independent Developmental TR"
 
     # TR starts like P but is not taking over the completion of the P module left ambiguous
-    DISSOLVING_RESTATEMENT = "Dissolving Restatement"  # Starts as an initial restatement to any completed P
-    DISSOLVING_CONSEQUENT_RESTATEMENT = "Dissolving Consequent Restatement"  # Starts like P's completed consequent
-    DISSOLVING_CONTINUATION_RESTATEMENT = "Dissolving Consequent Restatement"  # Starts like P's completed continuation
+    DISSOLVING_RESTATEMENT = "Dissolving Restatement TR"  # Starts as an initial restatement to any completed P
+    DISSOLVING_CONSEQUENT_RESTATEMENT = "Dissolving Consequent Restatement TR"  # Starts like P's completed consequent
+    DISSOLVING_CONTINUATION_RESTATEMENT = "Dissolving Consequent Restatement TR"  # Starts like P's completed continuation
 
     # Partial P => TR merger where TR reacts and beings as a quasi-P module given how P left the phrase
     # (I call this a partial merger because it means P+TR together form some type of phrase structure themselves)
-    DISSOLVING_CONSEQUENT = "Dissolving Consequent"  # Starts as Consequent to P Antecedent (P+TR = Grand Period)
-    DISSOLVING_CONTINUATION = "Dissolving Continuation"  # Starts as Continuation to P Antecedent (P+TR = Grand Hybrid1)
-    DISSOLVING_REPRISE = "Dissolving Reprise"  # Elides the A' in ABA' form (P+TR = Rounded Binary)
+    DISSOLVING_CONSEQUENT = "Dissolving Consequent TR"  # Starts as Consequent to P Antecedent (P+TR = Grand Period)
+    DISSOLVING_CONTINUATION = "Dissolving Continuation TR"  # Starts as Continuation to P Antecedent (P+TR = Grand Hybrid1)
+    DISSOLVING_REPRISE = "Dissolving Reprise TR"  # Elides the A' in ABA' form (P+TR = Rounded Binary)
 
     # Full P => TR merger where P + TR are so fully elided that they serve as a single phrase.
     # (The Only TR that doesn't start with the beginning of a phrase)
@@ -199,7 +222,7 @@ class TransitionType(object):
 
     # For transitions that are more than one category, this should be used as TR Type and the different modules of TR
     # should be given the classifications above in TR_Theme_Module_Types (usually left blank)
-    MIXED = "Mixed Transition (Multi-module)"
+    MULTI_MODULAR_MIXED_TR = "Multimodular (Mixed) TR"
 
 
 class EnergyChange(object):
@@ -213,7 +236,7 @@ class EnergyChange(object):
     ENERGY_STASIS_PIANO = "Energy Stasis Piano"
 
 
-class MedialCaesura(object):
+class MC(object):
     """
     An enum to describe MC Styles with a static method to compute MC Types from a Relative Key and Cadence Type
     """
@@ -237,13 +260,53 @@ class MedialCaesura(object):
         return "{}: {} MC".format(relative_key, cadence_type.split('(')[0].rstrip())
 
 
-class ContinuousSubtype(object):
+class SThemeType(object):
     """
-    An enum to describe subtypes of continuous expositions/recapitulations (i.e. sonata blocks missing MC and S)
+    An enum to describe S Theme Types.
     """
-    SUBTYPE_1_EXPANSION_SECTION = "Subtype 1: Expansion Section"
-    SUBTYPE_2_EARLY_PAC_REPETITIONS = "Subtype 2: Early PAC with Reiterations of Cadence"
+
+    # For S Themes with Multiple Modules
+    MULTI_MODULAR_S = "Multimodular S (MMS)"
+    TRI_MODULAR_S = "Trimodular S (TMS)"  # Special case of MMS
+
+    # General S Types that can be the full S module
+    BUSTLING_GALANT = "Bustling Galant S"
+    P_BASED_S = "P-Based S"
+    LYRICAL_CANTABILE = "Lyrical Cantabile S"
+    CONTRASTING_P_DERIVATION = "Contrasting P-Derivation S"
+    LEARNED_STYLE_FUGAL_IMITATIVE = "\"Learned-Style\" S"
+    VIRTUOSIC_FIGURATION = "Virtuosic Figuration S"
+
+    # S Types for specific S modules (unlikely to apply to all of S)
+    OMINOUS_THREATENING = "Ominous Threatening S"
+    HEROIC_CADENTIAL = "Heroic Cadential S"
+    MISCHEIVOUS_LAMENT = "Mischeivous Lament S"
+
+
+
+class CThemeType(object):
+    """
+    An enum to describe C Theme Types.
+    """
+
+    # For C Types with Multiple Modules
+    MULTI_MODULAR_C = "Multimodular C"
+
+    FORTE_P_BASED_C = "Forte P-Based C"  # For those that very closely match P
+    PIANO_P_BASED_C = "Piano P-Based C"
+
+    FORTE_P_DERIVATION_C = "Forte P-Derivation C"  # For those that are loosely derived from motives in P
+    PIANO_P_DERIVATION_C = "Piano P-Derivation C"
+
+    FORTE_TR_BASED_C = "Forte TR-Based C"
+    PIANO_TR_BASED_C = "Piano TR-Based C"
+
+    NEW_THEME_C = "New Theme C"
+    CODETTA_CADENTIAL = "Codetta Cadential C"
+    C_AS_S_AFTERMATH = "C as S Aftermath"
+    CRESCENDO_ONSET = "Crescendo Onset C"
+    PIANO_AFTERTHOUGHT = "Piano Afterthought C"
 
 
 if __name__ == '__main__':
-    print(MedialCaesura.compute_mc_type(RelativeKey.MAJOR_DOMINANT, Cadence.IAC_V6_I))
+    print(MC.compute_mc_type(RelativeKey.MAJOR_DOMINANT, Cadence.IAC_V6_I))

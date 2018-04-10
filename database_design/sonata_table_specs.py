@@ -248,10 +248,25 @@ class SonataBlockTableSpecification(TableSpecification):
     ID = Field("id")
     SONATA_ID = Field("sonata_id")
 
+    """
+    SUPPORT FOR DERIVED FIELDS
+    """
+
+    @classmethod
+    @abstractmethod
+    def absolute_key_fields(cls) -> Set[Field]:
+        """
+        Returns a set of all absolute key fields, which will be the set of fields for which we will derive a
+        corresponding relative key field.
+
+        :return: a set of fields corresponding to all the fields that are for absolute keys
+        """
+
     @staticmethod
-    def get_relative_from_absolute(absolute_key_field: Field) -> Field:
+    def get_relative_key_field_from_absolute_key_field(absolute_key_field: Field) -> Field:
         """
         Given a field name with the word 'key' implying absolute, dynamically replaces it with 'relative key'.
+        Replaces the display name "Key" with "Relative Key".
 
         :param absolute_key_field: the name of the absolute key field. Must contain the word "key"
         :return: a new Field with key switched out for relative key as its name
@@ -267,21 +282,22 @@ class SonataBlockTableSpecification(TableSpecification):
 
     @classmethod
     @abstractmethod
-    def absolute_key_fields(cls) -> Set[Field]:
+    def measure_range_fields_to_compute_measure_counts(cls) -> Set[Field]:
         """
-        Returns a set of all absolute key fields, which will be the set of fields for which we will add a
-        corresponding relative key.
+        Returns a set of all measure range fields, which will be the set of fields for which we will add a
+        corresponding measure count derived field.
 
-        :return: a set of fields corresponding to all the fields that are for absolute keys
+        :return: a set of fields corresponding to all the fields that are for measure ranges that are not going
+        to be single measures and is thus worth deriving counts for.
         """
 
     @staticmethod
-    def get_measure_count_from_measure_range(measure_range_field: Field) -> Field:
+    def get_measure_count_field_from_measure_range_field(measure_range_field: Field) -> Field:
         """
-        Given a field name with the word 'measures', dynamically replaces it with 'measure count.
+        Given a field name with the word 'measure', dynamically replaces it with 'measure count'
 
         :param measure_range_field: the name of the measure range. Must contain the word "measures"
-        :return: a new Field with 'measures' switched out for 'measure count as its name
+        :return: a new Field with 'measures' switched out for 'measure count' as its name
         """
         name = measure_range_field.name
         display_name = measure_range_field.display_name
@@ -295,13 +311,34 @@ class SonataBlockTableSpecification(TableSpecification):
 
     @classmethod
     @abstractmethod
-    def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
+    def measures_array_fields_to_compute_counts(cls) -> Set[Field]:
         """
-        Returns a set of all measure range fields, which will be the set of fields for which we will add a
-        corresponding measure counts.
+        Returns a set of all measure array fields, which will be the set of fields for which we will add a
+        corresponding count of the number of measure elements in an array. Note: this is not for deriving counts of
+        measures in each range (it should be 1 for each range), we will basically simply derive the length of the
+        JSONArray.
 
-        :return: a set of fields corresponding to all the fields that are for measure ranges.
+        :return: a set of JSONArray fields of single-measure elements that we want to derive the counts of (i.e.
+        the number of measure elements of the JSONArray)
         """
+
+    @staticmethod
+    def get_count_field_from_measures_array_field(measures_array_field: Field) -> Field:
+        """
+        Given a JSONArray field wit the word 'measures', dynamically replaces it with count.
+
+        :param measures_array_field: a JSONArray field of measures that we wish to count
+        :return: a new Field with 'measures' switched out for 'count' as its name
+        """
+        name = measures_array_field.name
+        display_name = measures_array_field.display_name
+
+        if 'measures' not in name or 'Measure(s)' not in display_name:
+            raise Exception("Field {} with display_name {} marked as a MeasureRange but didn't contain \"measures\" "
+                            "in its name or \"Measure(s)\" in its display name!".format(name, display_name))
+        else:
+            return Field(name.replace('measures', 'count'),
+                         display_name=display_name.replace('Measure(s)', 'Count'))
 
     @classmethod
     @abstractmethod
@@ -322,10 +359,16 @@ class SonataBlockTableSpecification(TableSpecification):
         Right now, the only derived fields are:
 
         1. The relative keys built from every absolute key field specified in absolute_key_fields using the
-        staticmethod get_relative_from_absolute.
+        staticmethod get_relative_key_field_from_absolute_key_field.
 
-        2. The measure counts built from every measure range field specified in measure_range_fields_to_compute_counts using the
-        staticmethod get_measure_count_from_measure_range
+        2. The measure counts built from every measure range field specified in
+        measure_range_fields_to_compute_measure_counts using the staticmethod
+        get_measure_count_field_from_measure_range_field
+
+        3. The count of measures built from all single measures specified in measure array field field in
+        measures_array_fields_to_compute_counts using the staticmethod get_count_field_from_measures_array_field
+
+        elements in a JSONArray of measures, using
 
         :return: a list of tuple pairs of fields with their sql type in the ordinal order that we want them in the table
         """
@@ -333,23 +376,33 @@ class SonataBlockTableSpecification(TableSpecification):
         new_list = []
         for field, sql_type in cls.field_sql_type_list_pre_derived_fields():
 
+            # If necessary, compute the count of measure elements in the JSON Array right before it:
+            if field in cls.measures_array_fields_to_compute_counts():
+                if sql_type != SQLType.JSONB and sql_type != SQLType.JSONB_DEFAULT_EMPTY_ARRAY:
+                    raise Exception("Field \"{}\" in class {} was marked as a measure array field, which means it"
+                                    "should have a SQLType of JSONB instead of {}"
+                                    "".format(field.name, cls.__name__, sql_type))
+                count_field = cls.get_count_field_from_measures_array_field(field)
+                new_list.append((count_field, SQLType.INTEGER_DEFAULT_ZERO))
+
             new_list.append((field, sql_type))
 
-            # If any field is in the set of absolute key fields, add the relative key version of it right afterwards
+            # If necessary, add the relative key version of it right afterwards
             if field in cls.absolute_key_fields():
                 if sql_type != SQLType.TEXT and sql_type != SQLType.JSONB:
                     raise Exception("Field \"{}\" in class {} was marked as an absolute key field, which means it "
                                     "should have a SQLType of TEXT OR JSONB instead of {}"
                                     "".format(field.name, cls.__name__, sql_type))
-                relative_key_field = cls.get_relative_from_absolute(field)
+                relative_key_field = cls.get_relative_key_field_from_absolute_key_field(field)
                 new_list.append((relative_key_field, sql_type))
 
-            if field in cls.measure_range_fields_to_compute_counts():
+            # If necessary, compute the measure length right after it
+            if field in cls.measure_range_fields_to_compute_measure_counts():
                 if sql_type != SQLType.TEXT and sql_type != SQLType.JSONB:
                     raise Exception("Field \"{}\" in class {} was marked as a measure range, which means it "
                                     "should have a SQLType of TEXT OR JSONB instead of {}"
                                     "".format(field.name, cls.__name__, sql_type))
-                measure_count_field = cls.get_measure_count_from_measure_range(field)
+                measure_count_field = cls.get_measure_count_field_from_measure_range_field(field)
                 new_list.append((measure_count_field, sql_type))
 
         return new_list
@@ -377,7 +430,7 @@ class Introduction(SonataBlockTableSpecification):
     OPENING_KEY = Field("opening_key", "Introduction Opening Key")
     OPENING_TEMPO = Field("opening_tempo", "Introduction Opening Tempo")
 
-    INTRODUCTION_OTHER_KEYS = Field("introduction_other_keys", "Introduction Other Key(s)")
+    OTHER_KEYS_LIST = Field("other_keys", "Introduction Other Key(s)")
 
     EXPOSITION_WINDUP = Field("expoistion_windup", "Exposition Wind-up")
     EXPOSITION_WINDUP_MEASURE = Field("exposition_windup_measure", "Exposition Wind-up Start Measure")
@@ -388,15 +441,19 @@ class Introduction(SonataBlockTableSpecification):
     def absolute_key_fields(cls) -> Set[Field]:
         return {
             cls.OPENING_KEY,
-            cls.INTRODUCTION_OTHER_KEYS,
+            cls.OTHER_KEYS_LIST,
             cls.ENDING_KEY,
         }
 
     @classmethod
-    def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
+    def measure_range_fields_to_compute_measure_counts(cls) -> Set[Field]:
         return {
             cls.MEASURES,
         }
+
+    @classmethod
+    def measures_array_fields_to_compute_counts(cls) -> Set[Field]:
+        return set()
 
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
@@ -409,9 +466,7 @@ class Introduction(SonataBlockTableSpecification):
             (cls.COMMENTS, SQLType.TEXT),
             (cls.OPENING_TEMPO, SQLType.TEXT),
             (cls.OPENING_KEY, SQLType.TEXT),
-
-            (cls.INTRODUCTION_OTHER_KEYS, SQLType.JSONB),  # JSONArray
-
+            (cls.OTHER_KEYS_LIST, SQLType.JSONB),
             (cls.EXPOSITION_WINDUP, SQLType.BOOLEAN_DEFAULT_FALSE),
             (cls.EXPOSITION_WINDUP_MEASURE, SQLType.TEXT),
             (cls.ENDING_KEY, SQLType.TEXT),
@@ -438,64 +493,65 @@ class Exposition(SonataBlockTableSpecification):
     OPENING_TEMPO = Field("opening_tempo", "Exposition Opening Tempo")
 
     # P
-    P_THEME_TYPE = Field("p_theme_type", "P Theme Type")
     P_THEME_MEASURES = Field("p_theme_measures", "P Theme Measures")
-    P_MODULE_MEASURES = Field("p_module_measures", "P Module Measures")
-    P_MODULE_PHRASE_STRUCTURE = Field("p_module_phrase_structure", "P Module Phrase Structure")
-    P_THEME_OPENING_KEY = Field("p_theme_opening_key", "P Theme Opening Key")
     P_THEME_COMMENTS = Field("p_theme_comments", "P Theme Description")
-    P_THEME_STRUCTURAL_PAC_COUNT = Field("p_theme_structural_pac_count", "P Theme Structural PAC Count")
-    P_THEME_OTHER_KEYS = Field("p_theme_other_keys", "P Theme Other Key(s)")
+    P_THEME_TYPE = Field("p_theme_type", "P Theme Type")
+    P_MODULE_MEASURES_DICT = Field("p_module_measures", "P Module Measures")
+    # Rarely used since multimodule Ps have descriptive single type that rarely need types for each module
+    P_MODULE_TYPES_DICT = Field("p_module_types", "P Module Types")
+    P_MODULE_PHRASE_DICT = Field("p_module_phrase_structure", "P Module Phrase Structure")
+    P_THEME_PAC_MEASURES_LIST = Field("p_theme_pac_measures", "P Theme PAC Measure(s)")
+    P_THEME_OPENING_KEY = Field("p_theme_opening_key", "P Theme Opening Key")
+    P_THEME_OTHER_KEYS_LIST = Field("p_theme_other_keys", "P Theme Other Key(s)")
     P_THEME_ENDING_KEY = Field("p_theme_ending_key", "P Theme Ending Key")
     P_THEME_ENDING_CADENCE = Field("p_theme_ending_cadence", "P Theme Ending Cadence")
 
     # TR
     TR_THEME_PRESENT = Field("tr_theme_present", "TR Theme Present")
-    TR_THEME_TYPE = Field("tr_theme_type", "TR Theme Type")
     TR_THEME_MEASURES = Field("tr_theme_measures", "TR Theme Measures")
-    TR_MODULE_MEASURES = Field("tr_module_measures", "TR Module Measures")
-    TR_MODULE_TYPES = Field("tr_theme_module_types", "TR Module Types")  # Only use if Mixed Transition
-    TR_THEME_OPENING_KEY = Field("tr_theme_opening_key", "TR Theme Opening Key")
     TR_THEME_COMMENTS = Field("tr_theme_comments", "TR Theme Comments")
-    TR_THEME_P_BASED = Field("tr_theme_p_based", "TR Theme P-Based")
-    TR_THEME_PHRASE_STRUCTURE = Field("tr_theme_phrase_structure", "TR Theme Phrase Structure")
-    TR_THEME_OTHER_KEYS = Field("tr_theme_other_keys", "TR Theme Other Key(s)")
+    TR_THEME_TYPE = Field("tr_theme_type", "TR Theme Type")
+    TR_MODULE_MEASURES_DICT = Field("tr_module_measures", "TR Module Measures")
+    TR_MODULE_TYPES_DICT = Field("tr_module_types", "TR Module Types")  # Only use if Mixed Transition
+    TR_MODULE_PHRASE_DICT = Field("tr_module_phrase_structure", "TR Module Phrase Structure")
     TR_THEME_CHROMATIC_PREDOMINANT = Field("tr_theme_chromatic_predominant", "TR Theme Chromatic Predominant")
-
     TR_THEME_DOMINANT_LOCK = Field("tr_theme_dominant_lock", "TR Theme Dominant Lock")
     TR_THEME_ENERGY = Field("tr_theme_energy", "TR Theme Energy")
     TR_THEME_HAMMER_BLOW_COUNT = Field("tr_final_hammer_blow_count", "TR Theme Final Hammer Blows")
-    # The measures of any quasi-MC Effects - these will all be single measures, so no need for counts
-    TR_THEME_MC_EFFECT_MEASURES = Field("tr_theme_mc_effect_measures", "TR Theme MC Effect Measures")
+    # The measures of any quasi-MC Effects or Early PAC in Continuous Exposition Subtype 2:
+    TR_THEME_MC_EFFECT_MEASURES_LIST = Field("tr_theme_mc_effect_measures", "TR Theme MC Effect Measure(s)")
+    TR_THEME_PAC_MEASURES_LIST = Field("tr_theme_pac_measures", "TR Theme PAC Measure(s)")
+
+    TR_THEME_OPENING_KEY = Field("tr_theme_opening_key", "TR Theme Opening Key")
+    TR_THEME_OTHER_KEYS_LIST = Field("tr_theme_other_keys", "TR Theme Other Key(s)")
     TR_THEME_ENDING_KEY = Field("tr_theme_ending_key", "TR Theme Ending Key")  #
     TR_THEME_ENDING_CADENCE = Field("tr_theme_ending_cadence", "TR Theme Ending Cadence")
 
     # MC
     MC_PRESENT = Field("mc_present", "MC Present")
+    MC_MEASURES = Field("mc_measures", "MC Measures")
     _MC_TYPE = Field("mc_type", "MC Type")  # Derived field from TR Ending Relative Key and Ending Cadence
     MC_COMMENTS = Field("mc_comments", "MC Comments")
-    MC_MEASURES = Field("mc_measures", "MC Measures")
     MC_STYLE = Field("mc_style", "MC Style")  # Whether caesura fill, general pause, S0 affect etc.
     MC_FILL_KEY = Field("mc_fill_key", "MC Fill Key")  # Only fill out if different from TR Ending Key
     # This is usually only a parallel mode shift (i.e. TR implies C minor but MC implies C major)
 
     # S
     S_THEME_PRESENT = Field("s_theme_present", "S Theme Present")
-    S_THEME_TYPE = Field("s_theme_type", "S Theme Type")
-    S_THEME_COMMENTS = Field("s_theme_comments", "S Theme Comments")
     S_THEME_MEASURES = Field("s_theme_measures", "S Theme Measures")
-    # This will be a JSON Array of all attenuated cadence measures, since all will be 1 measure long, no need for counts
-    # Attenuated meaning a PAC that is weakened in a way to diminish the effect
-    S_ATTENUATED_PAC_MEASURES = Field("s_attenuated_pac_measures", "S Attenuated PAC Measure(s)")
-    # Similar to above but for non-PACs that would have been conclusive PACs (dramatic root position active Vs)
+    S_THEME_COMMENTS = Field("s_theme_comments", "S Theme Comments")
+    S_THEME_TYPE = Field("s_theme_type", "S Theme Type")
+    S_MODULE_MEASURES_DICT = Field("s_module_measures", "S Module Measures")
+    S_MODULE_TYPES_DICT = Field("s_module_types", "S Module Types")
+    S_MODULE_PHRASE_DICT = Field("s_module_phrase_structure", "S Module Phrase Structure")
+    # These will be a JSON Array of all cadence measures, since they are all 1 measure long, no need for counts
+    S_THEME_STRONG_PAC_MEASURES_LIST = Field("s_theme_strong_pac_measures", "S Theme Strong PAC Measure(s)")
+    S_THEME_ATTEN_PAC_MEASURES_LIST = Field("s_theme_attenuated_pac_measures", "S Theme Attenuated PAC Measure(s)")
+    # Evaded PACs mean non-PACs that would have been PACs (dramatic root position active Vs)
     # but are either resolved imperfectly, deceptively, or with no resolution at all
-    S_EVADED_PAC_MEASURES = Field("s_evaded_pac_measures", "S Evaded PAC Measure(s)")
-
-    S_MODULE_MEASURES = Field("s_module_measures", "S Module Measures")
-    S_MODULE_PHRASE_STRUCTURE = Field("s_module_phrase_structure", "S Module Phrase Structure")
+    S_THEME_EVADED_PAC_MEASURES_LIST = Field("s_theme_evaded_pac_measures", "S Theme Evaded PAC Measure(s)")
     S_THEME_OPENING_KEY = Field("s_theme_opening_key", "S Theme Opening Key")
-    S_THEME_P_BASED = Field("s_theme_p_based", "S Theme P-Based")
-    S_THEME_OTHER_KEYS = Field("s_theme_other_keys", "S Theme Other Key(s)")
+    S_THEME_OTHER_KEYS_LIST = Field("s_theme_other_keys", "S Theme Other Key(s)")
     S_THEME_ENDING_KEY = Field("s_theme_ending_key", "S Theme Ending Key")
     S_THEME_ENDING_CADENCE = Field("s_theme_ending_cadence", "S Theme Ending Cadence")
 
@@ -508,50 +564,66 @@ class Exposition(SonataBlockTableSpecification):
 
     # C
     C_THEME_PRESENT = Field("c_theme_present", "C Theme Present")
-    C_THEME_TYPE = Field("c_theme_type", "C Theme Type")
+    C_THEME_MEASURES_INCL_C_RT = Field("c_theme_measures", "C Theme Measures")  # Includes RT so it's the full zone
     C_THEME_COMMENTS = Field("c_theme_comments", "C Theme Comments")
-    C_THEME_MEASURES = Field("c_theme_measures", "C Theme Measures")
-    C_MODULE_MEASURES = Field("c_module_measures", "C Module Measures")
-    C_MODULE_PHRASE_STRUCTURE = Field("c_module_phrase_structure", "C Module Phrase Structure")
+    C_THEME_SC_PRE_EEC_ESC = Field("c_theme_sc_pre_eec_esc", "C Theme in S Space / Pre-EEC")
+    C_THEME_TYPE = Field("c_theme_type", "C Theme Type")
+    C_MODULE_MEASURES_DICT = Field("c_module_measures", "C Module Measures")
+    C_MODULE_TYPES_DICT = Field("c_module_types", "C Module Types")
+    C_MODULE_PHRASE_DICT = Field("c_module_phrase_structure", "C Module Phrase Structure")
+    C_THEME_PAC_MEASURES_LIST = Field("c_theme_pac_measures", "C Theme PAC Measure(s)")  # Always 1 measures
     C_THEME_OPENING_KEY = Field("c_theme_opening_key", "C Theme Opening Key")
-    C_THEME_P_BASED = Field("c_theme_p_based", "C Theme P-Based")
-    C_THEME_OTHER_KEYS = Field("c_theme_other_keys", "C Theme Other Key(s)")
-    C_THEME_ENDING_KEY = Field("c_theme_ending_key", "C Theme Ending Key")
-    C_THEME_ENDING_CADENCE = Field("c_theme_ending_cadence", "C Theme Ending Cadence")
+    C_THEME_OTHER_KEYS_LIST = Field("c_theme_other_keys", "C Theme Other Key(s)")
+    C_THEME_ENDING_KEY_BEFORE_C_RT = Field("c_theme_ending_key", "C Theme Ending Key")  # Before RT
+    C_RT_PRESENT = Field("c_rt_present", "C-RT Present")
+    C_RT_MEASURES = Field("c_rt_measures", "C-RT Measures")
+    C_RT_ENDING_KEY = Field("c_rt_ending_key", "C-RT Ending Key")
 
     @classmethod
     def absolute_key_fields(cls) -> Set[Field]:
         return {
             cls.P_THEME_OPENING_KEY,
-            cls.P_THEME_OTHER_KEYS,
+            cls.P_THEME_OTHER_KEYS_LIST,
             cls.P_THEME_ENDING_KEY,
             cls.TR_THEME_OPENING_KEY,
-            cls.TR_THEME_OTHER_KEYS,
+            cls.TR_THEME_OTHER_KEYS_LIST,
             cls.TR_THEME_ENDING_KEY,
             cls.S_THEME_OPENING_KEY,
-            cls.S_THEME_OTHER_KEYS,
+            cls.S_THEME_OTHER_KEYS_LIST,
             cls.S_THEME_ENDING_KEY,
             cls.C_THEME_OPENING_KEY,
-            cls.C_THEME_OTHER_KEYS,
-            cls.C_THEME_ENDING_KEY
+            cls.C_THEME_OTHER_KEYS_LIST,
+            cls.C_THEME_ENDING_KEY_BEFORE_C_RT,
+            cls.C_RT_ENDING_KEY,
         }
 
     @classmethod
-    def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
+    def measure_range_fields_to_compute_measure_counts(cls) -> Set[Field]:
         return {
             cls.MEASURES,
             cls.P_THEME_MEASURES,
-            cls.P_MODULE_MEASURES,
+            cls.P_MODULE_MEASURES_DICT,
             cls.TR_THEME_MEASURES,
-            cls.TR_MODULE_MEASURES,
+            cls.TR_MODULE_MEASURES_DICT,
             cls.MC_MEASURES,
             cls.S_THEME_MEASURES,
-            cls.S_MODULE_MEASURES,
-            cls.C_THEME_MEASURES,
-            cls.C_MODULE_MEASURES,
+            cls.S_MODULE_MEASURES_DICT,
+            cls.C_THEME_MEASURES_INCL_C_RT,
+            cls.C_MODULE_MEASURES_DICT,
+            cls.C_RT_MEASURES
         }
-        # Don't put TR MC Effect and S Evaded/Aborted PACs and EEC Measure since those will always be 1
-        # and are thus not worth computing counts for
+
+    @classmethod
+    def measures_array_fields_to_compute_counts(cls) -> Set[Field]:
+        return {
+            cls.P_THEME_PAC_MEASURES_LIST,
+            cls.TR_THEME_PAC_MEASURES_LIST,
+            cls.TR_THEME_MC_EFFECT_MEASURES_LIST,
+            cls.S_THEME_EVADED_PAC_MEASURES_LIST,
+            cls.S_THEME_STRONG_PAC_MEASURES_LIST,
+            cls.S_THEME_ATTEN_PAC_MEASURES_LIST,
+            cls.C_THEME_PAC_MEASURES_LIST,
+        }
 
     @classmethod
     def fields_unlikely_to_be_same_for_exposition_and_recap(cls) -> Set[Field]:
@@ -566,11 +638,12 @@ class Exposition(SonataBlockTableSpecification):
         :return: a set of fields
         """
         # Exclude all fields that involve comments or measures
-        fields_to_exclude = {
-            # Measure fields not those in the ones we already denoted to compute counts
-            cls.TR_THEME_MC_EFFECT_MEASURES,
-            cls.S_ATTENUATED_PAC_MEASURES,
-            cls.S_EVADED_PAC_MEASURES,
+        fields_to_exclude = set()
+        fields_to_exclude.update(cls.measures_array_fields_to_compute_counts())
+        fields_to_exclude.update(cls.measure_range_fields_to_compute_measure_counts())
+
+        fields_to_exclude.update({
+            # Measure fields not those already specified in
             cls.EEC_ESC_MEASURE,
 
             # Comments
@@ -583,22 +656,21 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_COMMENTS,
 
             # Exposition Part 2 Keys that 99% of the time will be different in recap
-            cls.S_THEME_OPENING_KEY,
-            cls.S_THEME_OTHER_KEYS,
-            cls.S_THEME_ENDING_KEY,
-            cls.C_THEME_OPENING_KEY,
-            cls.C_THEME_OTHER_KEYS,
-            cls.C_THEME_ENDING_KEY,
-
-            # P Things that often change
-            cls.P_MODULE_PHRASE_STRUCTURE,
-            cls.P_THEME_STRUCTURAL_PAC_COUNT,
-
-            # Other things that we don't want to assume are the same
             cls.TR_THEME_ENDING_KEY,
             cls.MC_FILL_KEY,
-        }
-        fields_to_exclude.update(cls.measure_range_fields_to_compute_counts())
+            cls.S_THEME_OPENING_KEY,
+            cls.S_THEME_OTHER_KEYS_LIST,
+            cls.S_THEME_ENDING_KEY,
+            cls.C_THEME_OPENING_KEY,
+            cls.C_THEME_OTHER_KEYS_LIST,
+            cls.C_THEME_ENDING_KEY_BEFORE_C_RT,
+            cls.C_RT_ENDING_KEY,
+
+            # P Things that often change
+            cls.P_MODULE_PHRASE_DICT,
+        })
+        fields_to_exclude.update(cls.measures_array_fields_to_compute_counts())
+        fields_to_exclude.update(cls.measure_range_fields_to_compute_measure_counts())
         return fields_to_exclude
 
     # Helper methods so the recap can easily insert new attributes after or before phases of the exposition
@@ -619,14 +691,15 @@ class Exposition(SonataBlockTableSpecification):
     @classmethod
     def _p_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
-            (cls.P_THEME_TYPE, SQLType.TEXT),
             (cls.P_THEME_MEASURES, SQLType.TEXT),
             (cls.P_THEME_COMMENTS, SQLType.TEXT),
-            (cls.P_MODULE_MEASURES, SQLType.JSONB),  # JSONObject mapping P module to their measure ranges
-            (cls.P_MODULE_PHRASE_STRUCTURE, SQLType.JSONB),  # JSONObject mapping P module to their phrase structure
+            (cls.P_THEME_TYPE, SQLType.TEXT),
+            (cls.P_MODULE_MEASURES_DICT, SQLType.JSONB),
+            (cls.P_MODULE_TYPES_DICT, SQLType.JSONB),
+            (cls.P_MODULE_PHRASE_DICT, SQLType.JSONB),
+            (cls.P_THEME_PAC_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
             (cls.P_THEME_OPENING_KEY, SQLType.TEXT),
-            (cls.P_THEME_STRUCTURAL_PAC_COUNT, SQLType.INTEGER),
-            (cls.P_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
+            (cls.P_THEME_OTHER_KEYS_LIST, SQLType.JSONB),
             (cls.P_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.P_THEME_ENDING_CADENCE, SQLType.TEXT),
         ]
@@ -636,19 +709,19 @@ class Exposition(SonataBlockTableSpecification):
         return [
             (cls.TR_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.TR_THEME_MEASURES, SQLType.TEXT),
-            (cls.TR_THEME_TYPE, SQLType.TEXT),
             (cls.TR_THEME_COMMENTS, SQLType.TEXT),
-            (cls.TR_THEME_OPENING_KEY, SQLType.TEXT),
-            (cls.TR_MODULE_MEASURES, SQLType.JSONB),  # JSONObject mapping TR module to their measure ranges
-            (cls.TR_MODULE_TYPES, SQLType.JSONB),  # JSONObject mapping TR module to TR Type if TR Type = Mixed
-            (cls.TR_THEME_PHRASE_STRUCTURE, SQLType.JSONB),
-            (cls.TR_THEME_P_BASED, SQLType.BOOLEAN),
-            (cls.TR_THEME_OTHER_KEYS, SQLType.TEXT),  # JSONArray
+            (cls.TR_THEME_TYPE, SQLType.TEXT),
+            (cls.TR_MODULE_MEASURES_DICT, SQLType.JSONB),
+            (cls.TR_MODULE_TYPES_DICT, SQLType.JSONB),
+            (cls.TR_MODULE_PHRASE_DICT, SQLType.JSONB),
             (cls.TR_THEME_CHROMATIC_PREDOMINANT, SQLType.BOOLEAN),
             (cls.TR_THEME_DOMINANT_LOCK, SQLType.BOOLEAN),
             (cls.TR_THEME_ENERGY, SQLType.TEXT),
             (cls.TR_THEME_HAMMER_BLOW_COUNT, SQLType.INTEGER),
-            (cls.TR_THEME_MC_EFFECT_MEASURES, SQLType.JSONB),  # A JSON Array of the measure numbers
+            (cls.TR_THEME_MC_EFFECT_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
+            (cls.TR_THEME_PAC_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
+            (cls.TR_THEME_OPENING_KEY, SQLType.TEXT),
+            (cls.TR_THEME_OTHER_KEYS_LIST, SQLType.TEXT),
             (cls.TR_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.TR_THEME_ENDING_CADENCE, SQLType.TEXT),
 
@@ -659,7 +732,7 @@ class Exposition(SonataBlockTableSpecification):
         return [
             (cls.MC_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.MC_MEASURES, SQLType.TEXT),
-            (cls._MC_TYPE, SQLType.TEXT),  # Derived field
+            (cls._MC_TYPE, SQLType.TEXT),  # Derived field so never specify it
             (cls.MC_COMMENTS, SQLType.TEXT),
             (cls.MC_STYLE, SQLType.TEXT),
             (cls.MC_FILL_KEY, SQLType.TEXT),
@@ -670,15 +743,16 @@ class Exposition(SonataBlockTableSpecification):
         return [
             (cls.S_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
             (cls.S_THEME_MEASURES, SQLType.TEXT),
-            (cls.S_THEME_TYPE, SQLType.TEXT),
             (cls.S_THEME_COMMENTS, SQLType.TEXT),
-            (cls.S_MODULE_MEASURES, SQLType.JSONB),  # JSONObject mapping S module to their measure ranges
-            (cls.S_MODULE_PHRASE_STRUCTURE, SQLType.JSONB),  # JSONObject mapping S module to their phrase structures
+            (cls.S_THEME_TYPE, SQLType.TEXT),
+            (cls.S_MODULE_MEASURES_DICT, SQLType.JSONB),
+            (cls.S_MODULE_TYPES_DICT, SQLType.JSONB),
+            (cls.S_MODULE_PHRASE_DICT, SQLType.JSONB),
+            (cls.S_THEME_STRONG_PAC_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
+            (cls.S_THEME_ATTEN_PAC_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
+            (cls.S_THEME_EVADED_PAC_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
             (cls.S_THEME_OPENING_KEY, SQLType.TEXT),
-            (cls.S_ATTENUATED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
-            (cls.S_EVADED_PAC_MEASURES, SQLType.JSONB),  # JSON Array
-            (cls.S_THEME_P_BASED, SQLType.TEXT),
-            (cls.S_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
+            (cls.S_THEME_OTHER_KEYS_LIST, SQLType.JSONB),
             (cls.S_THEME_ENDING_KEY, SQLType.TEXT),
             (cls.S_THEME_ENDING_CADENCE, SQLType.TEXT),
             (cls.EEC_ESC_SECURED, SQLType.BOOLEAN_DEFAULT_TRUE),
@@ -690,16 +764,20 @@ class Exposition(SonataBlockTableSpecification):
     def _c_field_sql_type_list(cls) -> List[Tuple[Field, SQLType]]:
         return [
             (cls.C_THEME_PRESENT, SQLType.BOOLEAN_DEFAULT_TRUE),
-            (cls.C_THEME_MEASURES, SQLType.TEXT),
-            (cls.C_THEME_TYPE, SQLType.TEXT),
+            (cls.C_THEME_SC_PRE_EEC_ESC, SQLType.BOOLEAN_DEFAULT_FALSE),
+            (cls.C_THEME_MEASURES_INCL_C_RT, SQLType.TEXT),
             (cls.C_THEME_COMMENTS, SQLType.TEXT),
-            (cls.C_MODULE_MEASURES, SQLType.JSONB),  # JSONObject mapping C module to their measure ranges
-            (cls.C_MODULE_PHRASE_STRUCTURE, SQLType.JSONB),  # JSONObject mapping C module to their phrase structures
+            (cls.C_THEME_TYPE, SQLType.TEXT),
+            (cls.C_MODULE_MEASURES_DICT, SQLType.JSONB),
+            (cls.C_MODULE_TYPES_DICT, SQLType.JSONB),
+            (cls.C_MODULE_PHRASE_DICT, SQLType.JSONB),
+            (cls.C_THEME_PAC_MEASURES_LIST, SQLType.JSONB_DEFAULT_EMPTY_ARRAY),
             (cls.C_THEME_OPENING_KEY, SQLType.TEXT),
-            (cls.C_THEME_P_BASED, SQLType.BOOLEAN),
-            (cls.C_THEME_OTHER_KEYS, SQLType.JSONB),  # JSONArray
-            (cls.C_THEME_ENDING_KEY, SQLType.TEXT),
-            (cls.C_THEME_ENDING_CADENCE, SQLType.TEXT),
+            (cls.C_THEME_OTHER_KEYS_LIST, SQLType.JSONB),
+            (cls.C_THEME_ENDING_KEY_BEFORE_C_RT, SQLType.TEXT),
+            (cls.C_RT_PRESENT, SQLType.BOOLEAN_DEFAULT_FALSE),
+            (cls.C_RT_MEASURES, SQLType.TEXT),
+            (cls.C_RT_ENDING_KEY, SQLType.TEXT)
         ]
 
     # Builds this from all the private methods
@@ -732,16 +810,16 @@ class Development(SonataBlockTableSpecification):
     COMMENTS = Field("comments", "Development Comments")
     OPENING_TEMPO = Field("opening_tempo", "Opening Tempo")
     OPENING_KEY = Field("opening_key", "Development Opening Key")
-    DEVELOPMENT_OTHER_KEYS = Field("development_other_keys", "Development Other Key(s)")
+    OTHER_KEYS_LIST = Field("other_keys", "Development Other Key(s)")
     # JSONArray of all keys IN ORDER between opening key and ending key
 
     # Episodes
     NUM_EPISODES = Field("num_episodes", "Development Episodes")
-    EPISODE_MEASURES = Field("episode_measures", "Episode Measures")  # a map of episode to a measure range
-    EPISODE_DESCRIPTIONS = Field("episode_descriptions", "Episode Description")
-    EPISODE_TONAL_MAP = Field("episode_tonal_map", "Episode Tonal Map")  # a map of episode to the keys used
-    EPISODE_THEME_MAP = Field("episode_theme_map",
-                              "Episode Theme Map")  # a map of episode to the themes used P / S / TR / C
+    EPISODE_MEASURES_DICT = Field("episode_measures", "Episode Measures")  # a map of episode to a measure range
+    EPISODE_DESCRIPTIONS_DICT = Field("episode_descriptions", "Episode Description")
+    EPISODE_TONAL_DICT = Field("episode_tonal_map", "Episode Tonal Map")  # a map of episode to the keys used
+    EPISODE_THEME_DICT = Field("episode_theme_map",
+                               "Episode Theme Map")  # a map of episode to the themes used P / S / TR / C
 
     P_THEME_INITIATED = Field("p_theme_initiated", "P Theme Initiated")
     P_THEME_DEVELOPED = Field("p_theme_developed", "P Theme Developed")
@@ -755,24 +833,28 @@ class Development(SonataBlockTableSpecification):
     DEVELOPMENT_THEME_DESCRIPTION = Field("Development Theme Comments")
 
     # Retransition
-    DEVELOPMENT_ENDING_KEY = Field("development_ending_key", "Development Ending Key")
-    DEVELOPMENT_ENDING_CADENCE = Field("development_ending_cadence", "Development Ending Cadence")
+    ENDING_KEY = Field("ending_key", "Development Ending Key")
+    ENDING_CADENCE = Field("ending_cadence", "Development Ending Cadence")
 
     @classmethod
     def absolute_key_fields(cls) -> Set[Field]:
         return {
             cls.OPENING_KEY,
-            cls.DEVELOPMENT_OTHER_KEYS,
+            cls.OTHER_KEYS_LIST,
             cls.DEVELOPMENT_THEME_KEYS,
-            cls.DEVELOPMENT_ENDING_KEY,
+            cls.ENDING_KEY,
         }
 
     @classmethod
-    def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
+    def measure_range_fields_to_compute_measure_counts(cls) -> Set[Field]:
         return {
             cls.MEASURES,
-            cls.EPISODE_MEASURES,
+            cls.EPISODE_MEASURES_DICT,
         }
+
+    @classmethod
+    def measures_array_fields_to_compute_counts(cls) -> Set[Field]:
+        return set()
 
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
@@ -786,14 +868,14 @@ class Development(SonataBlockTableSpecification):
             (cls.OPENING_TEMPO, SQLType.TEXT),
             (cls.OPENING_KEY, SQLType.TEXT),
 
-            (cls.DEVELOPMENT_OTHER_KEYS, SQLType.JSONB),  # JSONArray
+            (cls.OTHER_KEYS_LIST, SQLType.JSONB),  # JSONArray
 
             # Episodes
             (cls.NUM_EPISODES, SQLType.INTEGER),
-            (cls.EPISODE_MEASURES, SQLType.JSONB),
-            (cls.EPISODE_DESCRIPTIONS, SQLType.JSONB),
-            (cls.EPISODE_THEME_MAP, SQLType.JSONB),
-            (cls.EPISODE_TONAL_MAP, SQLType.JSONB),
+            (cls.EPISODE_MEASURES_DICT, SQLType.JSONB),
+            (cls.EPISODE_DESCRIPTIONS_DICT, SQLType.JSONB),
+            (cls.EPISODE_THEME_DICT, SQLType.JSONB),
+            (cls.EPISODE_TONAL_DICT, SQLType.JSONB),
 
             (cls.P_THEME_INITIATED, SQLType.BOOLEAN),
             (cls.P_THEME_DEVELOPED, SQLType.BOOLEAN),
@@ -806,8 +888,8 @@ class Development(SonataBlockTableSpecification):
             (cls.DEVELOPMENT_THEME_KEYS, SQLType.JSONB),
             (cls.DEVELOPMENT_THEME_DESCRIPTION, SQLType.TEXT),
 
-            (cls.DEVELOPMENT_ENDING_KEY, SQLType.TEXT),
-            (cls.DEVELOPMENT_ENDING_CADENCE, SQLType.TEXT),
+            (cls.ENDING_KEY, SQLType.TEXT),
+            (cls.ENDING_CADENCE, SQLType.TEXT),
         ]
 
 
@@ -852,6 +934,7 @@ class Recapitulation(Exposition):
     # Only fill this field if ESC is not secured, which indicates whether there is any "wrong-key" substitute or not
     # If true, then the eec_esc_measure refers to the false esc, since the real one was not secured
     ESC_SUBSTITUTE = Field("esc_false_substitute", "ESC False/Substitute")
+    C_THEME_SC_PRE_EEC_ESC = Field("c_theme_sc_pre_eec_esc", "C Theme SC / Pre-ESC")
 
     # C
     C_THEME_CHANGE_FROM_EXPOSITION = Field("c_theme_change_from_exposition", "C Theme Change From Exposition")
@@ -911,7 +994,7 @@ class Coda(SonataBlockTableSpecification):
     OPENING_TEMPO = Field("opening_tempo", "Coda Opening Tempo")
     OPENING_KEY = Field("opening_key", "Coda Opening Key")
 
-    CODA_OTHER_KEYS = Field("coda_other_keys", "Coda Other Key(s)")  # a JSONArray of keys tonicized
+    OTHER_KEYS_LIST = Field("other_keys", "Coda Other Key(s)")  # a JSONArray of keys tonicized
     P_THEME_RECALLED = Field("p_theme_recalled", "P Theme Recalled")
     TR_THEME_RECALLED = Field("tr_theme_recalled", "TR Theme Recalled")
     S_THEME_RECALLED = Field("s_theme_recalled", "S Theme Recalled")
@@ -930,10 +1013,14 @@ class Coda(SonataBlockTableSpecification):
         }
 
     @classmethod
-    def measure_range_fields_to_compute_counts(cls) -> Set[Field]:
+    def measure_range_fields_to_compute_measure_counts(cls) -> Set[Field]:
         return {
             cls.MEASURES
         }
+
+    @classmethod
+    def measures_array_fields_to_compute_counts(cls) -> Set[Field]:
+        return set()
 
     @classmethod
     def field_sql_type_list_pre_derived_fields(cls) -> List[Tuple[Field, SQLType]]:
@@ -947,7 +1034,7 @@ class Coda(SonataBlockTableSpecification):
             (cls.OPENING_TEMPO, SQLType.TEXT),
             (cls.OPENING_KEY, SQLType.TEXT),
 
-            (cls.CODA_OTHER_KEYS, SQLType.JSONB),  # JSONArray
+            (cls.OTHER_KEYS_LIST, SQLType.JSONB),  # JSONArray
             (cls.P_THEME_RECALLED, SQLType.BOOLEAN),
             (cls.TR_THEME_RECALLED, SQLType.BOOLEAN),
             (cls.S_THEME_RECALLED, SQLType.BOOLEAN),

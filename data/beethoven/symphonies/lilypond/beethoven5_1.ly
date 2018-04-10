@@ -124,7 +124,7 @@ dolce = \markup { \italic dolce }
     r8 bes'\ff bes bes | es,2\sf | f2\sf | << bes,2 {s8\sf s s\> s\!}>>
 }
 
-\markup{\huge S\super{1.1}}
+\markup{\huge S\super{1.1.1}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #63
@@ -133,7 +133,7 @@ dolce = \markup { \italic dolce }
     bes4\p ( es_\dolce | d es | f c) | c (bes)
 }
 
-\markup{\huge S\super{1.2}}
+\markup{\huge S\super{1.1.2}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #75
@@ -141,6 +141,16 @@ dolce = \markup { \italic dolce }
     \key c \minor
     bes4 (c | des c) | bes (c | bes aes)
 }
+
+\markup{\huge S\super{1.2} \huge{(S}\super{1.1.2 frag} \huge)}
+\relative c'' {
+    \time 2/4
+    \set Score.currentBarNumber = #83
+    \bar ""
+    \key c \minor
+    ees4\p (f | ges-\markup{\italic cresc.} f | ees f) | ges (f | ees f)
+}
+
 
 \markup{\huge S\super{1.3}}
 \relative c''' {

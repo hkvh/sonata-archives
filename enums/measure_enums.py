@@ -11,7 +11,7 @@ class MeasureException(Exception):
     """
 
 
-class MeasureRange(object):
+class MR(object):
     """
     An class for measure number ranges that can also compute measure counts and filter input.
     """
@@ -59,12 +59,12 @@ def validate_is_measure_range(param) -> None:
     :param param: the param to check is a MeasureRange
     :return: nothing if no problems, else raises a TypeError
     """
-    if not isinstance(param, MeasureRange):
+    if not isinstance(param, MR):
         raise TypeError("Input '{0}' should be a <class 'MeasureRange>, not a {1}".format(str(param), type(param)))
 
 
 if __name__ == '__main__':
-    print(MeasureRange(204))
-    print(MeasureRange(202, 204))
-    print(MeasureRange(202, 204).count)
-    print(MeasureRange(202, 204).count)
+    print(MR(204))
+    print(MR(202, 204))
+    print(MR(202, 204).count)
+    print(MR(202, 204).count)

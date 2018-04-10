@@ -127,13 +127,22 @@
     <e c> [(<d b> <c a> <d b>)] | <e c>\f
 }
 
-\markup{\huge C\super1}
+\markup{\huge C\super1.1}
 \relative c'' {
     \time 2/4
     \key f \major
     \set Score.currentBarNumber = #115
     \bar ""
     c4\f r8 e16 (d | c8-.) e16 (d c8-.) a'16 (fis | g4-.) r8 a16 (g | e8-.) g16 (f d8-.) f16 (e | c4-.)
+}
+
+\markup{\huge C\super1.2}
+\relative c'' {
+    \time 2/4
+    \key f \major
+    \set Score.currentBarNumber = #127
+    \bar ""
+    c4\p (g | c-\markup {\italic {dimin. sempre} } g | c g | c g | c8-.\pp) r r4 |
 }
 
 \markup{\huge C\super{rt}}
@@ -145,6 +154,8 @@
     \bar ""
     r8 c\p (d) f-. | e-. e (f) a-. | g-. g (a) c-. | bes-. a\f (bes) d-. |
 }
+
+
 
 \markup {\huge \bold {Recapitulation Motives}}
 

@@ -50,67 +50,105 @@ class Beethoven1_1(SonataDataClass):
             Sonata.DEVELOPMENT_RECAP_REPEAT: False,
 
             # Delete this attribute if did not render a lilypond image for this sonata
-            Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 560}
+            Sonata.LILYPOND_IMAGE_SETTINGS:  {Sonata.IMAGE_WIDTH: 530}
         }
 
     @classmethod
     def introduction_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Introduction.MEASURES:                MeasureRange(1, 12),
-            Introduction.OPENING_TEMPO:           "Adagio molto",
-            Introduction.OPENING_KEY:             Key.F_MAJOR,
-            Introduction.INTRODUCTION_OTHER_KEYS: [Key.G_MAJOR],
-            Introduction.ENDING_KEY:              Key.C_MAJOR,
+            Introduction.MEASURES:        MR(1, 12),
+            Introduction.OPENING_TEMPO:   "Adagio molto",
+            Introduction.OPENING_KEY:     Key.F_MAJOR,
+            Introduction.OTHER_KEYS_LIST: [Key.G_MAJOR],
+            Introduction.ENDING_KEY:      Key.C_MAJOR,
         }
 
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.MEASURES:                         MeasureRange(13, 109),
+            Exposition.MEASURES:                         MR(13, 109),
             Exposition.OPENING_TEMPO:                    "Allegro con brio",
 
-            Exposition.P_THEME_MEASURES:                 MeasureRange(13, 33),
+            Exposition.P_THEME_TYPE:                     PThemeType.COMPLETED_PHRASE_NON_ANTECEDENT,
+            Exposition.P_THEME_MEASURES:                 MR(13, 33),
             Exposition.P_THEME_OPENING_KEY:              Key.C_MAJOR,
-            Exposition.P_MODULE_PHRASE_STRUCTURE:        [PhraseStructure.COMPOUND_SENTENCE],
+            Exposition.P_MODULE_PHRASE_DICT:             {
+                "P1": PhraseStructure.COMPOUND_SENTENCE,
+            },
+            Exposition.P_MODULE_MEASURES_DICT:           {
+                "P1.1": MR(13, 25),
+                "P1.2": MR(25, 33),
+            },
+            Exposition.P_THEME_PAC_MEASURES_LIST:        [MR(33)],
             Exposition.P_THEME_ENDING_KEY:               Key.C_MAJOR,
             Exposition.P_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
 
-            Exposition.TR_THEME_MEASURES:                MeasureRange(33, 52),
+            Exposition.TR_THEME_MEASURES:                MR(33, 52),
+            Exposition.TR_THEME_TYPE:                    TRThemeType.INDEPENDENT_DEVELOPMENTAL,
+            Exposition.TR_MODULE_MEASURES_DICT:          {
+                "TR1.1": MR(33, 41),
+                "TR1.2": MR(41, 52)
+            },
             Exposition.TR_THEME_OPENING_KEY:             Key.C_MAJOR,
             Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_GAIN_CRESCENDO,
             Exposition.TR_THEME_DOMINANT_LOCK:           True,
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   True,
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:       3,
             Exposition.TR_THEME_ENDING_KEY:              Key.C_MAJOR,
-            Exposition.TR_THEME_ENDING_CADENCE:   Cadence.HC,
+            Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC,
 
-            Exposition.MC_STYLE:                  MedialCaesura.GENERAL_PAUSE,
-            Exposition.MC_MEASURES:               MeasureRange(52),
+            Exposition.MC_STYLE:                         MC.GENERAL_PAUSE,
+            Exposition.MC_MEASURES:                      MR(52),
 
-            Exposition.S_THEME_MEASURES:          MeasureRange(53, 88),
-            Exposition.S_MODULE_MEASURES:         {
-                "S1": MeasureRange(53, 77),
-                "S2": MeasureRange(77, 88),
+            Exposition.S_THEME_MEASURES:                 MR(53, 88),
+            Exposition.S_THEME_TYPE:                     SThemeType.TRI_MODULAR_S,
+            Exposition.S_MODULE_MEASURES_DICT:           {
+                "S1.1": MR(53, 68),
+                "S1.2": MR(69, 77),
+                "S2.1": MR(77, 88),
             },
-            Exposition.S_THEME_OPENING_KEY:       Key.G_MAJOR,
-            Exposition.S_ATTENUATED_PAC_MEASURES: [MeasureRange(77)],
-            Exposition.S_THEME_OTHER_KEYS:        [Key.G_MINOR],
-            Exposition.S_THEME_ENDING_KEY:        Key.G_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:    Cadence.PAC_MAJOR,
-            Exposition.EEC_ESC_SECURED:           True,
-            Exposition.EEC_ESC_MEASURE:           MeasureRange(88),
+            Exposition.S_MODULE_PHRASE_DICT:             {
+                "S1.1": PhraseStructure.PERIOD,
+            },
+            Exposition.S_MODULE_TYPES_DICT:              {
+                "S1.1": SThemeType.LYRICAL_CANTABILE,
+                "S1.2": SThemeType.BUSTLING_GALANT,
+                "S2.1": SThemeType.MISCHEIVOUS_LAMENT,
+            },
+            Exposition.S_THEME_OPENING_KEY:              Key.G_MAJOR,
+            Exposition.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(77)],
+            Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(88)],
+            Exposition.S_THEME_OTHER_KEYS_LIST:          [Key.G_MINOR],
+            Exposition.S_THEME_ENDING_KEY:               Key.G_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
+            Exposition.EEC_ESC_SECURED:                  True,
+            Exposition.EEC_ESC_MEASURE:                MR(88),
 
-            Exposition.C_THEME_MEASURES:          MeasureRange(88, 109),
-            Exposition.C_THEME_OPENING_KEY:       Key.G_MAJOR,
-            Exposition.C_THEME_P_BASED:                  True,
+            Exposition.C_THEME_MEASURES_INCL_C_RT:     MR(88, 109),
+            Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
+            Exposition.C_MODULE_MEASURES_DICT:         {
+                "C1.1": MR(88, 91),
+                "C1.2": MR(92, 100),
+                "C2.1": MR(100, 106),
+            },
+            Exposition.C_THEME_TYPE:                   CThemeType.MULTI_MODULAR_C,
+            Exposition.C_MODULE_TYPES_DICT:            {
+                "C1": CThemeType.FORTE_P_BASED_C,
+                "C2": CThemeType.PIANO_AFTERTHOUGHT,
+            },
+            Exposition.C_THEME_PAC_MEASURES_LIST:      [MR(100), MR(106)],
+            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT: Key.G_MAJOR,
+            Exposition.C_RT_PRESENT:                   True,
+            Exposition.C_RT_MEASURES:                  MR(106, 109),
+            Exposition.C_RT_ENDING_KEY:                Key.C_MAJOR,
         }
 
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.MEASURES:                   MeasureRange(110, 178),
-            Development.OPENING_KEY:                Key.A_MAJOR,
-            Development.DEVELOPMENT_OTHER_KEYS:     [
+            Development.MEASURES:        MR(110, 178),
+            Development.OPENING_KEY:     Key.A_MAJOR,
+            Development.OTHER_KEYS_LIST: [
                 Key.G_MAJOR,
                 Key.C_MINOR,
                 Key.F_MINOR,
@@ -120,8 +158,8 @@ class Beethoven1_1(SonataDataClass):
                 Key.G_MINOR,
                 Key.D_MINOR,
             ],
-            Development.DEVELOPMENT_ENDING_KEY:     Key.A_MINOR,
-            Development.DEVELOPMENT_ENDING_CADENCE: Cadence.HC
+            Development.ENDING_KEY:      Key.A_MINOR,
+            Development.ENDING_CADENCE:  Cadence.HC
 
         }
 
@@ -130,32 +168,53 @@ class Beethoven1_1(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
-            Recapitulation.MEASURES:                         MeasureRange(178, 298),
+            Recapitulation.MEASURES:                        MR(178, 298),
 
-            Recapitulation.P_THEME_MEASURES:                 MeasureRange(178, 198),
-            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.3 extended and P1.4 elided",
-            Recapitulation.P_THEME_ENDING_KEY:               Key.G_MAJOR,
-            Recapitulation.P_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
-
-            Recapitulation.TR_THEME_MEASURES:                MeasureRange(198, 204),
-            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION:  "TR Theme shortened and no exposition TR motives appear",
-            Recapitulation.TR_THEME_ENDING_KEY:              Key.C_MAJOR,
-            Recapitulation.MC_MEASURES:                      MeasureRange(204, 205),
-            Recapitulation.MC_STYLE:                         MedialCaesura.CAESURA_FILL,
-            Recapitulation.MC_CHANGE_FROM_EXPOSITION:        "",
-            Recapitulation.S_THEME_MEASURES:                 MeasureRange(206, 241),
-            Recapitulation.S_ATTENUATED_PAC_MEASURES:        [MeasureRange(230)],
-            Recapitulation.S_MODULE_MEASURES:                {
-                "S1": MeasureRange(206, 230),
-                "S2": MeasureRange(230, 241),
+            Recapitulation.P_THEME_MEASURES:                MR(178, 198),
+            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "P1.2 changed to fragment P1.1.2 motives instead of P1.1.1",
+            Recapitulation.P_THEME_ENDING_KEY:              Key.G_MAJOR,
+            Recapitulation.P_THEME_ENDING_CADENCE:          Cadence.PAC_MAJOR,
+            Recapitulation.P_THEME_PAC_MEASURES_LIST:       [MR(198)],
+            Recapitulation.P_MODULE_MEASURES_DICT:          {
+                "P1.1":    MR(178, 190),
+                "P1.2var": MR(190, 198),
             },
-            Recapitulation.S_THEME_OPENING_KEY:              Key.C_MAJOR,
-            Recapitulation.S_THEME_OTHER_KEYS:               [Key.C_MINOR],
-            Recapitulation.S_THEME_ENDING_KEY:               Key.C_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                  MeasureRange(241),
+            Recapitulation.TR_THEME_MEASURES:               MR(198, 204),
+            Recapitulation.TR_MODULE_MEASURES_DICT:         {
+                "TR1.1var": MR(198, 204)
+            },
+            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR Theme heavily truncated and altered - "
+                                                            "continues to fragment P1.1.2 16th note motives "
+                                                            "and TR1.1 headmotive does not appear",
+            Recapitulation.TR_THEME_ENDING_KEY:             Key.C_MAJOR,
+            Recapitulation.MC_MEASURES:                     MR(204, 205),
+            Recapitulation.MC_STYLE:                        MC.CAESURA_FILL,
+            Recapitulation.MC_CHANGE_FROM_EXPOSITION:       "",
+            Recapitulation.S_THEME_MEASURES:                MR(206, 241),
+            Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST: [MR(230)],
+            Recapitulation.S_MODULE_MEASURES_DICT:          {
+                "S1.1": MR(206, 221),
+                "S1.2": MR(222, 230),
+                "S2.1": MR(230, 241),
+            },
+            Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
+            Recapitulation.S_THEME_OTHER_KEYS_LIST:         [
+                Key.C_MINOR
+            ],
+            Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
+            Recapitulation.EEC_ESC_MEASURE:                 MR(241),
 
-            Recapitulation.C_THEME_MEASURES:                 MeasureRange(241, 259),
-            Recapitulation.C_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Recapitulation.C_THEME_MEASURES_INCL_C_RT:      MR(241, 259),
+            Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:  Key.C_MAJOR,
+            Recapitulation.C_MODULE_MEASURES_DICT:          {
+                "C1.1": MR(241, 244),
+                "C1.2": MR(245, 253),
+                "C2.1": MR(253, 259),
+            },
+            Recapitulation.C_THEME_PAC_MEASURES_LIST:       [MR(253), MR(259)],
+            Recapitulation.C_RT_PRESENT:                    False,
+            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Retransition elided with onset of Coda",
         }
 
         recap_dict.update(recap_updates)
@@ -164,8 +223,8 @@ class Beethoven1_1(SonataDataClass):
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Coda.MEASURES:        MeasureRange(259, 298),
+            Coda.MEASURES:        MR(259, 298),
             Coda.OPENING_KEY:     Key.F_MAJOR,
-            Coda.CODA_OTHER_KEYS: [Key.D_MINOR],
+            Coda.OTHER_KEYS_LIST: [Key.D_MINOR],
             Coda.ENDING_KEY:      Key.C_MAJOR,
         }

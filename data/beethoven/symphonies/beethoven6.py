@@ -64,68 +64,77 @@ class Beethoven6_1(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.MEASURES:                       MeasureRange(1, 138),
-            Exposition.OPENING_TEMPO:                  "Allegro ma non troppo",
+            Exposition.MEASURES:                         MR(1, 138),
+            Exposition.OPENING_TEMPO:                    "Allegro ma non troppo",
 
-            Exposition.P_THEME_MEASURES:               MeasureRange(1, 37),
-            Exposition.P_THEME_TYPE:                   PrimaryThemeType.ABORTED_ROUNDED_BINARY,
-            Exposition.P_MODULE_MEASURES:              {
-                "P1.0": MeasureRange(1, 4),
-                "P1.1": MeasureRange(5, 29),
-                "P1.2": MeasureRange(29, 37),
+            Exposition.P_THEME_MEASURES:                 MR(1, 37),
+            Exposition.P_THEME_TYPE:                     PThemeType.ABORTED_ROUNDED_BINARY,
+            Exposition.P_MODULE_MEASURES_DICT:           {
+                "P1.0": MR(1, 4),
+                "P1.1": MR(5, 29),
+                "P1.2": MR(29, 37),
             },
-            Exposition.P_MODULE_PHRASE_STRUCTURE:      {
+            Exposition.P_MODULE_PHRASE_DICT:             {
                 "P1.0": PhraseStructure.ANTECEDENT,
                 "P1.1": PhraseStructure.SENTENCE,
                 "P1.2": PhraseStructure.PRESENTATION,
             },
-            Exposition.P_THEME_OPENING_KEY:            Key.BES_MAJOR,
-            Exposition.P_THEME_ENDING_KEY:             Key.BES_MAJOR,
-            Exposition.P_THEME_STRUCTURAL_PAC_COUNT:   0,
+            Exposition.P_THEME_OPENING_KEY:              Key.BES_MAJOR,
+            Exposition.P_THEME_ENDING_KEY:               Key.BES_MAJOR,
+            Exposition.P_THEME_PAC_MEASURES_LIST:        [],
 
-            Exposition.TR_THEME_MEASURES:              MeasureRange(37, 53),
-            Exposition.TR_THEME_TYPE:                  TransitionType.DISSOLVING_RESTATEMENT,
-            Exposition.TR_THEME_OPENING_KEY:           Key.F_MAJOR,
-            Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
-            Exposition.TR_THEME_HAMMER_BLOW_COUNT:     0,
-            Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
-            Exposition.TR_THEME_ENDING_KEY:            Key.F_MAJOR,
-            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.IAC_MAJOR,
+            Exposition.TR_THEME_MEASURES:                MR(37, 53),
+            Exposition.TR_THEME_TYPE:                    TRThemeType.DISSOLVING_RESTATEMENT,
+            Exposition.TR_THEME_OPENING_KEY:             Key.F_MAJOR,
+            Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_STASIS_FORTE,
+            Exposition.TR_THEME_HAMMER_BLOW_COUNT:       0,
+            Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   False,
+            Exposition.TR_THEME_ENDING_KEY:              Key.F_MAJOR,
+            Exposition.TR_THEME_ENDING_CADENCE:          Cadence.IAC_MAJOR,
 
-            Exposition.MC_MEASURES:                    MeasureRange(53, 66),
-            Exposition.MC_STYLE:                       MedialCaesura.DEFORMATION_CAESURA_FILL,
-            Exposition.MC_FILL_KEY:                    Key.F_MAJOR,
-            Exposition.MC_COMMENTS:                    "Series of pause + fill gestures surround tripleted motives – "
-                                                       "it is a deformational cascade of MC moments but the net effect "
-                                                       "is still the MC that is clearly opening up S space",
+            Exposition.MC_MEASURES:                      MR(53, 66),
+            Exposition.MC_STYLE:                         MC.DEFORMATION_CAESURA_FILL,
+            Exposition.MC_FILL_KEY:                      Key.F_MAJOR,
+            Exposition.MC_COMMENTS:                      "Series of pause + fill gestures surround tripleted motives; "
+                                                         "it is a deformational cascade of MC moments but the net "
+                                                         "effect is still the MC that is clearly opening up S space",
 
-            Exposition.S_THEME_MEASURES:               MeasureRange(67, 115),
-            Exposition.S_MODULE_MEASURES:              {
-                "S1.1": MeasureRange(67, 93),
-                "S1.2": MeasureRange(93, 115),
+            Exposition.S_THEME_MEASURES:                 MR(67, 115),
+            Exposition.S_MODULE_MEASURES_DICT:           {
+                "S1.1": MR(67, 93),
+                "S1.2": MR(93, 115),
             },
-            Exposition.S_THEME_OPENING_KEY:            Key.C_MAJOR,
-            Exposition.S_EVADED_PAC_MEASURES:          [100, 107, 111],
-            Exposition.S_THEME_ENDING_KEY:             Key.C_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
-            Exposition.EEC_ESC_SECURED:                True,
-            Exposition.EEC_ESC_MEASURE:                MeasureRange(115),
-            Exposition.C_THEME_MEASURES:               MeasureRange(115, 138),
-            Exposition.C_MODULE_MEASURES:              {
-                "C1":   MeasureRange(115, 135),
-                "C-rt": MeasureRange(135, 138)
+            Exposition.S_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Exposition.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(100), MR(107), MR(111)],
+            Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(115)],
+            Exposition.S_THEME_ENDING_KEY:               Key.C_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
+            Exposition.EEC_ESC_SECURED:                  True,
+            Exposition.EEC_ESC_MEASURE:                  MR(115),
+
+            Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(115, 138),
+            Exposition.C_RT_PRESENT:                     True,
+            Exposition.C_MODULE_MEASURES_DICT:           {
+                "C1.1": MR(115, 127),
+                "C1.2": MR(127, 135)
             },
-            Exposition.C_THEME_OPENING_KEY:            Key.C_MAJOR,
-            Exposition.C_THEME_ENDING_KEY:             Key.F_MAJOR,
-            Exposition.C_THEME_COMMENTS:               "C1 ends in C Major but 4-bar C-rt veers back to F Major",
+            Exposition.C_MODULE_TYPES_DICT:              {
+                "C1.1": CThemeType.FORTE_P_BASED_C,
+                "C1.2": CThemeType.PIANO_AFTERTHOUGHT
+            },
+            Exposition.C_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.C_MAJOR,
+            Exposition.C_RT_MEASURES:                    MR(135, 138),
+            Exposition.C_RT_ENDING_KEY:                  Key.F_MAJOR,
+            Exposition.C_THEME_COMMENTS:                 "C1 ends in C Major but 4-bar C-RT veers back to F Major",
         }
 
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.MEASURES:               MeasureRange(139, 278),
-            Development.OPENING_KEY:            Key.F_MAJOR,
-            Development.DEVELOPMENT_OTHER_KEYS: [
+            Development.MEASURES:        MR(139, 278),
+            Development.OPENING_KEY:     Key.F_MAJOR,
+            Development.OTHER_KEYS_LIST: [
                 Key.BES_MAJOR,
                 Key.D_MAJOR,  # This is a long-enough V of G that it feels like its own key
                 Key.G_MAJOR,
@@ -135,7 +144,7 @@ class Beethoven6_1(SonataDataClass):
                 Key.C_MAJOR,
                 Key.F_MAJOR,  # Ends on clear subdominant (almost like an a half cadence ending on IV)
             ],
-            Development.DEVELOPMENT_ENDING_KEY: Key.BES_MAJOR,
+            Development.ENDING_KEY:      Key.BES_MAJOR,
         }
 
     @classmethod
@@ -147,14 +156,14 @@ class Beethoven6_1(SonataDataClass):
                                                              "onset of Recapitulation: "
                                                              "developmental counter-melodies over P1.0 and P1.1 "
                                                              "make recap-effect subtle until dramatic TR emergence",
-            Recapitulation.MEASURES:                         MeasureRange(279, 417),
+            Recapitulation.MEASURES:                         MR(279, 417),
 
-            Recapitulation.P_THEME_MEASURES:                 MeasureRange(337, 351),
-            Recapitulation.P_MODULE_MEASURES:                {
-                "P1.0": MeasureRange(279, 288),
-                "P1.1": MeasureRange(289, 312),
+            Recapitulation.P_THEME_MEASURES:                 MR(337, 351),
+            Recapitulation.P_MODULE_MEASURES_DICT:           {
+                "P1.0": MR(279, 288),
+                "P1.1": MR(289, 312),
             },
-            Recapitulation.P_MODULE_PHRASE_STRUCTURE:        {
+            Recapitulation.P_MODULE_PHRASE_DICT:             {
                 "P1.0": PhraseStructure.ANTECEDENT,
                 "P1.1": PhraseStructure.SENTENCE,
             },
@@ -162,37 +171,39 @@ class Beethoven6_1(SonataDataClass):
                                                              "fermata is expanded into a multi-measure figuration; "
                                                              "P1.1 contains a novel tripleted ostinato countermelody "
                                                              "throughout, and P1.2 is entirely absent",
-            Recapitulation.TR_THEME_MEASURES:                MeasureRange(312, 328),
+            Recapitulation.TR_THEME_MEASURES:                MR(312, 328),
 
             Recapitulation.TR_THEME_ENDING_KEY:              Key.F_MAJOR,
 
-            Recapitulation.MC_MEASURES:                      MeasureRange(328, 345),
+            Recapitulation.MC_MEASURES:                      MR(328, 345),
             Recapitulation.MC_CHANGE_FROM_EXPOSITION:        "MC is slightly extended with additional "
                                                              "tripleted gestures + fill",
 
-            Recapitulation.S_THEME_MEASURES:                 MeasureRange(346, 394),
-            Recapitulation.S_MODULE_MEASURES:                {
-                "S1.1": MeasureRange(346, 372),
-                "S1.2": MeasureRange(372, 394),
+            Recapitulation.S_THEME_MEASURES:                 MR(346, 394),
+            Recapitulation.S_MODULE_MEASURES_DICT:           {
+                "S1.1": MR(346, 372),
+                "S1.2": MR(372, 394),
             },
             Recapitulation.S_THEME_OPENING_KEY:              Key.F_MAJOR,
-            Recapitulation.S_ATTENUATED_PAC_MEASURES:        [MeasureRange(415)],
-            Recapitulation.S_EVADED_PAC_MEASURES:            [379, 386, 390],
+            Recapitulation.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(379), MR(386), MR(390)],
+            Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(394)],
             Recapitulation.S_THEME_ENDING_KEY:               Key.F_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                  MeasureRange(394),
+            Recapitulation.EEC_ESC_MEASURE:                  MR(394),
 
-            Recapitulation.C_THEME_MEASURES:                 MeasureRange(394, 417),
-            Recapitulation.C_MODULE_MEASURES:                {
-                "C1":   MeasureRange(394, 414),
-                "C-rt": MeasureRange(414, 417)
+            Recapitulation.C_THEME_MEASURES_INCL_C_RT:       MR(394, 417),
+            Recapitulation.C_MODULE_MEASURES_DICT:           {
+                "C1.1": MR(394, 406),
+                "C1.2": MR(406, 414)
             },
             Recapitulation.C_THEME_OPENING_KEY:              Key.F_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY:               Key.BES_MAJOR,
-            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:   "C theme transposed up a fourth for tonic resolution (as"
-                                                             "expected), leading to C Major C1. However,"
-                                                             "this creates a problem for the C-rt gesture"
-                                                             "that was already in tonic in exposition, so the exact"
-                                                             " transposition accidentally veers us to the subdominant!"
+            Recapitulation.C_RT_MEASURES:                    MR(414, 417),
+            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.F_MAJOR,
+            Recapitulation.C_RT_ENDING_KEY:                  Key.BES_MAJOR,
+            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:   "C transposed up a fourth for tonic resolution (as "
+                                                             "expected), leading to C Major C1. However, "
+                                                             "this creates a problem for the C-RT gesture that "
+                                                             "was already going to tonic in exposition, so the exact "
+                                                             "transposition accidentally veers us to the subdominant!"
         }
 
         recap_dict.update(recap_updates)
@@ -201,7 +212,7 @@ class Beethoven6_1(SonataDataClass):
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Coda.MEASURES:         MeasureRange(418, 512),
+            Coda.MEASURES:         MR(418, 512),
             Coda.P_THEME_RECALLED: True,
             Coda.OPENING_KEY:      Key.BES_MAJOR,
             Coda.ENDING_KEY:       Key.F_MAJOR,
