@@ -83,6 +83,9 @@ class Beethoven3_1(SonataDataClass):
 
             Exposition.TR_THEME_MEASURES:              MR(37, 45),
             Exposition.TR_THEME_TYPE:                  TRThemeType.DISSOLVING_RESTATEMENT,
+            Exposition.TR_MODULE_MEASURES_DICT:        {
+                "TR1": MR(37, 45),
+            },
             Exposition.TR_THEME_OPENING_KEY:           Key.EES_MAJOR,
             Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:     0,
@@ -94,6 +97,7 @@ class Beethoven3_1(SonataDataClass):
             Exposition.MC_MEASURES:                    MR(45, 56),
 
             Exposition.S_THEME_MEASURES:               MR(45, 83),
+            Exposition.S_THEME_TYPE:                   SThemeType.MULTI_MODULAR_S,
             Exposition.S_MODULE_MEASURES_DICT:         {
                 "S0": MR(45, 56),
                 "S1": MR(57, 83),
@@ -101,9 +105,12 @@ class Beethoven3_1(SonataDataClass):
             Exposition.S_THEME_OPENING_KEY:            Key.BES_MAJOR,
             Exposition.S_THEME_ENDING_KEY:             Key.BES_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
+
             Exposition.EEC_ESC_SECURED:                True,
             Exposition.EEC_ESC_MEASURE:                MR(83),
+
             Exposition.C_THEME_MEASURES_INCL_C_RT:     MR(83, 153),
+            Exposition.C_THEME_TYPE:                   CThemeType.MULTI_MODULAR_C,
             Exposition.C_MODULE_MEASURES_DICT:         {
                 "C0": MR(83, 109),
                 "C1": MR(109, 153),
@@ -115,9 +122,9 @@ class Beethoven3_1(SonataDataClass):
     @classmethod
     def development_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Development.MEASURES:               MR(154, 398),
-            Development.OPENING_KEY:            Key.C_MAJOR,
-            Development.OTHER_KEYS_LIST:        [
+            Development.MEASURES:                  MR(154, 398),
+            Development.OPENING_KEY:               Key.C_MAJOR,
+            Development.OTHER_KEYS_LIST:           [
                 Key.C_MINOR,
                 Key.CIS_MINOR,
                 Key.D_MINOR,
@@ -137,12 +144,12 @@ class Beethoven3_1(SonataDataClass):
                 Key.EES_MINOR,
             ],
             Development.DEVELOPMENT_THEME_PRESENT: True,
-            Development.DEVELOPMENT_THEME_KEYS: [
+            Development.DEVELOPMENT_THEME_KEYS:    [
                 Key.E_MINOR,
                 Key.EES_MINOR,
             ],
-            Development.ENDING_KEY:             Key.EES_MAJOR,
-            Development.ENDING_CADENCE:         Cadence.PAC_MAJOR
+            Development.ENDING_KEY:                Key.EES_MAJOR,
+            Development.ENDING_CADENCE:            Cadence.PAC_MAJOR
 
         }
 
@@ -163,28 +170,30 @@ class Beethoven3_1(SonataDataClass):
             ],
 
             Recapitulation.TR_THEME_MEASURES:               MR(430, 448),
-
+            Exposition.TR_MODULE_MEASURES_DICT:             {
+                "TR1": MR(430, 448),
+            },
             Recapitulation.TR_THEME_ENDING_KEY:             Key.EES_MAJOR,
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "Middle section lengthened",
 
-            Recapitulation.MC_MEASURES:                    MR(448, 459),
+            Recapitulation.MC_MEASURES:                     MR(448, 459),
 
-            Recapitulation.S_THEME_MEASURES:               MR(448, 486),
-            Recapitulation.S_MODULE_MEASURES_DICT:         {
+            Recapitulation.S_THEME_MEASURES:                MR(448, 486),
+            Recapitulation.S_MODULE_MEASURES_DICT:          {
                 "S0": MR(448, 459),
                 "S1": MR(460, 486),
             },
-            Recapitulation.S_THEME_OPENING_KEY:            Key.EES_MAJOR,
-            Recapitulation.S_THEME_ENDING_KEY:             Key.EES_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                MR(486),
+            Recapitulation.S_THEME_OPENING_KEY:             Key.EES_MAJOR,
+            Recapitulation.S_THEME_ENDING_KEY:              Key.EES_MAJOR,
+            Recapitulation.EEC_ESC_MEASURE:                 MR(486),
 
-            Recapitulation.C_THEME_MEASURES_INCL_C_RT:     MR(486, 556),
-            Recapitulation.C_MODULE_MEASURES_DICT:         {
+            Recapitulation.C_THEME_MEASURES_INCL_C_RT:      MR(486, 556),
+            Recapitulation.C_MODULE_MEASURES_DICT:          {
                 "C0": MR(486, 512),
                 "C1": MR(512, 556),
             },
-            Recapitulation.C_THEME_OPENING_KEY:            Key.EES_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT: Key.EES_MAJOR
+            Recapitulation.C_THEME_OPENING_KEY:             Key.EES_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:  Key.EES_MAJOR
         }
 
         recap_dict.update(recap_updates)

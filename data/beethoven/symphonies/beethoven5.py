@@ -125,6 +125,9 @@ class Beethoven5_1(SonataDataClass):
 
             Exposition.C_THEME_MEASURES_INCL_C_RT:     MR(110, 124),
             Exposition.C_THEME_TYPE:                   CThemeType.FORTE_TR_BASED_C,
+            Exposition.C_MODULE_MEASURES_DICT:         {
+                'C1': MR(110, 124)
+            },
             Exposition.C_THEME_OPENING_KEY:            Key.EES_MAJOR,
             Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT: Key.EES_MAJOR,
         }
@@ -184,6 +187,9 @@ class Beethoven5_1(SonataDataClass):
             Recapitulation.EEC_ESC_MEASURE:                 MR(362),
 
             Recapitulation.C_THEME_MEASURES_INCL_C_RT:      MR(362, 374),
+            Recapitulation.C_MODULE_MEASURES_DICT:          {
+                'C1': MR(362, 374)
+            },
             Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:  Key.C_MAJOR,
             Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Ending Cadence resolution elided into onset of Coda: "
@@ -248,6 +254,9 @@ class Beethoven5_4(SonataDataClass):
                                                          "TR, and thus m. 22 is not a real candidate to be an MC",
 
             Exposition.TR_THEME_MEASURES:                MR(26, 43),
+            Recapitulation.TR_MODULE_MEASURES_DICT:      {
+                "TR1": MR(26, 43)
+            },
             Exposition.TR_THEME_OPENING_KEY:             Key.C_MAJOR,
 
             Exposition.TR_THEME_TYPE:                    TRThemeType.INDEPENDENT_SEPARATELY_THEMATIZED,
@@ -259,6 +268,7 @@ class Beethoven5_4(SonataDataClass):
             Exposition.TR_THEME_DOMINANT_LOCK:           True,
             Exposition.TR_THEME_ENDING_KEY:              Key.G_MAJOR,
             Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC,
+            Exposition.TR_THEME_HAMMER_BLOW_COUNT:       0,
 
             Exposition.MC_MEASURES:                      MR(43, 44),
             Exposition.MC_STYLE:                         MC.CAESURA_FILL_CASCADE,
@@ -277,6 +287,7 @@ class Beethoven5_4(SonataDataClass):
             Exposition.EEC_ESC_SECURED:                  False,
 
             Exposition.C_THEME_SC_PRE_EEC_ESC:           True,
+            Exposition.C_THEME_TYPE:                     CThemeType.S_C_PRE_EEC,
             Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(64, 85),
             Exposition.C_MODULE_MEASURES_DICT:           {
                 "SC1.1": MR(64, 79),
@@ -284,6 +295,16 @@ class Beethoven5_4(SonataDataClass):
             },
             Exposition.C_THEME_OPENING_KEY:              Key.G_MAJOR,
             Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.C_MINOR,
+            Exposition.C_THEME_COMMENTS:                 "The C section I'm starting at m. 64 is not actually C "
+                                                         "because there is no EEC "
+                                                         "which is why I'm using the sonata theory"
+                                                         "label S^C (pre-EEC) to describe it. "
+                                                         "It is somewhat of a debatable use of the label as it is not "
+                                                         "especially in dialogue with C1 logic at m. 62, so it might "
+                                                         "be classified as S1.3 and S1.4 instead of SC1.1 and SC1.2. "
+                                                         "However, I do think there is an intrinsic closing-theme"
+                                                         "feel to this theme by m. 72 though, which is why I stand by "
+                                                         "the S^C label for now."
         }
 
     @classmethod
@@ -313,14 +334,18 @@ class Beethoven5_4(SonataDataClass):
 
             Recapitulation.P_THEME_MEASURES:               MR(207, 232),
             Recapitulation.P_THEME_TYPE:                   PThemeType.GRAND_ANTECEDENT,
-            Exposition.P_MODULE_MEASURES_DICT:             {
+            Recapitulation.P_MODULE_MEASURES_DICT:         {
                 "P1.1":    MR(207, 210),
                 "P1.2":    MR(211, 218),
                 "P1.3":    MR(219, 224),
                 "P1.4":    MR(224, 228),
                 "P1.5-cf": MR(228, 232),
             },
+
             Recapitulation.TR_THEME_MEASURES:              MR(232, 252),
+            Recapitulation.TR_MODULE_MEASURES_DICT:        {
+                "TR1": MR(232, 252)
+            },
             Recapitulation.TR_THEME_ENDING_KEY:            Key.C_MAJOR,
 
             Recapitulation.MC_MEASURES:                    MR(252, 253),

@@ -286,6 +286,7 @@ class SThemeType(object):
     MISCHEIVOUS_LAMENT = "Mischeivous Lament S"
     DISASTROUS_FAILED_CADENTIAL = "Disastrous Failed Cadential S"
     RECOVERED_CADENTIAL = "Restoration to Cadential S"
+    FORTE_PIANO_ALTERNATING = "Forte / Piano Alternating S"
 
 
 class CThemeType(object):
@@ -298,6 +299,8 @@ class CThemeType(object):
 
     FORTE_P_BASED_C = "Forte P-Based C"  # For those that very closely match P
     PIANO_P_BASED_C = "Piano P-Based C"
+
+    S_C_PRE_EEC = "S^C (pre-EEC)"
 
     FORTE_P_DERIVATION_C = "Forte P-Derivation C"  # For those that are loosely derived from motives in P
     PIANO_P_DERIVATION_C = "Piano P-Derivation C"

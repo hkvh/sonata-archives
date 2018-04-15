@@ -107,6 +107,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.TR_THEME_OPENING_KEY:             Key.D_MINOR,
             Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_GAIN_CRESCENDO,
             Exposition.TR_THEME_DOMINANT_LOCK:           True,
+            Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   False,
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:       0,
             Exposition.TR_THEME_ENDING_KEY:              Key.A_MINOR,
             Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC,
@@ -151,6 +152,7 @@ class Beethoven2_1(SonataDataClass):
             Exposition.EEC_ESC_COMMENTS:                 "Flute plays soprano 3ˆ, but otherwise feels like strong PAC",
 
             Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(112, 133),
+            Exposition.C_THEME_TYPE:                     CThemeType.FORTE_P_BASED_C,
             Exposition.C_MODULE_MEASURES_DICT:           {
                 'C1': MR(112, 131),
             },
@@ -205,7 +207,7 @@ class Beethoven2_1(SonataDataClass):
             # If decide to move exposition TR to m. 61, then TR exactly like recap and Expostion P2
             # would be the thing elided
 
-            Recapitulation.MC_MEASURES: MR(243, 244),
+            Recapitulation.MC_MEASURES:                      MR(243, 244),
             Recapitulation.MC_FILL_KEY:                      Key.D_MAJOR,
 
             Recapitulation.S_THEME_MEASURES:                 MR(245, 284),

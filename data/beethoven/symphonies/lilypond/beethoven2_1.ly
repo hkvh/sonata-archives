@@ -188,7 +188,7 @@
     \acciaccatura {d d'} d'2.\ff d4-. | a-. f-. e-. d-. | <a a,>
 }
 
-\markup{\huge C\super{rt}}
+\markup{\huge C\super{RT}}
 \relative c''' {
     \key d \major
     \set Score.currentBarNumber = #132

@@ -92,8 +92,8 @@ class Beethoven4_1(SonataDataClass):
             Exposition.P_THEME_MEASURES:                 MR(43, 81),
             Exposition.P_THEME_TYPE:                     PThemeType.ABORTED_ROUNDED_BINARY,
             Exposition.P_MODULE_MEASURES_DICT:           {
-                "P1": MR(43, 65),
-                "P2": MR(65, 81),
+                "P1":   MR(43, 65),
+                "P2.1": MR(65, 81),
             },
             Exposition.P_MODULE_PHRASE_DICT:             {
                 "P1": PhraseStructure.PERIOD,
@@ -105,23 +105,32 @@ class Beethoven4_1(SonataDataClass):
 
             Exposition.TR_THEME_MEASURES:                MR(81, 103),
             Exposition.TR_THEME_TYPE:                    TRThemeType.DISSOLVING_REPRISE,
-            Exposition.TR_THEME_OPENING_KEY:           Key.BES_MAJOR,
-            Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
-            Exposition.TR_THEME_HAMMER_BLOW_COUNT:     0,
-            Exposition.TR_THEME_CHROMATIC_PREDOMINANT: True,
-            Exposition.TR_THEME_ENDING_KEY:            Key.F_MINOR,
-            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC,
-
-            Exposition.MC_MEASURES:                    MR(103, 106),
-            Exposition.MC_STYLE:                       MC.CAESURA_FILL_CASCADE,
-            Exposition.MC_FILL_KEY:                    Key.F_MAJOR,
-
-            Exposition.S_THEME_MEASURES:               MR(107, 177),
-            Exposition.S_MODULE_MEASURES_DICT:         {
-                "S1": MR(107, 141),
-                "S2": MR(141, 177),
+            Exposition.TR_MODULE_MEASURES_DICT:          {
+                "TR1.1": MR(81, 95),
+                "TR1.2": MR(95, 103),
             },
-            Exposition.S_THEME_OPENING_KEY:            Key.BES_MAJOR,
+            Exposition.TR_THEME_OPENING_KEY:             Key.BES_MAJOR,
+            Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_STASIS_FORTE,
+            Exposition.TR_THEME_HAMMER_BLOW_COUNT:       0,
+            Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   True,
+            Exposition.TR_THEME_ENDING_KEY:              Key.F_MINOR,
+            Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC,
+
+            Exposition.MC_MEASURES:                      MR(103, 106),
+            Exposition.MC_STYLE:                         MC.CAESURA_FILL_CASCADE,
+            Exposition.MC_FILL_KEY:                      Key.F_MAJOR,
+
+            Exposition.S_THEME_MEASURES:                 MR(107, 177),
+            Exposition.S_THEME_TYPE:                     SThemeType.MULTI_MODULAR_S,
+            Exposition.S_MODULE_MEASURES_DICT:           {
+                "S1.1": MR(107, 112),
+                "S1.2": MR(113, 120),
+                "S1.3": MR(121, 134),
+                "S1.4": MR(135, 141),
+                "S2.1": MR(141, 158),
+                "S2.2": MR(159, 177)
+            },
+            Exposition.S_THEME_OPENING_KEY:              Key.F_MAJOR,
             Exposition.S_THEME_OTHER_KEYS_LIST:          [
                 Key.D_MINOR,
             ],
@@ -129,15 +138,24 @@ class Beethoven4_1(SonataDataClass):
             Exposition.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(141)],
             Exposition.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(163), MR(167)],
             Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
+
             Exposition.EEC_ESC_SECURED:                  True,
             Exposition.EEC_ESC_MEASURE:                  MR(177),
+
             Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(177, 187),
+            Exposition.C_THEME_TYPE:                     CThemeType.FORTE_P_DERIVATION_C,
+            Exposition.C_MODULE_MEASURES_DICT:           {
+                'C1': MR(177, 187)
+            },
             Exposition.C_THEME_COMMENTS:                 "Could maybe consider m. 141 EEC and S2 as C0 but the m. 141 "
                                                          "cadence is attenuated, and the S2.1 motives after m. 141 "
                                                          "link back to diminution of bass cadential 1.4 motives "
-                                                         "in m. 135-140",
-            Exposition.C_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.BES_MAJOR
+                                                         "in m. 135-140. Also, C-RT is in first ending which has"
+                                                         "no measure numbers since not present in second ending.",
+            Exposition.C_THEME_OPENING_KEY:              Key.F_MAJOR,
+            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.F_MAJOR,
+            Exposition.C_RT_PRESENT:                     True,
+            Exposition.C_RT_ENDING_KEY:                  Key.BES_MAJOR,
         }
 
     @classmethod
@@ -171,15 +189,22 @@ class Beethoven4_1(SonataDataClass):
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1 vastly truncated (no consequent) and "
                                                              "P2 absent entirely",
             Recapitulation.TR_THEME_MEASURES:                MR(351, 377),
-
+            Recapitulation.TR_MODULE_MEASURES_DICT:          {
+                "TR1.1": MR(351, 369),
+                "TR1.2": MR(369, 377),
+            },
             Recapitulation.TR_THEME_ENDING_KEY:              Key.BES_MAJOR,
 
             Recapitulation.MC_MEASURES:                      MR(377, 380),
 
-            Recapitulation.S_THEME_MEASURES:                 MR(381, 486),
+            Recapitulation.S_THEME_MEASURES:                 MR(381, 451),
             Recapitulation.S_MODULE_MEASURES_DICT:           {
-                "S0": MR(381, 415),
-                "S1": MR(415, 486),
+                "S1.1": MR(381, 386),
+                "S1.2": MR(387, 394),
+                "S1.3": MR(395, 408),
+                "S1.4": MR(409, 415),
+                "S2.1": MR(415, 432),
+                "S2.2": MR(433, 451)
             },
             Recapitulation.S_THEME_OPENING_KEY:              Key.BES_MAJOR,
             Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(415)],
@@ -188,8 +213,12 @@ class Beethoven4_1(SonataDataClass):
             Recapitulation.EEC_ESC_MEASURE:                  MR(451),
 
             Recapitulation.C_THEME_MEASURES_INCL_C_RT:       MR(451, 461),
+            Recapitulation.C_MODULE_MEASURES_DICT:           {
+                "C1": MR(451, 461),
+            },
             Recapitulation.C_THEME_OPENING_KEY:              Key.BES_MAJOR,
             Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.BES_MAJOR,
+            Recapitulation.C_RT_PRESENT:                     False,
         }
 
         recap_dict.update(recap_updates)

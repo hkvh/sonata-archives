@@ -14,7 +14,7 @@
 }
 
 
-\markup{\huge P\super1.1.1 \huge(P\super{1.0 frag}\huge)}
+\markup{\huge P\super1.1 \huge(P\super{1.0 frag}\huge)}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -27,7 +27,7 @@
     >>
 }
 
-\markup{\huge P\super1.1.2}
+\markup{\huge P\super1.2}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -37,7 +37,7 @@
 }
 
 
-\markup{\huge P\super1.1.3}
+\markup{\huge P\super1.3}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -47,28 +47,28 @@
     c8-. g16 (a) bes8-. b-. | c8-. g16 (a) bes8-. b-. | c8-. g16 (a) bes8-. b-.
 }
 
-\markup{\huge P\super1.2 \huge(P\super{1.0 var}\huge)}
+\markup{\huge TR\super1.1 \huge(P\super{1.0 var}\huge)}
 \relative c'' {
     \time 2/4
     \key f \major
     \set Score.currentBarNumber = #29
     \bar ""
-    a'8-.\p [a-. bes-. d-.] | c (bes16 a) | g8-. c,-. | f-. g-. <a f> (<bes g>16 <a f>) |
+    a'8-.\p [a-. bes-. d-.] | c (bes16 a) g8-. c,-. | f-. g-. <a f> (<bes g>16 <a f>) |
     <g e>8-. <a f>-. <bes g> (<c a>16 <bes g>) | <a f>8
 }
 
-\markup{\huge TR\super1.1.1 \huge(P\super{1.2}\huge)}
+\markup{\huge TR\super1.2.1 \huge(TR\super{1.1}\huge)}
 \relative c'' {
     \time 2/4
     \key f \major
     \set Score.currentBarNumber = #37
     \bar ""
-    <a' f>8-.\f <a f>-. [<bes g>-. <d bes>-.] | <c a> (<bes g>16 <a f>) | <g e>8-. c,-. |
+    <a' f>8-.\f <a f>-. [<bes g>-. <d bes>-.] | <c a> (<bes g>16 <a f>) <g e>8-. c,-. |
     f-. <g e>-. <a f> (<bes g>16 <a f>) |
     <g e>8-. <a f>-. <bes g> (<c a>16 <bes g>) | <a f>8
 }
 
-\markup{\huge TR\super1.1.2}
+\markup{\huge TR\super1.2.2}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -145,7 +145,7 @@
     c4\p (g | c-\markup {\italic {dimin. sempre} } g | c g | c g | c8-.\pp) r r4 |
 }
 
-\markup{\huge C\super{rt}}
+\markup{\huge C\super{RT}}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -169,7 +169,7 @@
     g8-.-\markup{\dynamic pp \italic stacc. } g-. c-. g-. | e-. g-. e-. c-.
 }
 
-\markup{\huge P\super{1.1.1 cntr}}
+\markup{\huge P\super{1.1 cntr}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #289
@@ -179,7 +179,7 @@
     \tuplet 3/2 { g-. g' (fis } \tuplet 3/2 { g e bes) }
 }
 
-\markup{\huge P\super{1.1.2 cntr}}
+\markup{\huge P\super{1.2 cntr}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #293
@@ -192,7 +192,7 @@
 
 }
 
-\markup{\huge P\super{1.1.3 cntr}}
+\markup{\huge P\super{1.3 cntr}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #300

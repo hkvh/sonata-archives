@@ -67,27 +67,35 @@ class Beethoven6_1(SonataDataClass):
             Exposition.MEASURES:                         MR(1, 138),
             Exposition.OPENING_TEMPO:                    "Allegro ma non troppo",
 
-            Exposition.P_THEME_MEASURES:                 MR(1, 37),
-            Exposition.P_THEME_TYPE:                     PThemeType.ABORTED_ROUNDED_BINARY,
+            Exposition.P_THEME_MEASURES:                 MR(1, 28),
+            Exposition.P_THEME_TYPE:                     PThemeType.GRAND_ANTECEDENT,
             Exposition.P_MODULE_MEASURES_DICT:           {
                 "P1.0": MR(1, 4),
-                "P1.1": MR(5, 29),
-                "P1.2": MR(29, 37),
+                "P1.1": MR(5, 8),
+                "P1.2": MR(9, 16),
+                "P1.3": MR(16, 28),
             },
             Exposition.P_MODULE_PHRASE_DICT:             {
                 "P1.0": PhraseStructure.ANTECEDENT,
-                "P1.1": PhraseStructure.SENTENCE,
+                "P1.1": PhraseStructure.PRESENTATION,
                 "P1.2": PhraseStructure.PRESENTATION,
+                "P1.3": PhraseStructure.CONTINUATION,
             },
-            Exposition.P_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Exposition.P_THEME_ENDING_KEY:               Key.BES_MAJOR,
             Exposition.P_THEME_PAC_MEASURES_LIST:        [],
+            Exposition.P_THEME_OPENING_KEY:              Key.F_MAJOR,
+            Exposition.P_THEME_ENDING_KEY:               Key.F_MAJOR,
+            Exposition.P_THEME_ENDING_CADENCE:           Cadence.HC,
 
-            Exposition.TR_THEME_MEASURES:                MR(37, 53),
-            Exposition.TR_THEME_TYPE:                    TRThemeType.DISSOLVING_RESTATEMENT,
+            Exposition.TR_THEME_MEASURES:                MR(29, 53),
+            Exposition.TR_THEME_TYPE:                    TRThemeType.INDEPENDENT_DEVELOPMENTAL,
+            Exposition.TR_MODULE_MEASURES_DICT:          {
+                "TR1.1": MR(29, 37),
+                "TR1.2": MR(37, 53),
+            },
             Exposition.TR_THEME_OPENING_KEY:             Key.F_MAJOR,
             Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_STASIS_FORTE,
             Exposition.TR_THEME_HAMMER_BLOW_COUNT:       0,
+            Exposition.TR_THEME_DOMINANT_LOCK:           False,
             Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   False,
             Exposition.TR_THEME_ENDING_KEY:              Key.F_MAJOR,
             Exposition.TR_THEME_ENDING_CADENCE:          Cadence.IAC_MAJOR,
@@ -100,6 +108,11 @@ class Beethoven6_1(SonataDataClass):
                                                          "effect is still the MC that is clearly opening up S space",
 
             Exposition.S_THEME_MEASURES:                 MR(67, 115),
+            Exposition.S_THEME_TYPE:                     SThemeType.MULTI_MODULAR_S,
+            Exposition.S_MODULE_TYPES_DICT:              {
+                "S1.1": SThemeType.LYRICAL_CANTABILE,
+                "S1.2": SThemeType.FORTE_PIANO_ALTERNATING,
+            },
             Exposition.S_MODULE_MEASURES_DICT:           {
                 "S1.1": MR(67, 93),
                 "S1.2": MR(93, 115),
@@ -109,18 +122,20 @@ class Beethoven6_1(SonataDataClass):
             Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(115)],
             Exposition.S_THEME_ENDING_KEY:               Key.C_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
+
             Exposition.EEC_ESC_SECURED:                  True,
             Exposition.EEC_ESC_MEASURE:                  MR(115),
 
             Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(115, 138),
+            Exposition.C_THEME_TYPE:                     CThemeType.MULTI_MODULAR_C,
             Exposition.C_RT_PRESENT:                     True,
             Exposition.C_MODULE_MEASURES_DICT:           {
                 "C1.1": MR(115, 127),
                 "C1.2": MR(127, 135)
             },
             Exposition.C_MODULE_TYPES_DICT:              {
-                "C1.1": CThemeType.FORTE_P_BASED_C,
-                "C1.2": CThemeType.PIANO_AFTERTHOUGHT
+                "C1.1": CThemeType.FORTE_P_DERIVATION_C,
+                "C1.2": CThemeType.PIANO_AFTERTHOUGHT,
             },
             Exposition.C_THEME_OPENING_KEY:              Key.C_MAJOR,
             Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.C_MAJOR,
@@ -158,22 +173,24 @@ class Beethoven6_1(SonataDataClass):
                                                              "make recap-effect subtle until dramatic TR emergence",
             Recapitulation.MEASURES:                         MR(279, 417),
 
-            Recapitulation.P_THEME_MEASURES:                 MR(337, 351),
+            Recapitulation.P_THEME_MEASURES:                 MR(279, 311),
             Recapitulation.P_MODULE_MEASURES_DICT:           {
                 "P1.0": MR(279, 288),
-                "P1.1": MR(289, 312),
-            },
-            Recapitulation.P_MODULE_PHRASE_DICT:             {
-                "P1.0": PhraseStructure.ANTECEDENT,
-                "P1.1": PhraseStructure.SENTENCE,
+                "P1.1": MR(289, 292),
+                "P1.2": MR(293, 300),
+                "P1.3": MR(300, 311)
             },
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.0 has new violin I countermelody and the half-cadence"
                                                              "fermata is expanded into a multi-measure figuration; "
                                                              "P1.1 contains a novel tripleted ostinato countermelody "
-                                                             "throughout, and P1.2 is entirely absent",
-            Recapitulation.TR_THEME_MEASURES:                MR(312, 328),
+                                                             "throughout",
 
+            Recapitulation.TR_THEME_MEASURES:                MR(312, 328),
+            Recapitulation.TR_MODULE_MEASURES_DICT:          {
+                "TR1.2": MR(312, 328)
+            },
             Recapitulation.TR_THEME_ENDING_KEY:              Key.F_MAJOR,
+            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION:  "TR1.1 elided completely in favor of more boisterous TR1.2",
 
             Recapitulation.MC_MEASURES:                      MR(328, 345),
             Recapitulation.MC_CHANGE_FROM_EXPOSITION:        "MC is slightly extended with additional "

@@ -46,17 +46,17 @@
 \markup {\huge \bold {Exposition Motives}}
 
 
-\markup{\huge P\super1.1}
+\markup{\huge P\super{1.1 ant}}
 \relative c'' {
     \key bes \major
     \set Score.currentBarNumber = #43
     \bar ""
     \time 2/2
-    <d' d, d,>8-\markup { \dynamic ff \italic sempre } r bes r f r bes r |
+    <d' d,>4-.\fp bes8 r f r bes r |
     d, r f r bes, r d r | g, r ees' r c r bes r |  a r f' r ees r c r
 }
 
-\markup{\huge P\super1.2}
+\markup{\huge P\super{1.2 ant}}
 \relative c'' {
     \key bes \major
     \set Score.currentBarNumber = #47
@@ -78,7 +78,26 @@
     <c a es c a f>4-. r8 a16 (bes) <c a es c a f>4-. r8 \tuplet 3/2 { a16 (bes c) } | <d d, d,>8
 }
 
-\markup{\huge P\super{1.3 cons}}
+\markup{\huge P\super{1.1 cons}}
+\relative c'' {
+    \key bes \major
+    \set Score.currentBarNumber = #53
+    \bar ""
+    \time 2/2
+    <d' d, d,>8-\markup { \dynamic ff \italic sempre } r bes r f r bes r |
+    d, r f r bes, r d r | g, r ees' r c r bes r |  a r f' r ees r c r
+}
+
+\markup{\huge P\super{1.2 cons}}
+\relative c'' {
+    \key bes \major
+    \set Score.currentBarNumber = #57
+    \bar ""
+    \time 2/2
+    r4 g'8 g f f ees ees | d d c c bes bes c c | bes1\sf~ | bes8 (c d ees f g a bes) |
+}
+
+\markup{\huge  P\super{1.3 cons} \huge(P\super{1.3 ant var}\huge)}
 \relative c'' {
     \key bes \major
     \set Score.currentBarNumber = #61
