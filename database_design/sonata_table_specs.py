@@ -588,6 +588,7 @@ class Exposition(SonataBlockTableSpecification):
             cls.TR_THEME_OPENING_KEY,
             cls.TR_THEME_OTHER_KEYS_LIST,
             cls.TR_THEME_ENDING_KEY,
+            cls.MC_FILL_KEY,
             cls.S_THEME_OPENING_KEY,
             cls.S_THEME_OTHER_KEYS_LIST,
             cls.S_THEME_ENDING_KEY,

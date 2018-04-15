@@ -80,6 +80,7 @@ class Beethoven5_1(SonataDataClass):
             Exposition.P_MODULE_PHRASE_DICT:           {
                 "P1": PhraseStructure.SENTENCE
             },
+            Exposition.P_THEME_ENDING_KEY:             Key.C_MINOR,
             Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
             Exposition.TR_THEME_TYPE:                  TRThemeType.DISSOLVING_CONTINUATION,
             Exposition.TR_THEME_MEASURES:              MR(22, 58),
@@ -145,7 +146,7 @@ class Beethoven5_1(SonataDataClass):
 
     @classmethod
     def recapitulation_attribute_dict(cls) -> Dict[Field, Any]:
-        recap_dict = cls.exposition_attribute_dict()
+        recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
             Recapitulation.MEASURES:                        MR(248, 374),
@@ -165,6 +166,7 @@ class Beethoven5_1(SonataDataClass):
                 "TR1.2": MR(277, 288),
                 "TR1.3": MR(288, 302),
             },
+            Recapitulation.TR_THEME_ENDING_KEY:             Key.C_MAJOR,
             Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR0 not present. "
                                                             "TR1.3 reaches same C dim chord, but resolves differently",
 
@@ -240,6 +242,10 @@ class Beethoven5_4(SonataDataClass):
             Exposition.P_THEME_TYPE:                     PThemeType.GRAND_ANTECEDENT,
             Exposition.P_THEME_OPENING_KEY:              Key.C_MAJOR,
             Exposition.P_THEME_ENDING_KEY:               Key.C_MAJOR,
+            Exposition.P_THEME_ENDING_CADENCE:           Cadence.HC,
+            Exposition.P_THEME_COMMENTS:                 "In m. 22, P ends with an unusual I: HC caesura fill module (P1.5cf) that is somewhat in "
+                                                         "dialogue with an MC effect, but what follows in m. 26 is clearly the onset of"
+                                                         "TR, and thus m. 22 is not a real candidate to be an MC",
 
             Exposition.TR_THEME_MEASURES:                MR(26, 43),
             Exposition.TR_THEME_OPENING_KEY:             Key.C_MAJOR,

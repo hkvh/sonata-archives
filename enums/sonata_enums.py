@@ -165,7 +165,7 @@ class PThemeType(object):
 
     # The catch-all to describe a P that completes its phrase and is not an antecedent / has nothing elided by TR
     # For this, the specific phrase type should be handled by the P Phrase Types
-    COMPLETED_PHRASE_NON_ANTECEDENT = "P as Completed Phrase (Non-Antecedent)"
+    SELF_CONTAINED_PHRASE = "P as Self-Contained Phrase(s)"
 
     # Partial P => TR merger where P's completed phrase left in a state for TR to finish it
     # (I call this a partial merger because it means P+TR together form some type of phrase structure themselves)
@@ -224,6 +224,9 @@ class TRThemeType(object):
     # should be given the classifications above in TR_Theme_Module_Types (usually left blank)
     MULTI_MODULAR_MIXED_TR = "Multimodular (Mixed) TR"
 
+    # For Dissolving Types, sometimes there is a middle module that is suddenly different
+    SUDDEN_INDEPENDENT_INTERRUPTION = "Sudden Independent Interruption TR"
+
 
 class EnergyChange(object):
     """
@@ -281,7 +284,8 @@ class SThemeType(object):
     OMINOUS_THREATENING = "Ominous Threatening S"
     HEROIC_CADENTIAL = "Heroic Cadential S"
     MISCHEIVOUS_LAMENT = "Mischeivous Lament S"
-
+    DISASTROUS_FAILED_CADENTIAL = "Disastrous Failed Cadential S"
+    RECOVERED_CADENTIAL = "Restoration to Cadential S"
 
 
 class CThemeType(object):

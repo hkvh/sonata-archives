@@ -79,12 +79,28 @@
                                         <td></td>
                                     </tr>
                                     {% for k, v in value.items() %}
-                                        <tr>
-                                            <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ k }}</td>
-                                            <td>{{ v }}</td>
-                                        </tr>
+                                        {% if v is iterable and v is not string %}{# Check if value is list #}
+                                            {% for x in v %}
+                                                {% if loop.index0 == 0 %}
+                                                    <tr>
+                                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ k }}</td>
+                                                        <td>{{ x }}</td>
+                                                    </tr>
+                                                {% else %}
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>{{ x }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ k }}</td>
+                                                <td>{{ v }}</td>
+                                            </tr>
+                                        {% endif %}
                                     {% endfor %}
-                                    {% elif value is iterable and value is not string %}{# Check if list #}
+                                {% elif value is iterable and value is not string %}{# Check if list #}
                                     {% for x in value %}
                                         {% if loop.index0 == 0 %}
                                             <tr>

@@ -71,7 +71,7 @@ class Beethoven3_1(SonataDataClass):
             Exposition.OPENING_TEMPO:                  "Allegro con brio",
 
             Exposition.P_THEME_MEASURES:               MR(3, 37),
-            Exposition.P_THEME_TYPE:                   PThemeType.COMPLETED_PHRASE_NON_ANTECEDENT,
+            Exposition.P_THEME_TYPE:                   PThemeType.SELF_CONTAINED_PHRASE,
             Exposition.P_MODULE_MEASURES_DICT:         {
                 "P1": MR(3, 15),
                 "P2": MR(15, 37),
