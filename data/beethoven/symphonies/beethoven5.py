@@ -61,75 +61,88 @@ class Beethoven5_1(SonataDataClass):
     @classmethod
     def exposition_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Exposition.MEASURES:                       MR(1, 124),
-            Exposition.OPENING_TEMPO:                  "Allegro con brio",
+            Exposition.MEASURES:                         MR(1, 124),
+            Exposition.OPENING_TEMPO:                    "Allegro con brio",
 
-            Exposition.P_THEME_MEASURES:               MR(1, 21),
-            Exposition.P_THEME_OPENING_KEY:            Key.C_MINOR,
-            Exposition.P_THEME_TYPE:                   PThemeType.GRAND_ANTECEDENT,
-            Exposition.P_MODULE_MEASURES_DICT:         {
+            Exposition.P_THEME_MEASURES:                 MR(1, 21),
+            Exposition.P_THEME_OPENING_KEY:              Key.C_MINOR,
+            Exposition.P_THEME_TYPE:                     PThemeType.GRAND_ANTECEDENT,
+            Exposition.P_MODULE_MEASURES_DICT:           {
                 "P0":   MR(1, 5),
                 "P1.1": MR(6, 14),
                 "P1.2": MR(14, 21)
             },
-            Exposition.P_THEME_COMMENTS:               "I am calling mm. 1-5 P0 since it is an opening motto cordoned "
-                                                       "off from the rest of P1, "
-                                                       "but it is a somewhat unusual P0 case since P1.1 "
-                                                       "is obviously completely derived from P0. "
-                                                       "(Hepokoski calls it P1.0 which is also defensible)",
-            Exposition.P_MODULE_PHRASE_DICT:           {
+            Exposition.P_THEME_COMMENTS:                 "I am calling mm. 1-5 P0 since it is an opening motto cordoned "
+                                                         "off from the rest of P1, "
+                                                         "but it is a somewhat unusual P0 case since P1.1 "
+                                                         "is obviously completely derived from P0. "
+                                                         "(Hepokoski calls it P1.0 which is also defensible)",
+            Exposition.P_MODULE_PHRASE_DICT:             {
                 "P1": PhraseStructure.SENTENCE
             },
-            Exposition.P_THEME_ENDING_KEY:             Key.C_MINOR,
-            Exposition.P_THEME_ENDING_CADENCE:         Cadence.HC,
-            Exposition.TR_THEME_TYPE:                  TRThemeType.DISSOLVING_CONTINUATION,
-            Exposition.TR_THEME_MEASURES:              MR(22, 58),
-            Exposition.TR_MODULE_MEASURES_DICT:        {
+            Exposition.P_MODULE_TYPES_DICT:              {
+                "P0": PThemeType.OPENING_MOTTO,
+                "P1": PThemeType.GRAND_ANTECEDENT,
+            },
+            Exposition.P_THEME_ENDING_KEY:               Key.C_MINOR,
+            Exposition.P_THEME_ENDING_CADENCE:           Cadence.HC,
+            Exposition.TR_THEME_TYPE:                    TRThemeType.DISSOLVING_CONTINUATION,
+            Exposition.TR_THEME_MEASURES:                MR(22, 58),
+            Exposition.TR_MODULE_MEASURES_DICT:          {
                 "TR0":   MR(22, 24),
                 "TR1.1": MR(25, 33),
                 "TR1.2": MR(33, 44),
                 "TR1.3": MR(44, 58),
             },
-            Exposition.TR_THEME_OPENING_KEY:           Key.C_MINOR,
-            Exposition.TR_THEME_CHROMATIC_PREDOMINANT: False,
-            Exposition.TR_THEME_HAMMER_BLOW_COUNT:     2,
-            Exposition.TR_THEME_ENERGY:                EnergyChange.ENERGY_GAIN_CRESCENDO,
-            Exposition.TR_THEME_DOMINANT_LOCK:         False,
-            Exposition.TR_THEME_ENDING_KEY:            Key.EES_MAJOR,
+            Exposition.TR_MODULE_TYPES_DICT:             {
+                "TR0":   TRThemeType.OPENING_MOTTO,
+                "TR1.1": TRThemeType.DISSOLVING_CONTINUATION,
+                "TR1.2": TRThemeType.INDEPENDENT_DEVELOPMENTAL,
+                "TR1.3": TRThemeType.DISSOLVING_CONTINUATION,
+            },
+            Exposition.TR_THEME_OPENING_KEY:             Key.C_MINOR,
+            Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   False,
+            Exposition.TR_THEME_HAMMER_BLOW_COUNT:       2,
+            Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_GAIN_CRESCENDO,
+            Exposition.TR_THEME_DOMINANT_LOCK:           False,
+            Exposition.TR_THEME_ENDING_KEY:              Key.EES_MAJOR,
             # Uses A dim7 / C as vii˚7/B-flat
-            Exposition.TR_THEME_ENDING_CADENCE:        Cadence.HC_V6,
+            Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC_V6,
 
-            Exposition.MC_MEASURES:                    MR(58, 62),
-            Exposition.MC_STYLE:                       MC.GENERAL_PAUSE_WITH_S0,
+            Exposition.MC_MEASURES:                      MR(58, 62),
+            Exposition.MC_STYLE:                         MC.GENERAL_PAUSE_WITH_S0,
 
-            Exposition.S_THEME_TYPE:                   SThemeType.TRI_MODULAR_S,
+            Exposition.S_THEME_TYPE:                     SThemeType.TRI_MODULAR_S,
 
-            Exposition.S_THEME_MEASURES:               MR(59, 110),
-            Exposition.S_MODULE_MEASURES_DICT:         {
+            Exposition.S_THEME_MEASURES:                 MR(59, 110),
+            Exposition.S_MODULE_MEASURES_DICT:           {
                 "S0":   MR(59, 62),
                 "S1.1": MR(63, 82),
                 "S1.2": MR(83, 93),
                 "S1.3": MR(94, 110),
             },
-            Exposition.S_MODULE_TYPES_DICT:            {
+            Exposition.S_MODULE_TYPES_DICT:              {
+                "S0":   SThemeType.OPENING_MOTTO,
                 "S1.1": SThemeType.LYRICAL_CANTABILE,
                 "S1.2": SThemeType.OMINOUS_THREATENING,
                 "S1.3": SThemeType.HEROIC_CADENTIAL,
             },
-            Exposition.S_THEME_OPENING_KEY:            Key.EES_MAJOR,
-            Exposition.S_THEME_ENDING_KEY:             Key.EES_MAJOR,
-            Exposition.S_THEME_ENDING_CADENCE:         Cadence.PAC_MAJOR,
+            Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(110)],
+            Exposition.S_THEME_OPENING_KEY:              Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_KEY:               Key.EES_MAJOR,
+            Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
 
-            Exposition.EEC_ESC_SECURED:                True,
-            Exposition.EEC_ESC_MEASURE:                MR(110),
+            Exposition.EEC_ESC_SECURED:                  True,
+            Exposition.EEC_ESC_MEASURE:                  MR(110),
 
-            Exposition.C_THEME_MEASURES_INCL_C_RT:     MR(110, 124),
-            Exposition.C_THEME_TYPE:                   CThemeType.FORTE_TR_BASED_C,
-            Exposition.C_MODULE_MEASURES_DICT:         {
+            Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(110, 124),
+            Exposition.C_THEME_TYPE:                     CThemeType.FORTE_TR_BASED_C,
+            Exposition.C_MODULE_MEASURES_DICT:           {
                 'C1': MR(110, 124)
             },
-            Exposition.C_THEME_OPENING_KEY:            Key.EES_MAJOR,
-            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT: Key.EES_MAJOR,
+            Exposition.C_THEME_PAC_MEASURES_LIST:        [MR(122)],
+            Exposition.C_THEME_OPENING_KEY:              Key.EES_MAJOR,
+            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.EES_MAJOR,
         }
 
     @classmethod
@@ -152,48 +165,55 @@ class Beethoven5_1(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
-            Recapitulation.MEASURES:                        MR(248, 374),
+            Recapitulation.MEASURES:                         MR(248, 374),
 
-            Recapitulation.P_THEME_MEASURES:                MR(248, 268),
-            Recapitulation.P_MODULE_MEASURES_DICT:          {
+            Recapitulation.P_THEME_MEASURES:                 MR(248, 268),
+            Recapitulation.P_MODULE_MEASURES_DICT:           {
                 "P0":   MR(248, 252),
                 "P1.1": MR(253, 261),
                 "P1.2": MR(261, 268)
             },
-            Recapitulation.P_THEME_TYPE:                    PThemeType.GRAND_ANTECEDENT,
-            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "Oboe has mournful Adagio interlude on final HC",
+            Recapitulation.P_THEME_TYPE:                     PThemeType.GRAND_ANTECEDENT,
+            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "Oboe has mournful Adagio interlude on final HC",
 
-            Recapitulation.TR_THEME_MEASURES:               MR(269, 302),
-            Recapitulation.TR_MODULE_MEASURES_DICT:         {
+            Recapitulation.TR_THEME_MEASURES:                MR(269, 302),
+            Recapitulation.TR_MODULE_MEASURES_DICT:          {
                 "TR1.1": MR(269, 277),
                 "TR1.2": MR(277, 288),
                 "TR1.3": MR(288, 302),
             },
-            Recapitulation.TR_THEME_ENDING_KEY:             Key.C_MAJOR,
-            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR0 not present. "
-                                                            "TR1.3 reaches same C dim chord, but resolves differently",
+            Exposition.TR_MODULE_TYPES_DICT: {
+                "TR1.1": TRThemeType.DISSOLVING_CONTINUATION,
+                "TR1.2": TRThemeType.INDEPENDENT_DEVELOPMENTAL,
+                "TR1.3": TRThemeType.DISSOLVING_CONTINUATION,
+            },
+            Recapitulation.TR_THEME_ENDING_KEY:              Key.C_MAJOR,
+            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION:  "TR0 opening motto not present."
+                                                             "TR1.3 reaches same C dim chord, but resolves differently",
 
-            Recapitulation.MC_MEASURES:                     MR(302, 306),
+            Recapitulation.MC_MEASURES:                      MR(302, 306),
 
-            Recapitulation.S_THEME_MEASURES:                MR(303, 362),
-            Recapitulation.S_MODULE_MEASURES_DICT:          {
+            Recapitulation.S_THEME_MEASURES:                 MR(303, 362),
+            Recapitulation.S_MODULE_MEASURES_DICT:           {
                 "S0":   MR(303, 306),
                 "S1.1": MR(307, 330),
                 "S1.2": MR(331, 345),
                 "S1.3": MR(346, 362),
             },
-            Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
-            Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                 MR(362),
+            Recapitulation.S_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Recapitulation.S_THEME_ENDING_KEY:               Key.C_MAJOR,
+            Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(362)],
+            Recapitulation.EEC_ESC_MEASURE:                  MR(362),
 
-            Recapitulation.C_THEME_MEASURES_INCL_C_RT:      MR(362, 374),
-            Recapitulation.C_MODULE_MEASURES_DICT:          {
+            Recapitulation.C_THEME_MEASURES_INCL_C_RT:       MR(362, 374),
+            Recapitulation.C_MODULE_MEASURES_DICT:           {
                 'C1': MR(362, 374)
             },
-            Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:  Key.C_MAJOR,
-            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Ending Cadence resolution elided into onset of Coda: "
-                                                            "I / C Major = V / F minor"
+            Recapitulation.C_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.C_MAJOR,
+            Recapitulation.C_THEME_PAC_MEASURES_LIST:        [MR(374)],
+            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:   "Ending PAC resolution elided into onset of Coda: "
+                                                             "I / C Major = V / F minor"
         }
 
         recap_dict.update(recap_updates)
@@ -273,13 +293,17 @@ class Beethoven5_4(SonataDataClass):
             Exposition.MC_MEASURES:                      MR(43, 44),
             Exposition.MC_STYLE:                         MC.CAESURA_FILL_CASCADE,
 
-            Exposition.S_THEME_TYPE:                     SThemeType.BUSTLING_GALANT,
+            Exposition.S_THEME_TYPE:                     SThemeType.MULTI_MODULAR_S,
             Exposition.S_THEME_MEASURES:                 MR(45, 63),
             # could be 45 if include S headmotive
             Exposition.S_THEME_OPENING_KEY:              Key.G_MAJOR,
             Exposition.S_MODULE_MEASURES_DICT:           {
                 "S1.1": MR(45, 58),
                 "S1.2": MR(58, 63)
+            },
+            Exposition.S_MODULE_TYPES_DICT:              {
+                "S1.1": SThemeType.FORTE_PIANO_ALTERNATING,
+                "S1.2": SThemeType.BUSTLING_GALANT,
             },
             Exposition.S_THEME_ENDING_KEY:               Key.G_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:           Cadence.HC,
@@ -292,6 +316,10 @@ class Beethoven5_4(SonataDataClass):
             Exposition.C_MODULE_MEASURES_DICT:           {
                 "SC1.1": MR(64, 79),
                 "SC1.2": MR(80, 85)
+            },
+            Exposition.C_MODULE_TYPES_DICT:              {
+                "SC1.1": CThemeType.NEW_THEME_C,
+                "SC1.2": CThemeType.FURIOUS_BUILDUP,
             },
             Exposition.C_THEME_OPENING_KEY:              Key.G_MAJOR,
             Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.C_MINOR,

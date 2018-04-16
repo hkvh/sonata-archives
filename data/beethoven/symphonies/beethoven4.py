@@ -135,6 +135,7 @@ class Beethoven4_1(SonataDataClass):
                 Key.D_MINOR,
             ],
             Exposition.S_THEME_ENDING_KEY:               Key.BES_MAJOR,
+            Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(177)],
             Exposition.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(141)],
             Exposition.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(163), MR(167)],
             Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
@@ -186,6 +187,9 @@ class Beethoven4_1(SonataDataClass):
             Recapitulation.P_MODULE_MEASURES_DICT:           {
                 "P1": MR(337, 351),
             },
+            Recapitulation.P_MODULE_PHRASE_DICT: {
+              "P1":  PhraseStructure.ANTECEDENT,
+            },
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1 vastly truncated (no consequent) and "
                                                              "P2 absent entirely",
             Recapitulation.TR_THEME_MEASURES:                MR(351, 377),
@@ -207,8 +211,9 @@ class Beethoven4_1(SonataDataClass):
                 "S2.2": MR(433, 451)
             },
             Recapitulation.S_THEME_OPENING_KEY:              Key.BES_MAJOR,
+            Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(451)],
             Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(415)],
-            Recapitulation.S_THEME_EVADED_PAC_MEASURES_LIST: [437, 441],
+            Recapitulation.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(437), MR(441)],
             Recapitulation.S_THEME_ENDING_KEY:               Key.BES_MAJOR,
             Recapitulation.EEC_ESC_MEASURE:                  MR(451),
 

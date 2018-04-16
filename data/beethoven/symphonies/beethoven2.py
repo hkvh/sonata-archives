@@ -141,6 +141,7 @@ class Beethoven2_1(SonataDataClass):
             },
 
             Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(80), MR(88)],
+            Exposition.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(112)],
             Exposition.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(100)],
             Exposition.S_THEME_OPENING_KEY:              Key.A_MAJOR,
             Exposition.S_THEME_OTHER_KEYS_LIST:          [Key.A_MINOR],
@@ -149,7 +150,10 @@ class Beethoven2_1(SonataDataClass):
 
             Exposition.EEC_ESC_SECURED:                  True,
             Exposition.EEC_ESC_MEASURE:                  MR(112),
-            Exposition.EEC_ESC_COMMENTS:                 "Flute plays soprano 3ˆ, but otherwise feels like strong PAC",
+            Exposition.EEC_ESC_COMMENTS:                 "Flute plays soprano 3ˆ in highest register, but otherwise "
+                                                         "it feels like a strong PAC, despite technically being IAC. "
+                                                         "I will thus consider it to be a type of attenuated PAC"
+                                                         "that does properly secure the EEC",
 
             Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(112, 133),
             Exposition.C_THEME_TYPE:                     CThemeType.FORTE_P_BASED_C,
@@ -218,6 +222,7 @@ class Beethoven2_1(SonataDataClass):
                 'S1.4': MR(274, 284),
             },
             Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(252), MR(260)],
+            Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(284)],
             Recapitulation.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(272)],
             Recapitulation.S_THEME_OPENING_KEY:              Key.D_MAJOR,
             Recapitulation.S_THEME_OTHER_KEYS_LIST:          [Key.D_MINOR],

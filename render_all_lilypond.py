@@ -62,11 +62,11 @@ if __name__ == '__main__':
                         format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 
     filenames_list = [
-        'beethoven2_1',
+        'beethoven3_1',
     ]
 
     # Comment this out to use the filename_list
-    # filenames_list = None
+    filenames_list = None
 
     render_all_lilypond(filenames_list=filenames_list, remove_temp_dir=True)
 

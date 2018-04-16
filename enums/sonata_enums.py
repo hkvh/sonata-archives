@@ -183,6 +183,9 @@ class PThemeType(object):
     # (The Only P that doesn't end in any cadence)
     P_TR_MERGER_SENTENCE_PRESENTATION = "P=>TR Merger: Sentence Presentation"
 
+    # P0
+    OPENING_MOTTO = "Opening Motto to P"
+
 
 class ContinuousSubtype(object):
     """
@@ -227,6 +230,8 @@ class TRThemeType(object):
     # For Dissolving Types, sometimes there is a middle module that is suddenly different
     SUDDEN_INDEPENDENT_INTERRUPTION = "Sudden Independent Interruption TR"
 
+    # TR0
+    OPENING_MOTTO = "Opening Motto to TR"
 
 class EnergyChange(object):
     """
@@ -281,9 +286,11 @@ class SThemeType(object):
     VIRTUOSIC_FIGURATION = "Virtuosic Figuration S"
 
     # S Types for specific S modules (unlikely to apply to all of S)
+    OPENING_MOTTO = "Opening Motto to S"
     OMINOUS_THREATENING = "Ominous Threatening S"
     HEROIC_CADENTIAL = "Heroic Cadential S"
     MISCHEIVOUS_LAMENT = "Mischeivous Lament S"
+    FURIOUS_STORMY = "Furious Stormy S"
     DISASTROUS_FAILED_CADENTIAL = "Disastrous Failed Cadential S"
     RECOVERED_CADENTIAL = "Restoration to Cadential S"
     FORTE_PIANO_ALTERNATING = "Forte / Piano Alternating S"
@@ -313,6 +320,13 @@ class CThemeType(object):
     C_AS_S_AFTERMATH = "C as S Aftermath"
     CRESCENDO_ONSET = "Crescendo Onset C"
     PIANO_AFTERTHOUGHT = "Piano Afterthought C"
+
+    # Things to describe single modules
+
+    FURIOUS_BUILDUP = "Furious Buildup"
+
+    # C0
+    RETREAT_FROM_ACTION = "Retreat from Action C"
 
 
 if __name__ == '__main__':

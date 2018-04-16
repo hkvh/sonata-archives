@@ -192,6 +192,7 @@ class Beethoven1_1(SonataDataClass):
             Recapitulation.MC_CHANGE_FROM_EXPOSITION:       "",
             Recapitulation.S_THEME_MEASURES:                MR(206, 241),
             Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST: [MR(230)],
+            Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(241)],
             Recapitulation.S_MODULE_MEASURES_DICT:          {
                 "S1.1": MR(206, 221),
                 "S1.2": MR(222, 230),

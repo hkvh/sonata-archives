@@ -666,9 +666,6 @@ class Exposition(SonataBlockTableSpecification):
             cls.C_THEME_OTHER_KEYS_LIST,
             cls.C_THEME_ENDING_KEY_BEFORE_C_RT,
             cls.C_RT_ENDING_KEY,
-
-            # P Things that often change
-            cls.P_MODULE_PHRASE_DICT,
         })
         fields_to_exclude.update(cls.measures_array_fields_to_compute_counts())
         fields_to_exclude.update(cls.measure_range_fields_to_compute_measure_counts())
