@@ -122,25 +122,25 @@ class Beethoven1_1(SonataDataClass):
             Exposition.S_THEME_ENDING_KEY:               Key.G_MAJOR,
             Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
             Exposition.EEC_ESC_SECURED:                  True,
-            Exposition.EEC_ESC_MEASURE:                MR(88),
+            Exposition.EEC_ESC_MEASURE:                  MR(88),
 
-            Exposition.C_THEME_MEASURES_INCL_C_RT:     MR(88, 109),
-            Exposition.C_THEME_OPENING_KEY:            Key.G_MAJOR,
-            Exposition.C_MODULE_MEASURES_DICT:         {
+            Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(88, 109),
+            Exposition.C_THEME_OPENING_KEY:              Key.G_MAJOR,
+            Exposition.C_MODULE_MEASURES_DICT:           {
                 "C1.1": MR(88, 91),
                 "C1.2": MR(92, 100),
                 "C2.1": MR(100, 106),
             },
-            Exposition.C_THEME_TYPE:                   CThemeType.MULTI_MODULAR_C,
-            Exposition.C_MODULE_TYPES_DICT:            {
+            Exposition.C_THEME_TYPE:                     CThemeType.MULTI_MODULAR_C,
+            Exposition.C_MODULE_TYPES_DICT:              {
                 "C1": CThemeType.FORTE_P_BASED_C,
                 "C2": CThemeType.PIANO_AFTERTHOUGHT,
             },
-            Exposition.C_THEME_PAC_MEASURES_LIST:      [MR(100), MR(106)],
-            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT: Key.G_MAJOR,
-            Exposition.C_RT_PRESENT:                   True,
-            Exposition.C_RT_MEASURES:                  MR(106, 109),
-            Exposition.C_RT_ENDING_KEY:                Key.C_MAJOR,
+            Exposition.C_THEME_PAC_MEASURES_LIST:        [MR(100), MR(106)],
+            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.G_MAJOR,
+            Exposition.C_RT_PRESENT:                     True,
+            Exposition.C_RT_MEASURES:                    MR(106, 109),
+            Exposition.C_RT_ENDING_KEY:                  Key.C_MAJOR,
         }
 
     @classmethod
@@ -168,54 +168,54 @@ class Beethoven1_1(SonataDataClass):
         recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
-            Recapitulation.MEASURES:                        MR(178, 298),
+            Recapitulation.MEASURES:                         MR(178, 298),
 
-            Recapitulation.P_THEME_MEASURES:                MR(178, 198),
-            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:  "P1.2 changed to fragment P1.1.2 motives instead of P1.1.1",
-            Recapitulation.P_THEME_ENDING_KEY:              Key.G_MAJOR,
-            Recapitulation.P_THEME_ENDING_CADENCE:          Cadence.PAC_MAJOR,
-            Recapitulation.P_THEME_PAC_MEASURES_LIST:       [MR(198)],
-            Recapitulation.P_MODULE_MEASURES_DICT:          {
+            Recapitulation.P_THEME_MEASURES:                 MR(178, 198),
+            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.2 changed to fragment P1.1.2 motives instead of P1.1.1",
+            Recapitulation.P_THEME_ENDING_KEY:               Key.G_MAJOR,
+            Recapitulation.P_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
+            Recapitulation.P_THEME_PAC_MEASURES_LIST:        [MR(198)],
+            Recapitulation.P_MODULE_MEASURES_DICT:           {
                 "P1.1":    MR(178, 190),
                 "P1.2var": MR(190, 198),
             },
-            Recapitulation.TR_THEME_MEASURES:               MR(198, 204),
-            Recapitulation.TR_MODULE_MEASURES_DICT:         {
+            Recapitulation.TR_THEME_MEASURES:                MR(198, 204),
+            Recapitulation.TR_MODULE_MEASURES_DICT:          {
                 "TR1.1var": MR(198, 204)
             },
-            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION: "TR Theme heavily truncated and altered - "
-                                                            "continues to fragment P1.1.2 16th note motives "
-                                                            "and TR1.1 headmotive does not appear",
-            Recapitulation.TR_THEME_ENDING_KEY:             Key.C_MAJOR,
-            Recapitulation.MC_MEASURES:                     MR(204, 205),
-            Recapitulation.MC_STYLE:                        MC.CAESURA_FILL,
-            Recapitulation.MC_CHANGE_FROM_EXPOSITION:       "",
-            Recapitulation.S_THEME_MEASURES:                MR(206, 241),
-            Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST: [MR(230)],
+            Recapitulation.TR_THEME_CHANGE_FROM_EXPOSITION:  "TR Theme heavily truncated and altered - "
+                                                             "continues to fragment P1.1.2 16th note motives "
+                                                             "and TR1.1 headmotive does not appear",
+            Recapitulation.TR_THEME_ENDING_KEY:              Key.C_MAJOR,
+            Recapitulation.MC_MEASURES:                      MR(204, 205),
+            Recapitulation.MC_STYLE:                         MC.CAESURA_FILL_CASCADE,
+            Recapitulation.MC_CHANGE_FROM_EXPOSITION:        "Caesura Fill added",
+            Recapitulation.S_THEME_MEASURES:                 MR(206, 241),
+            Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(230)],
             Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(241)],
-            Recapitulation.S_MODULE_MEASURES_DICT:          {
+            Recapitulation.S_MODULE_MEASURES_DICT:           {
                 "S1.1": MR(206, 221),
                 "S1.2": MR(222, 230),
                 "S2.1": MR(230, 241),
             },
-            Recapitulation.S_THEME_OPENING_KEY:             Key.C_MAJOR,
-            Recapitulation.S_THEME_OTHER_KEYS_LIST:         [
+            Recapitulation.S_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Recapitulation.S_THEME_OTHER_KEYS_LIST:          [
                 Key.C_MINOR
             ],
-            Recapitulation.S_THEME_ENDING_KEY:              Key.C_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                 MR(241),
+            Recapitulation.S_THEME_ENDING_KEY:               Key.C_MAJOR,
+            Recapitulation.EEC_ESC_MEASURE:                  MR(241),
 
-            Recapitulation.C_THEME_MEASURES_INCL_C_RT:      MR(241, 259),
-            Recapitulation.C_THEME_OPENING_KEY:             Key.C_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:  Key.C_MAJOR,
-            Recapitulation.C_MODULE_MEASURES_DICT:          {
+            Recapitulation.C_THEME_MEASURES_INCL_C_RT:       MR(241, 259),
+            Recapitulation.C_THEME_OPENING_KEY:              Key.C_MAJOR,
+            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.C_MAJOR,
+            Recapitulation.C_MODULE_MEASURES_DICT:           {
                 "C1.1": MR(241, 244),
                 "C1.2": MR(245, 253),
                 "C2.1": MR(253, 259),
             },
-            Recapitulation.C_THEME_PAC_MEASURES_LIST:       [MR(253), MR(259)],
-            Recapitulation.C_RT_PRESENT:                    False,
-            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:  "Retransition elided with onset of Coda",
+            Recapitulation.C_THEME_PAC_MEASURES_LIST:        [MR(253), MR(259)],
+            Recapitulation.C_RT_PRESENT:                     False,
+            Recapitulation.C_THEME_CHANGE_FROM_EXPOSITION:   "Retransition elided with onset of Coda",
         }
 
         recap_dict.update(recap_updates)

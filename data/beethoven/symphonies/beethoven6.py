@@ -70,16 +70,16 @@ class Beethoven6_1(SonataDataClass):
             Exposition.P_THEME_MEASURES:                 MR(1, 28),
             Exposition.P_THEME_TYPE:                     PThemeType.GRAND_ANTECEDENT,
             Exposition.P_MODULE_MEASURES_DICT:           {
-                "P1.0": MR(1, 4),
-                "P1.1": MR(5, 8),
-                "P1.2": MR(9, 16),
-                "P1.3": MR(16, 28),
+                "P1.1": MR(1, 4),
+                "P1.2": MR(5, 8),
+                "P1.3": MR(9, 16),
+                "P1.4": MR(16, 28),
             },
             Exposition.P_MODULE_PHRASE_DICT:             {
-                "P1.0": PhraseStructure.ANTECEDENT,
-                "P1.1": PhraseStructure.PRESENTATION,
+                "P1.1": PhraseStructure.ANTECEDENT,
                 "P1.2": PhraseStructure.PRESENTATION,
-                "P1.3": PhraseStructure.CONTINUATION,
+                "P1.3": PhraseStructure.PRESENTATION,
+                "P1.4": PhraseStructure.CONTINUATION,
             },
             Exposition.P_THEME_PAC_MEASURES_LIST:        [],
             Exposition.P_THEME_OPENING_KEY:              Key.F_MAJOR,
@@ -175,15 +175,15 @@ class Beethoven6_1(SonataDataClass):
 
             Recapitulation.P_THEME_MEASURES:                 MR(279, 311),
             Recapitulation.P_MODULE_MEASURES_DICT:           {
-                "P1.0": MR(279, 288),
-                "P1.1": MR(289, 292),
-                "P1.2": MR(293, 300),
-                "P1.3": MR(300, 311)
+                "P1.1": MR(279, 288),
+                "P1.2": MR(289, 292),
+                "P1.3": MR(293, 300),
+                "P1.4": MR(300, 311)
             },
-            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.0 has new violin I countermelody and the half-cadence"
+            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1.1 has new violin I countermelody and the half-cadence"
                                                              "fermata is expanded into a multi-measure figuration; "
-                                                             "P1.1 contains a novel tripleted ostinato countermelody "
-                                                             "throughout",
+                                                             "P1.2-P1.4 contain a novel tripleted ostinato "
+                                                             "countermelody throughout",
 
             Recapitulation.TR_THEME_MEASURES:                MR(312, 328),
             Recapitulation.TR_MODULE_MEASURES_DICT:          {

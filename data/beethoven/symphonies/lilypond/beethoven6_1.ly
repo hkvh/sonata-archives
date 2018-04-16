@@ -3,7 +3,7 @@
 \markup {\huge \bold {Exposition Motives}}
 
 
-\markup{\huge P\super1.0}
+\markup{\huge P\super1.1}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -14,7 +14,7 @@
 }
 
 
-\markup{\huge P\super1.1 \huge(P\super{1.0 frag}\huge)}
+\markup{\huge P\super1.2 \huge(P\super{1.1 frag}\huge)}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -27,7 +27,7 @@
     >>
 }
 
-\markup{\huge P\super1.2}
+\markup{\huge P\super1.3}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -37,7 +37,7 @@
 }
 
 
-\markup{\huge P\super1.3}
+\markup{\huge P\super1.4}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -47,7 +47,7 @@
     c8-. g16 (a) bes8-. b-. | c8-. g16 (a) bes8-. b-. | c8-. g16 (a) bes8-. b-.
 }
 
-\markup{\huge TR\super1.1 \huge(P\super{1.0 var}\huge)}
+\markup{\huge TR\super1.1 \huge(P\super{1.1 var}\huge)}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -159,7 +159,7 @@
 
 \markup {\huge \bold {Recapitulation Motives}}
 
-\markup{\huge P\super{1.0 cntr}}
+\markup{\huge P\super{1.1 cntr}}
 \relative c'' {
     \time 2/4
     \key f \major
@@ -169,7 +169,7 @@
     g8-.-\markup{\dynamic pp \italic stacc. } g-. c-. g-. | e-. g-. e-. c-.
 }
 
-\markup{\huge P\super{1.1 cntr}}
+\markup{\huge P\super{1.2 cntr}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #289
@@ -179,7 +179,7 @@
     \tuplet 3/2 { g-. g' (fis } \tuplet 3/2 { g e bes) }
 }
 
-\markup{\huge P\super{1.2 cntr}}
+\markup{\huge P\super{1.3 cntr}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #293
@@ -192,7 +192,7 @@
 
 }
 
-\markup{\huge P\super{1.3 cntr}}
+\markup{\huge P\super{1.4 cntr}}
 \relative c'' {
     \time 2/4
     \set Score.currentBarNumber = #300

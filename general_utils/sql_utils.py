@@ -328,6 +328,8 @@ def upsert_sql_from_field_value_dict(schema_table: SchemaTable, field_value_dict
     and "upsert", meaning that we will try to insert the dict values associated with each field key into the table,
     and if that fails due to a conflict where the conf;ict field lists already exist, then do an update instead.
 
+    Also we run lstrip and rstrip on any string that is a value.
+
     :param schema_table: the schema table to upsert into
     :param field_value_dict: the dict mapping a Field to a value representing the data we want to upsert
     :param conflict_field_list: a list of fields to use for the on conflict column – note that this is often a single
@@ -337,7 +339,16 @@ def upsert_sql_from_field_value_dict(schema_table: SchemaTable, field_value_dict
 
     # Grab the fields and values (the order will be preserved by grabbing these without changing the dict in between)
     field_list = field_value_dict.keys()
-    val_list = [sql.Literal(x) for x in field_value_dict.values()]  # Convert the values into sql.Literal for insertion
+
+    # Strip whitespace with rstrip and lstrip if a string (i.e. something that has lstrip and rstrip)
+    val_list = []
+    for x in field_value_dict.values():
+        if hasattr(x, 'rstrip') and hasattr(x, 'lstrip'):
+            x = x.rstrip().lstrip()
+        val_list.append(x)
+
+    field_value_dict.values()
+    val_list = [sql.Literal(x) for x in val_list]  # Convert the values into sql.Literal for insertion
 
     # EXCLUDED is the posgres name of the records that couldn't be inserted due to the conflict
     exc_fields = [sql.SQL("EXCLUDED.{}").format(x) for x in field_list]

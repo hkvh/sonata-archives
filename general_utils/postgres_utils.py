@@ -38,6 +38,7 @@ class StringConverterJSON(extras.Json):
 # This allows us to directly commit dict and list objects as JSONB with psycopg2
 register_adapter(dict, StringConverterJSON)
 register_adapter(list, StringConverterJSON)
+register_adapter(set, StringConverterJSON)
 
 # We also want our KeyStruct to be adapted as a normal text string so we can insert it directly as text
 register_adapter(KeyStruct, lambda x: AsIs("'{}'".format(str(x))))

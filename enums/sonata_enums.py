@@ -183,8 +183,14 @@ class PThemeType(object):
     # (The Only P that doesn't end in any cadence)
     P_TR_MERGER_SENTENCE_PRESENTATION = "P=>TR Merger: Sentence Presentation"
 
+    # Labels for specific P1.0 / P0 modules:
+
     # P0
     OPENING_MOTTO = "Opening Motto to P"
+
+    # P1.0
+    RHYTHMIC_STREAM = "Rhythmic Stream for P"
+    ANACRUSIS = "Anacrusis to P"
 
 
 class ContinuousSubtype(object):

@@ -56,20 +56,21 @@ class Beethoven4_1(SonataDataClass):
     @classmethod
     def introduction_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            # Determining end of Introduction is tricky...
+            Introduction.COMMENTS:                  """
+Determining end of Introduction is tricky...
 
-            # P1.1 starts at m. 43 (so it's definitely over by then)
-            # Allegro starts at m. 39
-            # But the quasi-P1.0 motive that starts in m. 36 also happens in exposition first ending
-            # First ending's last 12 measures map exactly to m. 36-44:
-            #    m. 36-38 are augmented to 6 measures to make up for doubly-fast tempo
-            #    m. 39-44 happen almost identically
-            # But the recap omits m. 36-40 and only contains the P1.0 diminution thing in m. 41-42
+P1.1 starts at m. 43 (so it's definitely over by then) while the Allegro starts at m. 39.
+But the quasi-P1.0 motive that starts in m. 36 also happens in exposition first ending –
+the last 12 (un-numbered) first ending measures map exactly to m. 36-44:
+    m. 36-38 are augmented to 6 measures to make up for doubly-fast tempo and
+    m. 39-44 happen almost identically.
+But, complicating things, the recap omits m. 36-40 and only contains the P1.0 diminution thing from m. 41-42.
 
-            # It is thus credible to make m. 36 or m. 40 be the start of the exposition, but I'll just
-            # for now bypass this question entirely by making all the P1.0 stuff considered exposition
-            # wind-up (which is what Hepokoski himself implies in Elements of Sonata Theory), but
-            # I am noting that the fact the first ending and recap play this stuff does bother me a bit
+It is thus credible to make m. 36 or m. 40 be the start of the exposition with P1.0, but I'll just
+for now bypass this question entirely by making all the P1.0 stuff considered exposition
+wind-up (which is what Hepokoski seems to endorse), and start the exposition with P1.1 in m. 43. 
+However, the fact that the first ending and recap play this wind-up as quasi-P1.0 does bother me a bit...
+            """,
             Introduction.MEASURES:                  MR(1, 42),
             Introduction.OPENING_TEMPO:             "Adagio",
             Introduction.OPENING_KEY:               Key.BES_MINOR,
@@ -187,8 +188,8 @@ class Beethoven4_1(SonataDataClass):
             Recapitulation.P_MODULE_MEASURES_DICT:           {
                 "P1": MR(337, 351),
             },
-            Recapitulation.P_MODULE_PHRASE_DICT: {
-              "P1":  PhraseStructure.ANTECEDENT,
+            Recapitulation.P_MODULE_PHRASE_DICT:             {
+                "P1": PhraseStructure.ANTECEDENT,
             },
             Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1 vastly truncated (no consequent) and "
                                                              "P2 absent entirely",
