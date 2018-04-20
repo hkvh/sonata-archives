@@ -55,9 +55,16 @@ class Field(sql.Identifier):
     def display_name(self) -> str:
         """
         Returns the display name of the field
-        :return:
+        :return: the field display name
         """
         return self._display_name
+
+    def clone_with_new_display_name(self, display_name: str) -> 'Field':
+        """
+        Clones this field and changes its display name (keeps the field name)
+        :return: a new field instance with the same name but the new field display name
+        """
+        return Field(self.name, display_name)
 
 
 class Schema(sql.Identifier):

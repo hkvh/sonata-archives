@@ -9,8 +9,8 @@ from typing import Dict, Any, Type, Union
 from psycopg2 import sql, extensions
 
 from enums.key_enums import KeyStruct, validate_is_key_struct
-from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
-    Recapitulation, Coda, SonataBlockTableSpecification
+from database_design.sonata_table_specs import Composer, Piece, Sonata, Intro, Expo, Development, \
+    Recap, Coda, SonataBlockTableSpecification
 from enums.measure_enums import validate_is_measure_range
 from enums.sonata_enums import MC
 from general_utils.sql_utils import Field, upsert_sql_from_field_value_dict
@@ -250,7 +250,7 @@ class SonataDataClass(DataClass, ABC):
         :return: a dict of fields to their values
         """
         new_dict = cls.exposition_attribute_dict()
-        for field in Exposition.fields_unlikely_to_be_same_for_exposition_and_recap():
+        for field in Expo.fields_unlikely_to_be_same_for_exposition_and_recap():
             if field in new_dict:
                 del new_dict[field]
         return new_dict
@@ -394,17 +394,17 @@ class SonataDataClass(DataClass, ABC):
                 new_attribute_dict[count_field] = len(value)
 
         # Expo or Recap and MC Present, add the MC Type
-        if (sonata_block_cls in {Exposition, Recapitulation}) and new_attribute_dict.get(Exposition.MC_PRESENT, True):
-            if Exposition.TR_THEME_ENDING_KEY not in new_attribute_dict:
+        if (sonata_block_cls in {Expo, Recap}) and new_attribute_dict.get(Expo.MC_PRESENT, True):
+            if Expo.TR_ENDING_KEY not in new_attribute_dict:
                 raise Exception("Must specify TR Ending Key for {} in {} (or mark MC not Present)!"
                                 "".format(cls.id(), sonata_block_cls.__name__))
-            if Exposition.TR_THEME_ENDING_CADENCE not in new_attribute_dict:
+            if Expo.TR_ENDING_CADENCE not in new_attribute_dict:
                 raise Exception("Must specify TR Ending Cadence for {} in {} (or mark MC not Present)!"
                                 "".format(cls.id(), sonata_block_cls.__name__))
-            tr_relative_key = new_attribute_dict[Exposition.get_relative_key_field_from_absolute_key_field(
-                Exposition.TR_THEME_ENDING_KEY)]
-            tr_cadence = new_attribute_dict[Exposition.TR_THEME_ENDING_CADENCE]
-            new_attribute_dict[Exposition._MC_TYPE] = MC.compute_mc_type(tr_relative_key, tr_cadence)
+            tr_relative_key = new_attribute_dict[Expo.get_relative_key_field_from_absolute_key_field(
+                Expo.TR_ENDING_KEY)]
+            tr_cadence = new_attribute_dict[Expo.TR_ENDING_CADENCE]
+            new_attribute_dict[Expo._MC_TYPE] = MC.compute_mc_type(tr_relative_key, tr_cadence)
 
         return new_attribute_dict
 
@@ -452,22 +452,22 @@ class SonataDataClass(DataClass, ABC):
         # Upsert the 2 essential sonata block tables that all sonatas have
 
         # Upsert Exposition
-        block_dict = cls.augment_with_derived_fields(cls.exposition_attribute_dict(), Exposition)
+        block_dict = cls.augment_with_derived_fields(cls.exposition_attribute_dict(), Expo)
         block_dict[SonataBlockTableSpecification.ID] = expo_id
         block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
         sonata_dict[Sonata.EXPOSITION_ID] = expo_id
-        upsert_sql = upsert_sql_from_field_value_dict(Exposition.schema_table(), block_dict,
-                                                      conflict_field_list=[Exposition.ID])
+        upsert_sql = upsert_sql_from_field_value_dict(Expo.schema_table(), block_dict,
+                                                      conflict_field_list=[Expo.ID])
         log.info(upsert_sql.as_string(cur) + "\n")
         cur.execute(upsert_sql)
 
         # Upsert Recapitulation
-        block_dict = cls.augment_with_derived_fields(cls.recapitulation_attribute_dict(), Recapitulation)
+        block_dict = cls.augment_with_derived_fields(cls.recapitulation_attribute_dict(), Recap)
         block_dict[SonataBlockTableSpecification.ID] = recap_id
         block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
         sonata_dict[Sonata.RECAPITULATION_ID] = recap_id
-        upsert_sql = upsert_sql_from_field_value_dict(Recapitulation.schema_table(), block_dict,
-                                                      conflict_field_list=[Recapitulation.ID])
+        upsert_sql = upsert_sql_from_field_value_dict(Recap.schema_table(), block_dict,
+                                                      conflict_field_list=[Recap.ID])
         log.info(upsert_sql.as_string(cur) + "\n")
         cur.execute(upsert_sql)
 
@@ -475,19 +475,19 @@ class SonataDataClass(DataClass, ABC):
 
         # Upsert Introduction if boolean True
         if cls.sonata_attribute_dict()[Sonata.INTRODUCTION_PRESENT]:
-            block_dict = cls.augment_with_derived_fields(cls.introduction_attribute_dict(), Introduction)
+            block_dict = cls.augment_with_derived_fields(cls.introduction_attribute_dict(), Intro)
             block_dict[SonataBlockTableSpecification.ID] = intro_id
             block_dict[SonataBlockTableSpecification.SONATA_ID] = cls.id()
             sonata_dict[Sonata.INTRODUCTION_ID] = intro_id
-            upsert_sql = upsert_sql_from_field_value_dict(Introduction.schema_table(), block_dict,
-                                                          conflict_field_list=[Introduction.ID])
+            upsert_sql = upsert_sql_from_field_value_dict(Intro.schema_table(), block_dict,
+                                                          conflict_field_list=[Intro.ID])
             log.info(upsert_sql.as_string(cur) + "\n")
             cur.execute(upsert_sql)
         else:
             # Delete from Introduction if boolean false (this will cascade delete the sonata as well)
             delete_sql = sql.SQL("DELETE FROM {schema_table} WHERE {id} = {id_val};").format(
-                schema_table=Introduction.schema_table(),
-                id=Introduction.ID, id_val=sql.Literal(intro_id))
+                schema_table=Intro.schema_table(),
+                id=Intro.ID, id_val=sql.Literal(intro_id))
             log.info(delete_sql.as_string(cur) + "\n")
             cur.execute(delete_sql)
 

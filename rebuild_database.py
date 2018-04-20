@@ -12,8 +12,8 @@ from psycopg2 import extensions, sql
 from psycopg2.extras import execute_values
 
 from database_design.sonata_data_classes import DataClass
-from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
-    Recapitulation, Coda, sonata_archives_schema, ColumnDisplay
+from database_design.sonata_table_specs import Composer, Piece, Sonata, Intro, Expo, Development, \
+    Recap, Coda, sonata_archives_schema, ColumnDisplay
 from database_design.sonata_view_specs import ExpositionRecapitulation
 from directories import DATA_DIR, ROOT_DIR
 from general_utils.postgres_utils import LocalhostCursor
@@ -51,10 +51,10 @@ def create_all_tables(cursor: extensions.cursor, drop_if_exists: bool = True) ->
         Composer,
         Piece,
         Sonata,
-        Introduction,
-        Exposition,
+        Intro,
+        Expo,
         Development,
-        Recapitulation,
+        Recap,
         Coda,
     ]
     for table in sonata_table_specs:

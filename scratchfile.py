@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from database_design.sonata_table_specs import Exposition
+from database_design.sonata_table_specs import Expo
 from database_design.sonata_view_specs import ExpositionRecapitulation
 from general_utils.sql_utils import *
 

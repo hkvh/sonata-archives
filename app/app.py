@@ -6,8 +6,8 @@ from flask import Flask, render_template, send_from_directory
 from flask_bootstrap import Bootstrap
 from psycopg2 import sql
 
-from database_design.sonata_table_specs import Composer, Piece, Sonata, Introduction, Exposition, Development, \
-    Recapitulation, Coda, ColumnDisplay
+from database_design.sonata_table_specs import Composer, Piece, Sonata, Intro, Expo, Development, \
+    Recap, Coda, ColumnDisplay
 from directories import APP_DIR
 from general_utils.postgres_utils import LocalhostCursor
 
@@ -323,7 +323,7 @@ def piece(composer_id: str, piece_id: str):
             sonatas_blocks_info_dict[movement_num] = {}
 
             block_ids = [intro_id, expo_id, dev_id, recap_id, coda_id]
-            block_table_specs = [Introduction, Exposition, Development, Recapitulation, Coda]
+            block_table_specs = [Intro, Expo, Development, Recap, Coda]
 
             #############################
             # Sonatas Blocks Info Dicts #

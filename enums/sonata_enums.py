@@ -211,6 +211,7 @@ class TRThemeType(object):
     INDEPENDENT_DEVELOPMENTAL = "Independent Developmental TR"
 
     # TR starts like P but is not taking over the completion of the P module left ambiguous
+
     DISSOLVING_RESTATEMENT = "Dissolving Restatement TR"  # Starts as an initial restatement to any completed P
     DISSOLVING_CONSEQUENT_RESTATEMENT = "Dissolving Consequent Restatement TR"  # Starts like P's completed consequent
     DISSOLVING_CONTINUATION_RESTATEMENT = "Dissolving Consequent Restatement TR"  # Starts like P's completed continuation
@@ -229,15 +230,23 @@ class TRThemeType(object):
     # (Associated with normal Antecedent P)
     P_TR_MERGER_MODULATING_CONSEQUENT = "P=>TR Merger: Period Modulating Consequent"
 
-    # For transitions that are more than one category, this should be used as TR Type and the different modules of TR
-    # should be given the classifications above in TR_Theme_Module_Types (usually left blank)
+    # For transitions that are more than one category
+    # this should be used as TR Type and the different modules of TR
+    # should be given the classifications above in TR_MODULE_TYPES
     MULTI_MODULAR_MIXED_TR = "Multimodular (Mixed) TR"
+
+    # TR Types only for individual modules:
 
     # For Dissolving Types, sometimes there is a middle module that is suddenly different
     SUDDEN_INDEPENDENT_INTERRUPTION = "Sudden Independent Interruption TR"
 
     # TR0
     OPENING_MOTTO = "Opening Motto to TR"
+
+    # Continuous Exposition Module Types
+    CADENTIAL = "Cadential TR"
+    DEVELOPMENTAL_BUILDUP = "Developmental Build-up TR"
+
 
 class EnergyChange(object):
     """

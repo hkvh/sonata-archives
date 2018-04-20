@@ -56,7 +56,7 @@ class Beethoven4_1(SonataDataClass):
     @classmethod
     def introduction_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Introduction.COMMENTS:                  """
+            Intro.COMMENTS:                  """
 Determining end of Introduction is tricky...
 
 P1.1 starts at m. 43 (so it's definitely over by then) while the Allegro starts at m. 39.
@@ -71,12 +71,12 @@ for now bypass this question entirely by making all the P1.0 stuff considered ex
 wind-up (which is what Hepokoski seems to endorse), and start the exposition with P1.1 in m. 43. 
 However, the fact that the first ending and recap play this wind-up as quasi-P1.0 does bother me a bit...
             """,
-            Introduction.MEASURES:                  MR(1, 42),
-            Introduction.OPENING_TEMPO:             "Adagio",
-            Introduction.OPENING_KEY:               Key.BES_MINOR,
-            Introduction.EXPOSITION_WINDUP:         True,
-            Introduction.EXPOSITION_WINDUP_MEASURE: MR(35),
-            Introduction.ENDING_KEY:                Key.BES_MAJOR,
+            Intro.MEASURES:                  MR(1, 42),
+            Intro.OPENING_TEMPO:             "Adagio",
+            Intro.OPENING_KEY:               Key.BES_MINOR,
+            Intro.EXPOSITION_WINDUP:         True,
+            Intro.EXPOSITION_WINDUP_MEASURE: MR(35),
+            Intro.ENDING_KEY:                Key.BES_MAJOR,
         }
 
     @classmethod
@@ -84,46 +84,46 @@ However, the fact that the first ending and recap play this wind-up as quasi-P1.
         return {
             # See discussion above: m. 36, m. 49 or m. 41 are all credible starts if want to include
             # wind-up as P1.0, but for now I will not have and P1.0
-            Exposition.MEASURES:                         MR(43, 187),
-            Exposition.COMMENTS:                         "Wind-up could alternatively be considered P1.0, "
-                                                         "meaning the start could be m. 36, 39 or 41",
+            Expo.MEASURES:                 MR(43, 187),
+            Expo.COMMENTS:                 "Wind-up could alternatively be considered P1.0, "
+                                           "meaning the start could be m. 36, 39 or 41",
 
-            Exposition.OPENING_TEMPO:                    "Allegro con brio",
+            Expo.OPENING_TEMPO:            "Allegro con brio",
 
-            Exposition.P_THEME_MEASURES:                 MR(43, 81),
-            Exposition.P_THEME_TYPE:                     PThemeType.ABORTED_ROUNDED_BINARY,
-            Exposition.P_MODULE_MEASURES_DICT:           {
+            Expo.P_MEASURES:               MR(43, 81),
+            Expo.P_TYPE:                   PThemeType.ABORTED_ROUNDED_BINARY,
+            Expo.P_MODULE_MEASURES_DICT:   {
                 "P1":   MR(43, 65),
                 "P2.1": MR(65, 81),
             },
-            Exposition.P_MODULE_PHRASE_DICT:             {
+            Expo.P_MODULE_PHRASE_DICT:     {
                 "P1": PhraseStructure.PERIOD,
             },
-            Exposition.P_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Exposition.P_THEME_ENDING_KEY:               Key.BES_MAJOR,
-            Exposition.P_THEME_ENDING_CADENCE:           Cadence.IAC_TONIC_BASS_PEDAL,
-            Exposition.P_THEME_PAC_MEASURES_LIST:        [MR(65)],
+            Expo.P_OPENING_KEY:            Key.BES_MAJOR,
+            Expo.P_ENDING_KEY:             Key.BES_MAJOR,
+            Expo.P_ENDING_CADENCE:         Cadence.IAC_TONIC_BASS_PEDAL,
+            Expo.P_PAC_MEASURES_LIST:      [MR(65)],
 
-            Exposition.TR_THEME_MEASURES:                MR(81, 103),
-            Exposition.TR_THEME_TYPE:                    TRThemeType.DISSOLVING_REPRISE,
-            Exposition.TR_MODULE_MEASURES_DICT:          {
+            Expo.TR_MEASURES:              MR(81, 103),
+            Expo.TR_TYPE:                  TRThemeType.DISSOLVING_REPRISE,
+            Expo.TR_MODULE_MEASURES_DICT:  {
                 "TR1.1": MR(81, 95),
                 "TR1.2": MR(95, 103),
             },
-            Exposition.TR_THEME_OPENING_KEY:             Key.BES_MAJOR,
-            Exposition.TR_THEME_ENERGY:                  EnergyChange.ENERGY_STASIS_FORTE,
-            Exposition.TR_THEME_HAMMER_BLOW_COUNT:       0,
-            Exposition.TR_THEME_CHROMATIC_PREDOMINANT:   True,
-            Exposition.TR_THEME_ENDING_KEY:              Key.F_MINOR,
-            Exposition.TR_THEME_ENDING_CADENCE:          Cadence.HC,
+            Expo.TR_OPENING_KEY:           Key.BES_MAJOR,
+            Expo.TR_ENERGY:                EnergyChange.ENERGY_STASIS_FORTE,
+            Expo.TR_HAMMER_COUNT:          0,
+            Expo.TR_CHROM_PREDOM:          True,
+            Expo.TR_ENDING_KEY:            Key.F_MINOR,
+            Expo.TR_ENDING_CADENCE:        Cadence.HC,
 
-            Exposition.MC_MEASURES:                      MR(103, 106),
-            Exposition.MC_STYLE:                         MC.CAESURA_FILL_CASCADE,
-            Exposition.MC_FILL_KEY:                      Key.F_MAJOR,
+            Expo.MC_MEASURES:              MR(103, 106),
+            Expo.MC_STYLE:                 MC.CAESURA_FILL_CASCADE,
+            Expo.MC_FILL_KEY:              Key.F_MAJOR,
 
-            Exposition.S_THEME_MEASURES:                 MR(107, 177),
-            Exposition.S_THEME_TYPE:                     SThemeType.MULTI_MODULAR_S,
-            Exposition.S_MODULE_MEASURES_DICT:           {
+            Expo.S_MEASURES:               MR(107, 177),
+            Expo.S_TYPE:                   SThemeType.MULTI_MODULAR_S,
+            Expo.S_MODULE_MEASURES_DICT:   {
                 "S1.1": MR(107, 112),
                 "S1.2": MR(113, 120),
                 "S1.3": MR(121, 134),
@@ -131,33 +131,33 @@ However, the fact that the first ending and recap play this wind-up as quasi-P1.
                 "S2.1": MR(141, 158),
                 "S2.2": MR(159, 177)
             },
-            Exposition.S_THEME_OPENING_KEY:              Key.F_MAJOR,
-            Exposition.S_THEME_OTHER_KEYS_LIST:          [
+            Expo.S_OPENING_KEY:            Key.F_MAJOR,
+            Expo.S_OTHER_KEYS_LIST:        [
                 Key.D_MINOR,
             ],
-            Exposition.S_THEME_ENDING_KEY:               Key.BES_MAJOR,
-            Exposition.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(177)],
-            Exposition.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(141)],
-            Exposition.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(163), MR(167)],
-            Exposition.S_THEME_ENDING_CADENCE:           Cadence.PAC_MAJOR,
+            Expo.S_ENDING_KEY:             Key.BES_MAJOR,
+            Expo.S_STRONG_PAC_MEAS_LIST:   [MR(177)],
+            Expo.S_ATTEN_PAC_MEAS_LIST:    [MR(141)],
+            Expo.S_EVADED_PAC_MEAS_LIST:   [MR(163), MR(167)],
+            Expo.S_ENDING_CADENCE:         Cadence.PAC_MAJOR,
 
-            Exposition.EEC_ESC_SECURED:                  True,
-            Exposition.EEC_ESC_MEASURE:                  MR(177),
+            Expo.EEC_ESC_SECURED:          True,
+            Expo.EEC_ESC_MEASURE:          MR(177),
 
-            Exposition.C_THEME_MEASURES_INCL_C_RT:       MR(177, 187),
-            Exposition.C_THEME_TYPE:                     CThemeType.FORTE_P_DERIVATION_C,
-            Exposition.C_MODULE_MEASURES_DICT:           {
+            Expo.C_MEASURES_INCL_C_RT:     MR(177, 187),
+            Expo.C_TYPE:                   CThemeType.FORTE_P_DERIVATION_C,
+            Expo.C_MODULE_MEASURES_DICT:   {
                 'C1': MR(177, 187)
             },
-            Exposition.C_THEME_COMMENTS:                 "Could maybe consider m. 141 EEC and S2 as C0 but the m. 141 "
-                                                         "cadence is attenuated, and the S2.1 motives after m. 141 "
-                                                         "link back to diminution of bass cadential 1.4 motives "
-                                                         "in m. 135-140. Also, C-RT is in first ending which has"
-                                                         "no measure numbers since not present in second ending.",
-            Exposition.C_THEME_OPENING_KEY:              Key.F_MAJOR,
-            Exposition.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.F_MAJOR,
-            Exposition.C_RT_PRESENT:                     True,
-            Exposition.C_RT_ENDING_KEY:                  Key.BES_MAJOR,
+            Expo.C_COMMENTS:               "Could maybe consider m. 141 EEC and S2 as C0 but the m. 141 "
+                                           "cadence is attenuated, and the S2.1 motives after m. 141 "
+                                           "link back to diminution of bass cadential 1.4 motives "
+                                           "in m. 135-140. Also, C-RT is in first ending which has"
+                                           "no measure numbers since not present in second ending.",
+            Expo.C_OPENING_KEY:            Key.F_MAJOR,
+            Expo.C_ENDING_KEY_BEFORE_C_RT: Key.F_MAJOR,
+            Expo.C_RT_PRESENT:             True,
+            Expo.C_RT_ENDING_KEY:          Key.BES_MAJOR,
         }
 
     @classmethod
@@ -180,30 +180,30 @@ However, the fact that the first ending and recap play this wind-up as quasi-P1.
         recap_dict = cls.exposition_attribute_dict_without_fields_unlikely_to_be_same()
 
         recap_updates = {
-            Recapitulation.COMMENTS:                         "If include wind-up as P0, recap could begin in "
-                                                             "m. 347 (especially since tonic starts there)",
-            Recapitulation.MEASURES:                         MR(337, 461),
+            Recap.COMMENTS:                 "If include wind-up as P0, recap could begin in "
+                                            "m. 347 (especially since tonic starts there)",
+            Recap.MEASURES:                 MR(337, 461),
 
-            Recapitulation.P_THEME_MEASURES:                 MR(337, 351),
-            Recapitulation.P_MODULE_MEASURES_DICT:           {
+            Recap.P_MEASURES:               MR(337, 351),
+            Recap.P_MODULE_MEASURES_DICT:   {
                 "P1": MR(337, 351),
             },
-            Recapitulation.P_MODULE_PHRASE_DICT:             {
+            Recap.P_MODULE_PHRASE_DICT:     {
                 "P1": PhraseStructure.ANTECEDENT,
             },
-            Recapitulation.P_THEME_CHANGE_FROM_EXPOSITION:   "P1 vastly truncated (no consequent) and "
-                                                             "P2 absent entirely",
-            Recapitulation.TR_THEME_MEASURES:                MR(351, 377),
-            Recapitulation.TR_MODULE_MEASURES_DICT:          {
+            Recap.P_COMMENTS:               "P1 vastly truncated (no consequent) and "
+                                            "P2 absent entirely",
+            Recap.TR_MEASURES:              MR(351, 377),
+            Recap.TR_MODULE_MEASURES_DICT:  {
                 "TR1.1": MR(351, 369),
                 "TR1.2": MR(369, 377),
             },
-            Recapitulation.TR_THEME_ENDING_KEY:              Key.BES_MAJOR,
+            Recap.TR_ENDING_KEY:            Key.BES_MAJOR,
 
-            Recapitulation.MC_MEASURES:                      MR(377, 380),
+            Recap.MC_MEASURES:              MR(377, 380),
 
-            Recapitulation.S_THEME_MEASURES:                 MR(381, 451),
-            Recapitulation.S_MODULE_MEASURES_DICT:           {
+            Recap.S_MEASURES:               MR(381, 451),
+            Recap.S_MODULE_MEASURES_DICT:   {
                 "S1.1": MR(381, 386),
                 "S1.2": MR(387, 394),
                 "S1.3": MR(395, 408),
@@ -211,20 +211,20 @@ However, the fact that the first ending and recap play this wind-up as quasi-P1.
                 "S2.1": MR(415, 432),
                 "S2.2": MR(433, 451)
             },
-            Recapitulation.S_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Recapitulation.S_THEME_STRONG_PAC_MEASURES_LIST: [MR(451)],
-            Recapitulation.S_THEME_ATTEN_PAC_MEASURES_LIST:  [MR(415)],
-            Recapitulation.S_THEME_EVADED_PAC_MEASURES_LIST: [MR(437), MR(441)],
-            Recapitulation.S_THEME_ENDING_KEY:               Key.BES_MAJOR,
-            Recapitulation.EEC_ESC_MEASURE:                  MR(451),
+            Recap.S_OPENING_KEY:            Key.BES_MAJOR,
+            Recap.S_STRONG_PAC_MEAS_LIST:   [MR(451)],
+            Recap.S_ATTEN_PAC_MEAS_LIST:    [MR(415)],
+            Recap.S_EVADED_PAC_MEAS_LIST:   [MR(437), MR(441)],
+            Recap.S_ENDING_KEY:             Key.BES_MAJOR,
+            Recap.EEC_ESC_MEASURE:          MR(451),
 
-            Recapitulation.C_THEME_MEASURES_INCL_C_RT:       MR(451, 461),
-            Recapitulation.C_MODULE_MEASURES_DICT:           {
+            Recap.C_MEASURES_INCL_C_RT:     MR(451, 461),
+            Recap.C_MODULE_MEASURES_DICT:   {
                 "C1": MR(451, 461),
             },
-            Recapitulation.C_THEME_OPENING_KEY:              Key.BES_MAJOR,
-            Recapitulation.C_THEME_ENDING_KEY_BEFORE_C_RT:   Key.BES_MAJOR,
-            Recapitulation.C_RT_PRESENT:                     False,
+            Recap.C_OPENING_KEY:            Key.BES_MAJOR,
+            Recap.C_ENDING_KEY_BEFORE_C_RT: Key.BES_MAJOR,
+            Recap.C_RT_PRESENT:             False,
         }
 
         recap_dict.update(recap_updates)
@@ -233,8 +233,8 @@ However, the fact that the first ending and recap play this wind-up as quasi-P1.
     @classmethod
     def coda_attribute_dict(cls) -> Dict[Field, Any]:
         return {
-            Coda.MEASURES:         MR(461, 498),
-            Coda.P_THEME_RECALLED: True,
-            Coda.OPENING_KEY:      Key.BES_MAJOR,
-            Coda.ENDING_KEY:       Key.BES_MAJOR,
+            Coda.MEASURES:    MR(461, 498),
+            Coda.P_RECALLED:  True,
+            Coda.OPENING_KEY: Key.BES_MAJOR,
+            Coda.ENDING_KEY:  Key.BES_MAJOR,
         }
