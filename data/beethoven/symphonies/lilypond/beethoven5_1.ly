@@ -1,4 +1,4 @@
-\version "2.18.2"
+\version "2.24.0"
 
 \markup {\huge \bold {Exposition Motives}}
 
@@ -21,6 +21,8 @@ dolce = \markup { \italic dolce }
     \override Score.BarNumber.break-visibility = #end-of-line-invisible
     \set Score.currentBarNumber = #7
     \set Score.barNumberVisibility = #(every-nth-bar-number-visible 7)
+    %Attempted to fix the parenthesized bar number but unfortunately can't nest the every-nth rule with this
+    %\set Score.barNumberVisibility = #first-bar-number-invisible-and-no-parenthesized-bar-numbers
     \key c \minor
     \set Timing.beatStructure = #'(4)
     <<

@@ -8,8 +8,16 @@ from directories import ROOT_DIR, LILYPOND_DIR
 
 log = logging.getLogger(__name__)
 
-# A useful preamble to anly lilypond file that properly crops all images (but also creates a lot of junk files)
-LILYPOND_BOOK_PREAMBLE = '\include "lilypond-book-preamble.ly"'
+# A useful preamble to any lilypond file that prevents page turns and gets rid of default footer
+LILYPOND_PREAMBLE = """
+\paper {
+  page-breaking = #ly:one-page-breaking
+}
+
+\header {
+  tagline = ""
+}
+"""
 
 # Using a manual temp directory
 # since issues with using NamedTemporaryFile have appeared between how Windows and Mac handle them
@@ -37,12 +45,11 @@ def render_lilypond_png_into_app_directory(ly_file_full_path: str, remove_temp_d
     ly_file_stem = ly_file_name.split('.ly')[0]
 
     # Open the raw lily file and append a preamble to it if necessary
-    log.info("Reading {} and appending the \"lilypond-book-preamble\" to it (if necessary)".format(ly_file_name))
+    log.info("Reading {}".format(ly_file_name))
     with open(ly_file_full_path, 'r') as f:
         ly_file_contents = f.read()
 
-        if LILYPOND_BOOK_PREAMBLE not in ly_file_contents:
-            ly_file_contents = LILYPOND_BOOK_PREAMBLE + "\n" + ly_file_contents
+        ly_file_contents = LILYPOND_PREAMBLE + "\n" + ly_file_contents
 
     log.debug(ly_file_contents)
 
@@ -76,7 +83,7 @@ def render_lilypond_png_into_app_directory(ly_file_full_path: str, remove_temp_d
 
     # The only way source won't exist is if the lilypond render failed
     if os.path.exists(source):
-        # Now copy the file from our temp directory to the source direcotry
+        # Now copy the file from our temp directory to the source directory
         log.info("Copying {} to {}".format(created_png_file_name, LILYPOND_DIR))
 
         # Must remove destination since copy won't overwrite by default
@@ -101,6 +108,6 @@ class LilypondRenderError(Exception):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
+    logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(name)s %(levelname)s: %(message)s')
-    render_lilypond_png_into_app_directory(os.path.join(ROOT_DIR, 'data/beethoven/beethoven5_1.ly'))
+    render_lilypond_png_into_app_directory(os.path.join(ROOT_DIR, 'data/beethoven/symphonies/lilypond/beethoven5_1.ly'))

@@ -142,21 +142,23 @@ Find the path to your previously-created environment which should be as follows:
 Make sure that you choose the python executable in the bin folder, which should be around ~10 KB, not an alias (which will only be a few bytes)
 
 
-## III. Lilypond 2.18
+## III. Lilypond 2.24
 
 GNU Lilypond is the software that this repository uses to convert a markup text into musical images.
 
-First install Lilypond 2.18 following the guide [here](http://lilypond.org/macos-x.html).
+First install Lilypond 2.24 [here](https://lilypond.org/doc/v2.23/Documentation/web/macos-x).
 
-After it's installed, configure it so that you can execute it from the command line.
+After it's installed, configure it so that you can execute it from the command line which you can read about on that link; in most cases, this should mean adding the following line to your `~/.zshrc`:
 
-In most cases, this should mean adding the following line to your `~/.bash_profile`:
+```zsh
+export PATH=$PATH:~/lilypond-2.24.1/bin
+```
 
-`export PATH="$PATH:/Applications/LilyPond.app/Contents/Resources/bin/"`
+Where in this case I've put the extracted lilypond-2.24.1 archive in the root `~` directory.
 
 Finally, to confirm that lilypond is set-up properly, open up a new terminal (must close an existing one if you had it open)
 and run:
 
 `$ lilypond --version`
 
-If this doesn't work, make sure that your path is actually pointing at the proper bin folder inside the package contents of the Lilypond.app
+If this doesn't work, make sure that your path is actually pointing at the proper bin folder.

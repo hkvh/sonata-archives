@@ -1,4 +1,4 @@
-\version "2.18.2"
+\version "2.24.0"
 
 %TODO figure out how to make this a global property
 %\override Score.BarNumber.self-alignment-X = #CENTER
