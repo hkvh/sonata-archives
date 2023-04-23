@@ -333,7 +333,7 @@ def piece(composer_id: str, piece_id: str):
                 # if there is no block id, that means the block is missing, so we can skip
                 if block_id is not None:
                     # The name of the block is the same as the table spec class name
-                    block_name = block_table_spec.__name__
+                    block_name = block_table_spec.block_display_name()
 
                     with LocalhostCursor(dict_cursor=True) as cur2:
                         select_sonata_block_info_query = sql.SQL("""

@@ -248,6 +248,15 @@ class SonataBlockTableSpecification(TableSpecification):
     ID = Field("id")
     SONATA_ID = Field("sonata_id")
 
+    @classmethod
+    @abstractmethod
+    def block_display_name(cls) -> str:
+        """
+        Gets a prettier/full version of the block name for display
+
+        :return: a display name for the block
+        """
+
     """
     SUPPORT FOR DERIVED FIELDS
     """
@@ -420,6 +429,10 @@ class Intro(SonataBlockTableSpecification):
     """
 
     @classmethod
+    def block_display_name(cls) -> str:
+        return "Introduction"
+
+    @classmethod
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_introduction")
 
@@ -478,6 +491,10 @@ class Expo(SonataBlockTableSpecification):
     """
     The table representing items particular to the exposition block in a sonata.
     """
+
+    @classmethod
+    def block_display_name(cls) -> str:
+        return "Exposition"
 
     @classmethod
     def schema_table(cls) -> SchemaTable:
@@ -822,6 +839,10 @@ class Development(SonataBlockTableSpecification):
     """
 
     @classmethod
+    def block_display_name(cls) -> str:
+        return "Development"
+
+    @classmethod
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_development")
 
@@ -922,6 +943,10 @@ class Recap(Expo):
     """
 
     @classmethod
+    def block_display_name(cls) -> str:
+        return "Recapitulation"
+
+    @classmethod
     def schema_table(cls) -> SchemaTable:
         return SchemaTable(sonata_archives_schema, "sonata_recapitulation")
 
@@ -1008,6 +1033,10 @@ class Coda(SonataBlockTableSpecification):
     """
     The table representing items particular to the coda block in a sonata.
     """
+
+    @classmethod
+    def block_display_name(cls) -> str:
+        return "Coda"
 
     @classmethod
     def schema_table(cls) -> SchemaTable:
