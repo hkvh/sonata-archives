@@ -5,18 +5,18 @@ A repository to build a sonata theory database for all sonatas in the classical 
 
 To work on this project, you first must properly set up:
 
-* PostgreSQL 9.6
-* Python 3.6+ (virtual environment highly recommended)
-* Lilypond 2.18
+* PostgreSQL 15
+* Python 3.9 (virtual environment using Pipenv)
+* Lilypond 2.24
 
-Here are some detailed guides that walk you throught the steps on how to set these up:
+Here are some detailed guides that walk you through the steps on how to set these up:
 
-* [Mac OS X](README_Setup_Mac.md)
-* [Windows 10](README_Setup_Windows.md)
+* [Mac OS (updated for Ventura)](README_Setup_Mac.md)
+* [Windows 10 (currently out-of-date)](README_Setup_Windows.md)
 
-Note that if you haven't worked on it in a while, dependencies may have changed since you last pulled, so it's recommended to first run the following from inside your `sonata-archives` virtual environment / conda environment before running other code:
+Note that if you haven't worked on it in a while, dependencies may have changed since you last pulled, so it's recommended to first run the following from inside your `sonata-archives` Pipenv virtual environment before running other code:
 
-`(sonata-archives) $ pip install -r requirements.txt`
+`(sonata-archives) $ pipenv sync`
 
 ## II. Building the Sonata Archives Database
 
