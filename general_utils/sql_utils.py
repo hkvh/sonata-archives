@@ -41,7 +41,7 @@ class Field(sql.Identifier):
         Implements hash for the Field by using the hash of its wrapped string
         :return:
         """
-        return self._wrapped.__hash__()
+        return self.string.__hash__()
 
     @property
     def name(self) -> str:
@@ -49,7 +49,7 @@ class Field(sql.Identifier):
         Returns the field name (unquoted)
         :return: the field name
         """
-        return self._wrapped
+        return self.string
 
     @property
     def display_name(self) -> str:

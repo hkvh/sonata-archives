@@ -2,6 +2,8 @@
 
 The following in an instructional guide for PostgreSQL, Python 3 Conda Environments and Lilypond that is confirmed to work on Windows 10.
 
+Note: This is now deprecated and needs to be updated for the 2023 workflow (see Mac guide)
+
 ## I. PostgreSQL 9.6 Localhost Database
 
 This codebase is designed to use PostgreSQL, which you can install at the link [here](https://www.postgresql.org/download/).
