@@ -8,8 +8,26 @@ from directories import ROOT_DIR, LILYPOND_DIR
 
 log = logging.getLogger(__name__)
 
-# A useful preamble to any lilypond file that prevents page turns and gets rid of default footer
-LILYPOND_PREAMBLE = """
+# A useful preamble to any lilypond file that prevents page turns, fixes pickup bar numbering,
+# and gets rid of the default footer.
+LILYPOND_PREAMBLE = r"""
+#(define (sonata-archives-bar-number-function barnum measure-pos alt-number context)
+   ;; Excerpt snippets that begin with \partial report a negative measure position.
+   ;; In that case, the parenthesized label should show the previous measure number,
+   ;; while genuine broken measures after a line break should keep the current one.
+   (let ((display-barnum (if (and (> barnum 1)
+                                  (< (ly:moment-main-numerator measure-pos) 0))
+                             (1- barnum)
+                             barnum)))
+     (robust-bar-number-function display-barnum measure-pos alt-number context)))
+
+\layout {
+  \context {
+    \Score
+    barNumberFormatter = #sonata-archives-bar-number-function
+  }
+}
+
 \paper {
   page-breaking = #ly:one-page-breaking
 }
